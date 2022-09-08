@@ -1,8 +1,8 @@
-package shoppingMall.domain.cart;
+package shoppingMall.gupang.domain.cart;
 
 
-import shoppingMall.domain.Item;
-import shoppingMall.domain.Member;
+import shoppingMall.gupang.domain.Item;
+import shoppingMall.gupang.domain.Member;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

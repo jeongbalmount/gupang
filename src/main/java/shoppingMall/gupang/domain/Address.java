@@ -1,4 +1,4 @@
-package shoppingMall.domain;
+package shoppingMall.gupang.domain;
 
 // 값 타입
 public class Address {

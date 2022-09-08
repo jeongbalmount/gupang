@@ -1,4 +1,4 @@
-package shoppingMall.domain.cart;
+package shoppingMall.gupang.domain.cart;
 
 import javax.persistence.Embeddable;
 

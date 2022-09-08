@@ -1,4 +1,4 @@
-package shoppingMall.domain;
+package shoppingMall.gupang.domain;
 
 import lombok.Getter;
 
