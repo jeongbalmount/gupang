@@ -1,18 +1,80 @@
 package shoppingMall.gupang.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.PROTECTED;
 
+@Entity @Getter @Builder
+@NoArgsConstructor(access = PROTECTED)
+@AllArgsConstructor
+@Table(name = "orders") // sql에서 order라는 이름의 테이블은 사용할 수 없다!
 public class Order {
 
+    public static Order Builder;
+    @Id
+    @GeneratedValue
     private Long id;
 
     private LocalDateTime orderDate;
 
-    private OrderItem orderItem;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
-    private int charge;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
 
-    private DeliveryStatus deliveryStatus;
+    @Enumerated(STRING)
+    private IsMemberShip memberShipOrder;
+
+    @Enumerated(STRING)
+    private OrderStatus orderStatus;
+
+    private Order(LocalDateTime orderDate, Delivery delivery, IsMemberShip memberShipOrder,
+                 OrderStatus orderStatus) {
+        this.orderDate = orderDate;
+        this.delivery = delivery;
+        this.memberShipOrder = memberShipOrder;
+        this.orderStatus = orderStatus;
+    }
+
+    // 생성 메서드
+    public static Order createOrder(LocalDateTime orderDate, Delivery delivery, IsMemberShip memberShipOrder,
+                                    OrderStatus orderStatus, List<OrderItem> orderItems) {
+        Order order = new Order(orderDate, delivery, memberShipOrder, orderStatus);
+
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+
+        return order;
+    }
+
+    public void cancel() {
+        if (delivery.getDeliveryStatus() == DeliveryStatus.DELIVERED) {
+            throw new IllegalStateException("이미 배송 처리 되었습니다.");
+        }
+
+        this.orderStatus = OrderStatus.CANCEL;
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+
+    // 연관관계 메서드
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.registerOrder(this);
+    }
 
 }

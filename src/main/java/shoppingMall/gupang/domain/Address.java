@@ -1,6 +1,11 @@
 package shoppingMall.gupang.domain;
 
-// 값 타입
+import lombok.Getter;
+
+import javax.persistence.Embeddable;
+
+@Embeddable
+@Getter
 public class Address {
 
     private String city;

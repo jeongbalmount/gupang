@@ -1,9 +1,44 @@
 package shoppingMall.gupang.domain;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import static lombok.AccessLevel.PROTECTED;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = PROTECTED)
 public class Delivery {
 
+    @Id
+    @GeneratedValue
     private Long id;
 
-    private Address address; // 값 타입
+    @Embedded
+    private Address address;
+
+    private int deliveryFee;
+
+    private DeliveryStatus deliveryStatus;
+
+    public Delivery(Address address, int deliveryFee, DeliveryStatus deliveryStatus) {
+        this.address = address;
+        this.deliveryFee = deliveryFee;
+        this.deliveryStatus = deliveryStatus;
+    }
+
+    public void goDelivery() {
+        // 나중에 firebase와 연동해서 실제 배달이 나가는 식으로 연동해보기
+        if (deliveryStatus == DeliveryStatus.READY) {
+            this.deliveryStatus = DeliveryStatus.DELIVERED;
+        } else {
+            throw new IllegalStateException("이미 배송된 건 입니다.");
+        }
+    }
 
 }
