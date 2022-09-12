@@ -43,10 +43,10 @@ public class Member {
     private String cardNumber;
 
     public void registerMembership() {
-        if (this.isMemberShip == IsMemberShip.MEMBER) {
+        if (this.isMemberShip == IsMemberShip.MEMBERSHIP) {
             throw new IllegalStateException("이미 회원 입니다.");
         }
-        this.isMemberShip = IsMemberShip.MEMBER;
+        this.isMemberShip = IsMemberShip.MEMBERSHIP;
     }
 
 }

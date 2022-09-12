@@ -14,9 +14,8 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-@Entity @Getter @Builder
+@Entity @Getter
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor
 @Table(name = "orders") // sql에서 order라는 이름의 테이블은 사용할 수 없다!
 public class Order {
 

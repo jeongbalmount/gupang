@@ -23,11 +23,17 @@ public class OrderItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    public OrderItem(Order order, Item item, int itemCount, int itemPrice) {
-        this.order = order;
+    private OrderItem(Item item, int itemPrice, int itemCount) {
         this.item = item;
         this.itemCount = itemCount;
         this.itemPrice = itemPrice;
+    }
+
+    public static OrderItem createOrderItem(Item item, int itemPrice, int count) {
+        OrderItem orderItem = new OrderItem(item, itemPrice, count);
+        item.removeStock(count);
+
+        return orderItem;
     }
 
     public void registerOrder(Order order) {
