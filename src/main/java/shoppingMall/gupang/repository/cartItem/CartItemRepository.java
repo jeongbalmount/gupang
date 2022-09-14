@@ -6,7 +6,5 @@ import shoppingMall.gupang.domain.Member;
 
 import java.util.List;
 
-public interface CartItemRepository extends JpaRepository<CartItem, Long> {
-
-    List<CartItem> findByMember(Member member);
+public interface CartItemRepository extends JpaRepository<CartItem, Long>, CartItemRepositoryCustom {
 }
