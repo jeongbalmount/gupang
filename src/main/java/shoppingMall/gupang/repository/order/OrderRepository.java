@@ -1,4 +1,4 @@
-package shoppingMall.gupang.repository.OrderRepository;
+package shoppingMall.gupang.repository.order;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import shoppingMall.gupang.domain.Order;

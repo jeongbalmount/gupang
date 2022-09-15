@@ -1,4 +1,4 @@
-package shoppingMall.gupang.repository.OrderRepository;
+package shoppingMall.gupang.repository.order;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import shoppingMall.gupang.domain.*;
