@@ -10,8 +10,6 @@ public interface ItemService {
 
     public void saveItem(ItemDto itemDto);
 
-    public Optional<Item> findItem(Long itemId);
-
     public List<Item> findItemByName();
 
 }

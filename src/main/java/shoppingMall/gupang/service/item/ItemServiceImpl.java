@@ -40,11 +40,6 @@ public record ItemServiceImpl(ItemRepository itemRepository, SellerRepository se
     }
 
     @Override
-    public Optional<Item> findItem(Long itemId) {
-        return Optional.empty();
-    }
-
-    @Override
     public List<Item> findItemByName() {
         return null;
     }
