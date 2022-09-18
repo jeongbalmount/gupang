@@ -1,18 +1,23 @@
 package shoppingMall.gupang.service.member;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.member.MemberDto;
 import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.domain.IsMemberShip;
 import shoppingMall.gupang.domain.Member;
+import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.repository.member.MemberRepository;
 
 import java.util.Optional;
 
 @Service
 @Transactional
-public record MemberServiceImpl(MemberRepository memberRepository) implements MemberService{
+@RequiredArgsConstructor
+public class MemberServiceImpl implements MemberService{
+    private final MemberRepository memberRepository;
+
     @Override
     public void registerMember(MemberDto memberDto) {
         Address address = new Address(memberDto.getCity(), memberDto.getStreet(), memberDto.getZipcode());

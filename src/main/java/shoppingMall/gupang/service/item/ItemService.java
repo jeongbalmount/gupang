@@ -10,6 +10,6 @@ public interface ItemService {
 
     public void saveItem(ItemDto itemDto);
 
-    public List<Item> findItemByName();
+    public Item findItemByName(String name);
 
 }

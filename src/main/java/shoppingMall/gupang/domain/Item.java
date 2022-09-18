@@ -22,6 +22,8 @@ public class Item {
     @GeneratedValue
     private Long id;
 
+    private String name;
+
     private int itemPrice;
 
     private int itemQuantity;
@@ -36,7 +38,8 @@ public class Item {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Item(int itemPrice, int itemQuantity, int discountPrice, Seller seller, Category category) {
+    public Item(String name, int itemPrice, int itemQuantity, int discountPrice, Seller seller, Category category) {
+        this.name = name;
         this.itemPrice = itemPrice;
         this.itemQuantity = itemQuantity;
         this.discountPrice = discountPrice;

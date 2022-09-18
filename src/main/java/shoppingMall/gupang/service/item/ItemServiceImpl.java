@@ -1,5 +1,6 @@
 package shoppingMall.gupang.service.item;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.item.ItemDto;
@@ -17,8 +18,13 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public record ItemServiceImpl(ItemRepository itemRepository, SellerRepository sellerRepository,
-                              CategoryRepository categoryRepository) implements ItemService{
+@RequiredArgsConstructor
+public class ItemServiceImpl implements ItemService{
+
+    private final ItemRepository itemRepository;
+    private final SellerRepository sellerRepository;
+    private final CategoryRepository categoryRepository;
+
     @Override
     @Transactional
     public void saveItem(ItemDto itemDto) {
@@ -35,12 +41,13 @@ public record ItemServiceImpl(ItemRepository itemRepository, SellerRepository se
             throw new NoCategoryException("카테고리를 찾을 수 없습니다.");
         }
 
-        Item item = new Item(itemDto.getPrice(), itemDto.getQuantity(), itemDto.getDiscountPrice(), seller, category);
+        Item item = new Item(itemDto.getName(), itemDto.getPrice(), itemDto.getQuantity(),
+                itemDto.getDiscountPrice(), seller, category);
         itemRepository.save(item);
     }
 
     @Override
-    public List<Item> findItemByName() {
-        return null;
+    public Item findItemByName(String name) {
+        return itemRepository.findByName(name);
     }
 }

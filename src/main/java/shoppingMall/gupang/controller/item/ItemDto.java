@@ -6,14 +6,15 @@ import lombok.Data;
 @Data
 public class ItemDto {
 
-    // int itemPrice, int itemQuantity, int discountPrice, Seller seller_id, Category category_id
+    private String name;
     private int price;
     private int quantity;
     private int discountPrice;
     private Long seller_id;
     private Long category_id;
 
-    public ItemDto(int price, int quantity, int discountPrice, Long seller_id, Long category_id) {
+    public ItemDto(String name, int price, int quantity, int discountPrice, Long seller_id, Long category_id) {
+        this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.discountPrice = discountPrice;

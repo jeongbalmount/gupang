@@ -2,6 +2,7 @@ package shoppingMall.gupang.service.member;
 
 import shoppingMall.gupang.controller.member.MemberDto;
 import shoppingMall.gupang.domain.Member;
+import shoppingMall.gupang.domain.coupon.Coupon;
 
 public interface MemberService {
 
@@ -12,7 +13,4 @@ public interface MemberService {
     void memberOutService(Long memberId);
 
     Member getMember(Long memberId);
-
-//    void addCoupon(Long memberId, Coupon coupon);
-
 }

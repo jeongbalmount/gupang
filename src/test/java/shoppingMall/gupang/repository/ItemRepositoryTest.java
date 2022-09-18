@@ -35,10 +35,10 @@ public class ItemRepositoryTest {
         em.persist(seller1);
         em.persist(seller2);
 
-        Item item = new Item(1000, 10, 100, seller1, category1);
-        Item item2 = new Item(2000, 10, 100, seller1, category1);
-        Item item3 = new Item(3000, 10, 100, seller2, category2);
-        Item item4 = new Item(4000, 10, 100, seller2, category2);
+        Item item = new Item("name",1000, 10, 100, seller1, category1);
+        Item item2 = new Item("name",2000, 10, 100, seller1, category1);
+        Item item3 = new Item("name",3000, 10, 100, seller2, category2);
+        Item item4 = new Item("name",4000, 10, 100, seller2, category2);
 
         em.persist(item);
         em.persist(item2);

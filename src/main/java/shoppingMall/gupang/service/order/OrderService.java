@@ -1,7 +1,7 @@
 package shoppingMall.gupang.service.order;
 
 import shoppingMall.gupang.controller.item.ItemFindDto;
-import shoppingMall.gupang.coupon.Coupon;
+import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.domain.*;
 
 import java.util.HashMap;

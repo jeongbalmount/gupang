@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
+    Item findByName(String name);
+
     List<Item> findBySeller(Seller seller);
 
     List<Item> findByCategory(Category category);
