@@ -6,7 +6,7 @@ import shoppingMall.gupang.domain.coupon.Coupon;
 
 public interface MemberService {
 
-    void registerMember(MemberDto memberDto);
+    Long registerMember(MemberDto memberDto);
 
     void changeMemberShipStatus(Long memberId);
 

@@ -12,6 +12,7 @@ import shoppingMall.gupang.exception.NoMemberException;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,5 +45,18 @@ public class CouponServiceImpl implements CouponService{
         }
         coupon.registerCouponUser(member);
         couponRepository.save(coupon);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Coupon> getUnusedCoupons(Long memberId) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member member = optionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당하는 멤버가 없습니다.");
+        }
+
+        return couponRepository.findByMember(member);
+
     }
 }

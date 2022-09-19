@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import shoppingMall.gupang.exception.AlreadyMemberException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -44,7 +45,7 @@ public class Member {
 
     public void registerMembership() {
         if (this.isMemberShip == IsMemberShip.MEMBERSHIP) {
-            throw new IllegalStateException("이미 회원 입니다.");
+            throw new AlreadyMemberException("이미 회원 입니다.");
         }
         this.isMemberShip = IsMemberShip.MEMBERSHIP;
     }

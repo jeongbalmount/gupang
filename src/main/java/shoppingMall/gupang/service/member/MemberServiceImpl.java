@@ -19,13 +19,14 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
 
     @Override
-    public void registerMember(MemberDto memberDto) {
+    public Long registerMember(MemberDto memberDto) {
         Address address = new Address(memberDto.getCity(), memberDto.getStreet(), memberDto.getZipcode());
 
         Member member = new Member(memberDto.getEmail(), memberDto.getPassword(), memberDto.getName(),
                 memberDto.getPhoneNumber(), address, IsMemberShip.NOMEMBERSHIP);
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+        return savedMember.getId();
     }
 
     @Override
