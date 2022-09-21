@@ -8,8 +8,8 @@ public class FixCoupon extends Coupon {
 
     private final int fixDiscountAmount;
 
-    public FixCoupon(Long applyItemId, LocalDateTime expireDate, int fixDiscountAmount) {
-        super(applyItemId, expireDate);
+    public FixCoupon(LocalDateTime expireDate, int fixDiscountAmount) {
+        super(expireDate);
         this.fixDiscountAmount = fixDiscountAmount;
     }
 

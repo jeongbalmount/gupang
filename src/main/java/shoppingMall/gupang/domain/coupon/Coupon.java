@@ -1,13 +1,17 @@
 package shoppingMall.gupang.domain.coupon;
 
+import lombok.Getter;
+import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
+import shoppingMall.gupang.exception.AlreadyCouponUsedException;
+import shoppingMall.gupang.exception.CouponExpiredException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 
-@Entity
+@Entity @Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Coupon {
 
@@ -18,29 +22,45 @@ public abstract class Coupon {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    Long applyItemId;
-    LocalDateTime expireDate;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
+    private LocalDateTime expireDate;
+    private Boolean used;
 
-    public Coupon(Long applyItemId, LocalDateTime expireDate) {
-        this.applyItemId = applyItemId;
+    public Coupon(LocalDateTime expireDate) {
         this.expireDate = expireDate;
+        this.used = false;
     }
-
     public Coupon() {
 
     }
 
+    public void useCoupon() {
+        checkCouponValid();
+        this.used = true;
+    }
+
     public abstract int getCouponAppliedPrice(int price);
 
-    public boolean isExpiredCoupon(Coupon coupon){
-        if (expireDate.isBefore(LocalDateTime.now())) {
-            return false;
-        } else {
-            return true;
+    public void checkCouponValid() {
+        checkExpireDate();
+        checkUsed();
+    }
+
+    private void checkUsed() {
+        if (this.used) {
+            throw new AlreadyCouponUsedException("이미 사용된 쿠폰입니다.");
+        }
+    }
+
+    private void checkExpireDate(){
+        if (expireDate.isAfter(LocalDateTime.now())) {
+            throw new CouponExpiredException("이미 기한이 지난 쿠폰입니다.");
         }
     };
 
-    public void registerCouponUser(Member member) {
+    public void couponRegisterMember(Member member) {
         this.member = member;
     }
 

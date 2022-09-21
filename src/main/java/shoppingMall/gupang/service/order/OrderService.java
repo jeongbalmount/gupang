@@ -1,26 +1,22 @@
 package shoppingMall.gupang.service.order;
 
 import shoppingMall.gupang.controller.item.ItemFindDto;
+import shoppingMall.gupang.controller.order.OrderDto;
 import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.domain.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface OrderService {
 
-    Long order(Long memberId, Address address, List<ItemFindDto> items);
+    Long order(Long memberId, Address address, List<OrderDto> orderDtos);
 
-    void getOrderItems(List<ItemFindDto> items, IsMemberShip isMemberShip, List<OrderItem> orderItems);
-
-    Order orderWithCoupon(Long memberId, Address address, List<ItemFindDto> items, HashMap<Long, Coupon> couponMap);
-
-    Delivery getDelivery(IsMemberShip isMemberShip, Address address);
+    Order orderWithCoupon(Long memberId, Address address, List<OrderDto> items, List<Long> couponIds);
 
     void cancelOrder(Long orderId);
 
-    int getMembershipDiscountedPrice(IsMemberShip isMemberShip, int price);
-
-    int getDeliveryFee(IsMemberShip isMemberShip);
+    List<Order> getOrderByMember(Long memberId);
 
 }

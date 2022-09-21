@@ -31,11 +31,9 @@ public class CouponServiceImpl implements CouponService{
     private void saveCoupon(Long memberId, CouponDto couponDto) {
         Coupon coupon;
         if (couponDto.isFixCoupon()) {
-            coupon = new FixCoupon(couponDto.getApplyItemId(), couponDto.getExpireDate(),
-                    couponDto.getDiscountAmount());
+            coupon = new FixCoupon(couponDto.getExpireDate(), couponDto.getDiscountAmount());
         } else {
-            coupon = new PercentCoupon(couponDto.getApplyItemId(), couponDto.getExpireDate(),
-                    couponDto.getDiscountAmount());
+            coupon = new PercentCoupon(couponDto.getExpireDate(), couponDto.getDiscountAmount());
         }
 
         Optional<Member> optionalMember = memberRepository.findById(memberId);
@@ -43,9 +41,11 @@ public class CouponServiceImpl implements CouponService{
         if (member == null) {
             throw new NoMemberException("해당하는 멤버가 없습니다.");
         }
-        coupon.registerCouponUser(member);
+        coupon.couponRegisterMember(member);
         couponRepository.save(coupon);
     }
+
+
 
     @Override
     @Transactional(readOnly = true)

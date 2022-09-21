@@ -2,42 +2,45 @@ package shoppingMall.gupang.service.order;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
-import shoppingMall.gupang.controller.item.ItemDto;
 import shoppingMall.gupang.controller.item.ItemFindDto;
+import shoppingMall.gupang.controller.order.OrderDto;
 import shoppingMall.gupang.discount.DiscountPolicy;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
+import shoppingMall.gupang.exception.NoCouponException;
+import shoppingMall.gupang.exception.NoItemException;
+import shoppingMall.gupang.exception.NoMemberException;
 import shoppingMall.gupang.exception.NoOrderException;
+import shoppingMall.gupang.repository.coupon.CouponRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.order.OrderRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static shoppingMall.gupang.domain.IsMemberShip.MEMBERSHIP;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final DiscountPolicy discountPolicy;
 
+    private final CouponRepository couponRepository;
+
     @Override
-    public Long order(Long memberId, Address address, List<ItemFindDto> items) {
+    public Long order(Long memberId, Address address, List<OrderDto> orderDtos) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);
         if (member == null) {
-            return null;
+            throw new NoMemberException("해당 멤버가 없습니다.");
         }
 
         IsMemberShip isMemberShip = member.getIsMemberShip();
@@ -46,36 +49,32 @@ public class OrderServiceImpl implements OrderService{
 
         List<OrderItem> orderItems = new ArrayList<>();
 
-        getOrderItems(items, isMemberShip, orderItems);
+        getOrderItems(orderDtos, isMemberShip, orderItems);
 
-        Order order = Order.createOrder(LocalDateTime.now(), delivery, isMemberShip,
+        Order order = Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip,
                 OrderStatus.ORDER, orderItems);
 
         return order.getId();
-
     }
 
-    @Override
-    public void getOrderItems(List<ItemFindDto> items, IsMemberShip isMemberShip, List<OrderItem> orderItems) {
-        for (ItemFindDto itemDto : items) {
-            Optional<Item> optionalItem = itemRepository.findById(itemDto.getItemId());
+    private void getOrderItems(List<OrderDto> orderDtos, IsMemberShip isMemberShip, List<OrderItem> orderItems) {
+        for (OrderDto dto : orderDtos) {
+            Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
             Item item = optionalItem.orElse(null);
-            if (item == null) {
-                return;
+            if (item != null) {
+                OrderItem orderItem = OrderItem.createOrderItem(item,
+                        getMembershipDiscountedPrice(isMemberShip, item.getItemPrice()), dto.getItemCount());
+                orderItems.add(orderItem);
             }
-            OrderItem orderItem = OrderItem.createOrderItem(item, itemDto.getItemCount(),
-                    getMembershipDiscountedPrice(isMemberShip, item.getItemPrice()));
-            orderItems.add(orderItem);
         }
     }
 
     @Override
-    public Order orderWithCoupon(Long memberId, Address address, List<ItemFindDto> items,
-                                 HashMap<Long, Coupon> couponMap) {
+    public Order orderWithCoupon(Long memberId, Address address, List<OrderDto> orderDtos,List<Long> couponIds) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);
         if (member == null) {
-            return null;
+            throw new NoMemberException("해당하는 회원이 없습니다.");
         }
 
         IsMemberShip isMemberShip = member.getIsMemberShip();
@@ -83,41 +82,66 @@ public class OrderServiceImpl implements OrderService{
         Delivery delivery = getDelivery(isMemberShip, address);
         List<OrderItem> orderItems = new ArrayList<>();
 
-        getOrderItemsWithCoupons(items, couponMap, isMemberShip, orderItems);
+        List<Coupon> coupons = getCoupons(couponIds, member);
 
-        return Order.createOrder(LocalDateTime.now(), delivery, isMemberShip, OrderStatus.ORDER, orderItems);
+        getOrderItemsWithCoupons(orderDtos, coupons, isMemberShip, orderItems);
+
+        return Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip, OrderStatus.ORDER, orderItems);
     }
 
-    public void getOrderItemsWithCoupons(List<ItemFindDto> items, HashMap<Long, Coupon> couponMap,
+    private List<Coupon> getCoupons(List<Long> couponIds, Member member) {
+        List<Coupon> memberCoupons = couponRepository.findByMember(member);
+        List<Coupon> coupons = new ArrayList<>();
+        for (Coupon memberCoupon : memberCoupons) {
+            if (couponIds.contains(memberCoupon.getId())) {
+                memberCoupon.checkCouponValid();
+                coupons.add(memberCoupon);
+            }
+        }
+        return coupons;
+    }
+
+    private void getOrderItemsWithCoupons(List<OrderDto> orderDtos, List<Coupon> coupons,
                                          IsMemberShip isMemberShip, List<OrderItem> orderItems) {
 
-        for (ItemFindDto ido : items) {
-            Optional<Item> optionalItem = itemRepository.findById(ido.getItemId());
+        for (OrderDto dto : orderDtos) {
+            Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
             Item item = optionalItem.orElse(null);
             if (item == null) {
-                return;
+                throw new NoItemException("해당 상품이 없습니다.");
             }
             int itemPrice = item.getItemPrice();
-            if (couponMap.get(item.getId()) != null) {
-                Coupon coupon = couponMap.get(item.getId());
-                if (!coupon.isExpiredCoupon(coupon)) {
-                    coupon.getCouponAppliedPrice(itemPrice);
+
+            for (Coupon coupon : coupons) {
+                // 쿠폰을 여러개 돌리면서 쿠폰이 지원하는 아이템과 같을 때 쿠폰 할인 적용
+                if (coupon.getItem().getId().equals(item.getId())) {
+                    itemPrice = coupon.getCouponAppliedPrice(itemPrice);
+                    coupon.useCoupon();
                 }
             }
-            OrderItem orderItem = OrderItem.createOrderItem(item, ido.getItemCount(),
+
+            OrderItem orderItem = OrderItem.createOrderItem(item, dto.getItemCount(),
                     getMembershipDiscountedPrice(isMemberShip, itemPrice));
             orderItems.add(orderItem);
         }
     }
 
-    @Override
-    public Delivery getDelivery(IsMemberShip isMemberShip, Address address) {
+    private Delivery getDelivery(IsMemberShip isMemberShip, Address address) {
         return new Delivery(address, getDeliveryFee(isMemberShip), DeliveryStatus.READY);
     }
 
     @Override
-    public void cancelOrder(Long orderId) {
+    public List<Order> getOrderByMember(Long memberId) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member member = optionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당 멤버가 없습니다.");
+        }
+        return orderRepository.findByMember(member);
+    }
 
+    @Override
+    public void cancelOrder(Long orderId) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         Order order = optionalOrder.orElse(null);
         if (order == null) {
@@ -127,13 +151,11 @@ public class OrderServiceImpl implements OrderService{
         orderRepository.delete(order);
     }
 
-    @Override
-    public int getMembershipDiscountedPrice(IsMemberShip isMemberShip, int price) {
+    private int getMembershipDiscountedPrice(IsMemberShip isMemberShip, int price) {
         return discountPolicy.discount(isMemberShip, price);
     }
 
-    @Override
-    public int getDeliveryFee(IsMemberShip isMemberShip) {
+    private int getDeliveryFee(IsMemberShip isMemberShip) {
         if (isMemberShip == MEMBERSHIP) {
             return 0;
         } else {

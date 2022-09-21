@@ -26,6 +26,10 @@ public class Order {
 
     private LocalDateTime orderDate;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -39,18 +43,20 @@ public class Order {
     @Enumerated(STRING)
     private OrderStatus orderStatus;
 
-    private Order(LocalDateTime orderDate, Delivery delivery, IsMemberShip memberShipOrder,
+    private Order(LocalDateTime orderDate, Member member, Delivery delivery, IsMemberShip memberShipOrder,
                  OrderStatus orderStatus) {
         this.orderDate = orderDate;
+        this.member = member;
         this.delivery = delivery;
         this.memberShipOrder = memberShipOrder;
         this.orderStatus = orderStatus;
     }
 
     // 생성 메서드
-    public static Order createOrder(LocalDateTime orderDate, Delivery delivery, IsMemberShip memberShipOrder,
+    public static Order createOrder(LocalDateTime orderDate, Member member,
+                                    Delivery delivery, IsMemberShip memberShipOrder,
                                     OrderStatus orderStatus, List<OrderItem> orderItems) {
-        Order order = new Order(orderDate, delivery, memberShipOrder, orderStatus);
+        Order order = new Order(orderDate, member, delivery, memberShipOrder, orderStatus);
 
         for (OrderItem orderItem : orderItems) {
             order.addOrderItem(orderItem);

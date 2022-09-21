@@ -3,6 +3,7 @@ package shoppingMall.gupang.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import shoppingMall.gupang.exception.NotEnoughStockException;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Slf4j
 public class Item {
 
     @Id

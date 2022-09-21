@@ -37,9 +37,9 @@ public class CouponTest {
         em.persist(item);
         LocalDateTime expireDate = LocalDateTime.of(2022, 9, 19, 23, 59, 59);
 
-        Coupon coupon = new FixCoupon(item.getId(), expireDate, 1000);
-        coupon.registerCouponUser(member);
-        em.persist(coupon);
+//        Coupon coupon = new FixCoupon(item.getId(), expireDate, 1000);
+//        coupon.registerCouponUser(member);
+//        em.persist(coupon);
 
     }
 

@@ -8,8 +8,8 @@ public class PercentCoupon extends Coupon{
 
     private final int percentDiscountAmount;
 
-    public PercentCoupon(Long applyItemId, LocalDateTime expireDate, int percentDiscountAmount) {
-        super(applyItemId, expireDate);
+    public PercentCoupon(LocalDateTime expireDate, int percentDiscountAmount) {
+        super(expireDate);
         this.percentDiscountAmount = percentDiscountAmount;
     }
 

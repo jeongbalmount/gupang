@@ -59,7 +59,10 @@ public class OrderRepositoryTest {
         Address address = new Address("city", "st", "zip");
         Delivery delivery = new Delivery(address, 1000, DeliveryStatus.READY);
 
-        order = Order.createOrder(LocalDateTime.now(), delivery, IsMemberShip.NOMEMBERSHIP, OrderStatus.ORDER,
+        Member member = new Member("e@gmail.com", "pwd", "name", "010-1111-2222",
+                address, IsMemberShip.NOMEMBERSHIP);
+        em.persist(member);
+        order = Order.createOrder(LocalDateTime.now(), member, delivery, IsMemberShip.NOMEMBERSHIP, OrderStatus.ORDER,
                 this.orderItems);
         em.persist(delivery);
         em.persist(order);
