@@ -1,5 +1,8 @@
 package shoppingMall.gupang.domain.coupon;
 
+import shoppingMall.gupang.domain.Item;
+import shoppingMall.gupang.domain.Member;
+
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
@@ -8,8 +11,8 @@ public class PercentCoupon extends Coupon{
 
     private final int percentDiscountAmount;
 
-    public PercentCoupon(LocalDateTime expireDate, int percentDiscountAmount) {
-        super(expireDate);
+    public PercentCoupon(Member member, Item item, LocalDateTime expireDate, int percentDiscountAmount) {
+        super(member, item, expireDate);
         this.percentDiscountAmount = percentDiscountAmount;
     }
 

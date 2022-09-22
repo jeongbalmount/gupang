@@ -3,6 +3,7 @@ package shoppingMall.gupang.service.order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.item.ItemFindDto;
 import shoppingMall.gupang.controller.order.OrderDto;
 import shoppingMall.gupang.discount.DiscountPolicy;
@@ -26,6 +27,7 @@ import static shoppingMall.gupang.domain.IsMemberShip.MEMBERSHIP;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -86,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
 
         getOrderItemsWithCoupons(orderDtos, coupons, isMemberShip, orderItems);
 
+        log.info("insert!!!!!!!!!!");
         return Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip, OrderStatus.ORDER, orderItems);
     }
 
@@ -120,8 +123,8 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            OrderItem orderItem = OrderItem.createOrderItem(item, dto.getItemCount(),
-                    getMembershipDiscountedPrice(isMemberShip, itemPrice));
+            OrderItem orderItem = OrderItem.createOrderItem(item,
+                    getMembershipDiscountedPrice(isMemberShip, itemPrice), dto.getItemCount());
             orderItems.add(orderItem);
         }
     }
@@ -131,6 +134,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getOrderByMember(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);

@@ -28,7 +28,9 @@ public abstract class Coupon {
     private LocalDateTime expireDate;
     private Boolean used;
 
-    public Coupon(LocalDateTime expireDate) {
+    public Coupon(Member member, Item item, LocalDateTime expireDate) {
+        this.member = member;
+        this.item = item;
         this.expireDate = expireDate;
         this.used = false;
     }
@@ -55,13 +57,9 @@ public abstract class Coupon {
     }
 
     private void checkExpireDate(){
-        if (expireDate.isAfter(LocalDateTime.now())) {
+        if (expireDate.isBefore(LocalDateTime.now())) {
             throw new CouponExpiredException("이미 기한이 지난 쿠폰입니다.");
         }
     };
-
-    public void couponRegisterMember(Member member) {
-        this.member = member;
-    }
 
 }

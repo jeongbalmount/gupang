@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CouponService {
 
-    void registerCoupon(Long memberId, CouponDto couponDto);
+    void registerCoupon(Long memberId, Long itemId, CouponDto couponDto);
 
     List<Coupon> getUnusedCoupons(Long memberId);
 

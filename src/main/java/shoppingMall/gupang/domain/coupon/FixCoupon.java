@@ -1,5 +1,8 @@
 package shoppingMall.gupang.domain.coupon;
 
+import shoppingMall.gupang.domain.Item;
+import shoppingMall.gupang.domain.Member;
+
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
@@ -8,8 +11,8 @@ public class FixCoupon extends Coupon {
 
     private final int fixDiscountAmount;
 
-    public FixCoupon(LocalDateTime expireDate, int fixDiscountAmount) {
-        super(expireDate);
+    public FixCoupon(Member member, Item item, LocalDateTime expireDate, int fixDiscountAmount) {
+        super(member, item, expireDate);
         this.fixDiscountAmount = fixDiscountAmount;
     }
 
