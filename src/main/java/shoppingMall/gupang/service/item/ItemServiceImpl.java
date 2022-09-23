@@ -41,8 +41,7 @@ public class ItemServiceImpl implements ItemService{
             throw new NoCategoryException("카테고리를 찾을 수 없습니다.");
         }
 
-        Item item = new Item(itemDto.getName(), itemDto.getPrice(), itemDto.getQuantity(),
-                itemDto.getDiscountPrice(), seller, category);
+        Item item = new Item(itemDto.getName(), itemDto.getPrice(), itemDto.getQuantity(), seller, category);
         itemRepository.save(item);
     }
 

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-@Entity @Getter
+@Entity @Getter @Slf4j
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "orders") // sql에서 order라는 이름의 테이블은 사용할 수 없다!
 public class Order {
@@ -59,6 +60,7 @@ public class Order {
         Order order = new Order(orderDate, member, delivery, memberShipOrder, orderStatus);
 
         for (OrderItem orderItem : orderItems) {
+            log.info(String.valueOf(orderItem.getItemPrice()));
             order.addOrderItem(orderItem);
         }
 

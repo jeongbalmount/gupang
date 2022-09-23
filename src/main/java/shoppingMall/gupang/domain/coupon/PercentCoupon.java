@@ -1,12 +1,13 @@
 package shoppingMall.gupang.domain.coupon;
 
+import lombok.extern.slf4j.Slf4j;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
 
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity @Slf4j
 public class PercentCoupon extends Coupon{
 
     private final int percentDiscountAmount;
@@ -18,6 +19,9 @@ public class PercentCoupon extends Coupon{
 
     @Override
     public int getCouponAppliedPrice(int price) {
-        return price * percentDiscountAmount / 100;
+        log.info("pppoo");
+        log.info(String.valueOf(price));
+        int percent = 100 - percentDiscountAmount;
+        return price * percent / 100;
     }
 }

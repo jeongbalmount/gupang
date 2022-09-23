@@ -14,6 +14,7 @@ import shoppingMall.gupang.exception.NoItemException;
 import shoppingMall.gupang.exception.NoMemberException;
 import shoppingMall.gupang.exception.NoOrderException;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
+import shoppingMall.gupang.repository.delivery.DeliveryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.order.OrderRepository;
@@ -34,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final DiscountPolicy discountPolicy;
-
+    private final DeliveryRepository deliveryRepository;
     private final CouponRepository couponRepository;
 
     @Override
@@ -88,8 +89,11 @@ public class OrderServiceImpl implements OrderService {
 
         getOrderItemsWithCoupons(orderDtos, coupons, isMemberShip, orderItems);
 
-        log.info("insert!!!!!!!!!!");
-        return Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip, OrderStatus.ORDER, orderItems);
+        Order order = Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip, OrderStatus.ORDER,
+                orderItems);
+
+        orderRepository.save(order);
+        return order;
     }
 
     private List<Coupon> getCoupons(List<Long> couponIds, Member member) {
@@ -130,7 +134,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Delivery getDelivery(IsMemberShip isMemberShip, Address address) {
-        return new Delivery(address, getDeliveryFee(isMemberShip), DeliveryStatus.READY);
+        Delivery delivery = new Delivery(address, getDeliveryFee(isMemberShip), DeliveryStatus.READY);
+        deliveryRepository.save(delivery);
+        return delivery;
     }
 
     @Override
