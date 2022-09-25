@@ -30,5 +30,4 @@ public class MemberDto {
 
     @NotEmpty
     private String phoneNumber;
-
 }

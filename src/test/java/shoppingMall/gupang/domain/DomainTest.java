@@ -32,7 +32,7 @@ public class DomainTest {
                 address, IsMemberShip.NOMEMBERSHIP);
         Seller seller = new Seller("010-0000-0000", "name");
         Category category = new Category("category");
-        Item item = new Item("name", 100, 10, 10, seller, category);
+        Item item = new Item("name", 100, 10, seller, category);
         CartItem cartItem = new CartItem(member, item, 10, 1000);
 
         em.persist(member);
@@ -59,7 +59,7 @@ public class DomainTest {
     void itemTest() {
         Seller seller = new Seller("010-1111-1111", "mn");
         Category category = new Category("cn");
-        Item item = new Item("name", 1000, 10, 200, seller, category);
+        Item item = new Item("name", 1000, 200, seller, category);
         em.persist(seller);
         em.persist(category);
         em.persist(item);
@@ -78,7 +78,7 @@ public class DomainTest {
     void orderItemTest() {
         Seller seller = new Seller("010-1111-1111", "mn");
         Category category = new Category("cn");
-        Item item = new Item("name", 1000, 10, 200, seller, category);
+        Item item = new Item("name", 1000,  200, seller, category);
         em.persist(seller);
         em.persist(category);
         em.persist(item);
@@ -94,7 +94,7 @@ public class DomainTest {
                 address, IsMemberShip.NOMEMBERSHIP);
         Seller seller = new Seller("010-0000-0000", "name");
         Category category = new Category("category");
-        Item item = new Item("name", 100, 10, 10, seller, category);
+        Item item = new Item("name", 100,  10, seller, category);
 
         em.persist(delivery);
         em.persist(member);
@@ -110,8 +110,9 @@ public class DomainTest {
         orderItems.add(orderItem1);
         orderItems.add(orderItem2);
 
-        Order order = Order.createOrder(LocalDateTime.now(), member, delivery, IsMemberShip.NOMEMBERSHIP, OrderStatus.ORDER,
-                orderItems);
+        Order order = Order.createOrder(LocalDateTime.now(), member, delivery, IsMemberShip.NOMEMBERSHIP,
+                OrderStatus.ORDER, orderItems);
+
         em.persist(order);
     }
 
@@ -119,7 +120,7 @@ public class DomainTest {
     void itemQuantityTest() {
         Seller seller = new Seller("010-0000-0000", "name");
         Category category = new Category("category");
-        Item item = new Item("name",100, 10, 10, seller, category);
+        Item item = new Item("name",100,  10, seller, category);
         em.persist(seller);
         em.persist(category);
         em.persist(item);

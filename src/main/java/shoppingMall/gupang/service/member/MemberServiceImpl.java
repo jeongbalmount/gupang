@@ -7,7 +7,6 @@ import shoppingMall.gupang.controller.member.MemberDto;
 import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.domain.IsMemberShip;
 import shoppingMall.gupang.domain.Member;
-import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.repository.member.MemberRepository;
 
 import java.util.Optional;

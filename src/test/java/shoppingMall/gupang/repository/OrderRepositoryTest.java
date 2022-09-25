@@ -37,9 +37,9 @@ public class OrderRepositoryTest {
     void beforeEach() {
         Seller seller = new Seller("010-1111-1111", "mn");
         Category category = new Category("ct");
-        Item item1 = new Item("name",1000, 10000, 200, seller, category);
-        Item item2 = new Item("name",2000, 10000, 300, seller, category);
-        Item item3 = new Item("name",3000, 10000, 300, seller, category);
+        Item item1 = new Item("name",10000, 200, seller, category);
+        Item item2 = new Item("name",10000, 300, seller, category);
+        Item item3 = new Item("name",10000, 300, seller, category);
 
         em.persist(seller);
         em.persist(category);

@@ -31,7 +31,7 @@ public class CouponTest {
 
         Seller seller = new Seller("010-1111-1111", "mn");
         Category category = new Category("cn");
-        Item item = new Item("name", 1000, 10, 200, seller, category);
+        Item item = new Item("name", 1000,  200, seller, category);
         em.persist(seller);
         em.persist(category);
         em.persist(item);
