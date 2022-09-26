@@ -29,6 +29,8 @@ public class Member {
     @Embedded
     private Address address;
 
+    private String cardNumber;
+
     @Enumerated(STRING)
     private IsMemberShip isMemberShip;
 
@@ -41,13 +43,15 @@ public class Member {
         this.isMemberShip = isMemberShip;
     }
 
-    private String cardNumber;
-
     public void registerMembership() {
         if (this.isMemberShip == IsMemberShip.MEMBERSHIP) {
             throw new AlreadyMemberException("이미 회원 입니다.");
         }
         this.isMemberShip = IsMemberShip.MEMBERSHIP;
+    }
+
+    public void registerCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 
 }

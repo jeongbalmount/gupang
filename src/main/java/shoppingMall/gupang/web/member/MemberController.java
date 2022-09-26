@@ -14,7 +14,6 @@ import shoppingMall.gupang.web.exception.AlreadyMemberExistException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -28,7 +27,7 @@ public class MemberController {
         if (member == null){
             return "ok";
         } else {
-            throw new AlreadyMemberExistException();
+            return "alreadyExist";
         }
     }
 
@@ -41,7 +40,7 @@ public class MemberController {
             return "signup";
         }
 
-        throw new AlreadyMemberExistException();
+        throw new AlreadyMemberExistException("이미 아이디가 존재합니다.");
     }
 
 }
