@@ -37,9 +37,6 @@ public class CartItem {
         this.itemPrice = itemPrice;
     }
 
-
-
-
     public void updateItemCount(int count) {
         this.itemCount = count;
     }

@@ -14,7 +14,7 @@ public class LoginService {
     private final MemberRepository memberRepository;
 
     public Member Login(String email, String password){
-        return memberRepository.findByEmail(email)
+        return memberRepository.findOptionalByEmail(email)
                 .filter(m -> m.getPassword().equals(password))
                 .orElse(null);
     }

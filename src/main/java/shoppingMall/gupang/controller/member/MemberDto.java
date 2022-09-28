@@ -7,7 +7,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-@AllArgsConstructor
 public class MemberDto {
 
     @Email
@@ -30,4 +29,5 @@ public class MemberDto {
 
     @NotEmpty
     private String phoneNumber;
+
 }

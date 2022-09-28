@@ -14,8 +14,4 @@ public class LoginDto {
     @NotEmpty
     private String password;
 
-    public LoginDto(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
 }

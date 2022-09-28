@@ -1,6 +1,9 @@
 package shoppingMall.gupang.web.member;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,14 +18,15 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberRepository memberRepository;
     private final MemberService memberService;
 
     @PostMapping("/checkId")
-    public String checkExistEmail(@RequestBody String memberEmail) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(memberEmail);
+    public String checkExistEmail(@RequestBody EmailDto emailDto) {
+        Optional<Member> optionalMember = memberRepository.findOptionalByEmail(emailDto.getEmail());
         Member member = optionalMember.orElse(null);
         if (member == null){
             return "ok";
@@ -31,9 +35,14 @@ public class MemberController {
         }
     }
 
+    @Data
+    private static class EmailDto {
+        private String email;
+    }
+
     @PostMapping("/signup")
     public String Signup(@RequestBody MemberDto memberDto) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(memberDto.getEmail());
+        Optional<Member> optionalMember = memberRepository.findOptionalByEmail(memberDto.getEmail());
         Member member = optionalMember.orElse(null);
         if (member == null) {
             memberService.registerMember(memberDto);
