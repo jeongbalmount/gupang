@@ -46,7 +46,7 @@ public class CartItem {
     }
 
     public int getItemTotalPrice() {
-        return itemPrice * itemPrice;
+        return itemCount * itemPrice;
     }
 
 

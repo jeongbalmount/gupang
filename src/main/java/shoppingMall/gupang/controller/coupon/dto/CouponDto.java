@@ -1,4 +1,4 @@
-package shoppingMall.gupang.controller.coupon;
+package shoppingMall.gupang.controller.coupon.dto;
 
 import lombok.Data;
 

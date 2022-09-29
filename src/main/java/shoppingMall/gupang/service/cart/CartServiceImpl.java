@@ -3,9 +3,13 @@ package shoppingMall.gupang.service.cart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shoppingMall.gupang.controller.cart.dto.CartItemDto;
+import shoppingMall.gupang.controller.cart.dto.CartItemsDto;
+import shoppingMall.gupang.controller.cart.dto.CartItemsMemberDto;
 import shoppingMall.gupang.domain.CartItem;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
+import shoppingMall.gupang.exception.LackOfCountException;
 import shoppingMall.gupang.exception.NoCartItemException;
 import shoppingMall.gupang.exception.NoItemException;
 import shoppingMall.gupang.exception.NoMemberException;
@@ -28,11 +32,23 @@ public class CartServiceImpl implements CartService{
     @Transactional(readOnly = true)
     @Override
     public List<CartItem> getAllCartItems(Long memberId) {
+
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member member = optionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당 회원이 없습니다.");
+        }
+
         return cartRepository.findCartItemsByMember(memberId);
     }
 
     @Override
     public void updateItemCount(Long cartItemId, int count) {
+
+        if (count < 1) {
+            throw new LackOfCountException("최소 1이상 입력하세요");
+        }
+
         Optional<CartItem> optionalCartItem = cartRepository.findById(cartItemId);
         CartItem cartItem = optionalCartItem.orElse(null);
         if (cartItem == null) {
@@ -61,10 +77,23 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public void removeCartItems(List<Long> cartItemIds) {
-        for (Long id : cartItemIds) {
-            Optional<CartItem> optionalCartItem = cartRepository.findById(id);
-            optionalCartItem.ifPresent(cartRepository::delete);
+    public List<CartItem> removeCartItems(CartItemsMemberDto cartItemsMemberDto) {
+
+        for (CartItemsDto dto : cartItemsMemberDto.getCartItemIds()) {
+            Optional<CartItem> optionalCartItem = cartRepository.findById(dto.getCartItemId());
+            CartItem cartItem = optionalCartItem.orElse(null);
+            if (cartItem == null) {
+                throw new NoCartItemException("해당하는 카트 상품이 없습니다.");
+            }
+            cartRepository.delete(cartItem);
         }
+        Long memberId = cartItemsMemberDto.getMemberId();
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member member = optionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당하는 멤버가 없습니다.");
+        }
+
+        return cartRepository.findCartItemsByMember(memberId);
     }
 }

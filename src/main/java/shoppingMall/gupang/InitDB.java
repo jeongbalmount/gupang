@@ -55,22 +55,29 @@ public class InitDB {
             Item item2 = new Item("itemName2", 20000, 100, seller, category);
             Item item3 = new Item("itemName3", 30000, 100, seller, category);
             Item item4 = new Item("itemName4", 40000, 100, seller, category);
+            Item item5 = new Item("itemName5", 50000, 100, seller, category);
+            Item item6 = new Item("itemName6", 60000, 100, seller, category);
+
             em.persist(seller);
             em.persist(category);
             em.persist(item1);
             em.persist(item2);
             em.persist(item3);
             em.persist(item4);
+            em.persist(item5);
+            em.persist(item6);
 
             CartItem cartItem1 = new CartItem(member1, item1, 50, item1.getItemPrice());
             CartItem cartItem2 = new CartItem(member1, item2, 50, item2.getItemPrice());
             CartItem cartItem3 = new CartItem(member2, item3, 50, item3.getItemPrice());
             CartItem cartItem4 = new CartItem(member2, item4, 50, item4.getItemPrice());
+            CartItem cartItem5 = new CartItem(member1, item6, 50, item6.getItemPrice());
 
             em.persist(cartItem1);
             em.persist(cartItem2);
             em.persist(cartItem3);
             em.persist(cartItem4);
+            em.persist(cartItem5);
 
         }
 

@@ -3,7 +3,7 @@ package shoppingMall.gupang.service.coupon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.coupon.CouponDto;
+import shoppingMall.gupang.controller.coupon.dto.CouponDto;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.coupon.Coupon;
