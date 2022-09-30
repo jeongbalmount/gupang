@@ -1,13 +1,12 @@
 package shoppingMall.gupang.domain;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.AlreadyMemberException;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 import static javax.persistence.EnumType.STRING;
 

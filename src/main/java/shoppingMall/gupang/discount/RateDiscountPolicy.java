@@ -1,9 +1,9 @@
 package shoppingMall.gupang.discount;
 
 import org.springframework.stereotype.Component;
-import shoppingMall.gupang.domain.IsMemberShip;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 
-import static shoppingMall.gupang.domain.IsMemberShip.MEMBERSHIP;
+import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 
 @Component
 public class RateDiscountPolicy implements DiscountPolicy{

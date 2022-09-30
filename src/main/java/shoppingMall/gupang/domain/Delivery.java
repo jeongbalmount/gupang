@@ -1,7 +1,7 @@
 package shoppingMall.gupang.domain;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import shoppingMall.gupang.domain.enums.DeliveryStatus;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

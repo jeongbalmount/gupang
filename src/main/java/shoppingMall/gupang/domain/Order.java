@@ -1,10 +1,10 @@
 package shoppingMall.gupang.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import shoppingMall.gupang.domain.enums.DeliveryStatus;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

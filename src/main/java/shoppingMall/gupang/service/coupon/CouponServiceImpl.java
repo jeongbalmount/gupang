@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.coupon.dto.CouponDto;
+import shoppingMall.gupang.controller.coupon.dto.CouponMemberDto;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.coupon.Coupon;
@@ -15,6 +16,7 @@ import shoppingMall.gupang.repository.coupon.CouponRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,14 +60,26 @@ public class CouponServiceImpl implements CouponService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Coupon> getUnusedCoupons(Long memberId) {
+    public List<CouponMemberDto> getUnusedCoupons(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);
         if (member == null) {
             throw new NoMemberException("해당하는 멤버가 없습니다.");
         }
 
-        return couponRepository.findByMember(member);
+        List<CouponMemberDto> couponMemberDtos = new ArrayList<>();
+        couponRepository.findCouponByMemberWithItem(memberId);
+        return transformToDto(couponMemberDtos, couponRepository.findCouponByMemberWithItem(memberId));
+    }
 
+    private List<CouponMemberDto> transformToDto(List<CouponMemberDto> dtoList, List<Coupon> coupons) {
+        for (Coupon c : coupons) {
+            if (!c.getUsed()) {
+                CouponMemberDto dto = new CouponMemberDto(c.getId(), c.getItem().getName(),
+                        c.getCouponType(), c.getDiscountAmount(), c.getExpireDate());
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
     }
 }

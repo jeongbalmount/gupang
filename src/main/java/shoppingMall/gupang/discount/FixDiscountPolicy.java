@@ -2,10 +2,10 @@ package shoppingMall.gupang.discount;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import shoppingMall.gupang.domain.IsMemberShip;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 
 import static java.lang.Math.max;
-import static shoppingMall.gupang.domain.IsMemberShip.MEMBERSHIP;
+import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 
 @Primary
 @Component

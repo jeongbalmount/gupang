@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.member.MemberDto;
 import shoppingMall.gupang.domain.Address;
-import shoppingMall.gupang.domain.IsMemberShip;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.repository.member.MemberRepository;
 

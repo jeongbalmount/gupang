@@ -1,4 +1,4 @@
-package shoppingMall.gupang.domain;
+package shoppingMall.gupang.domain.enums;
 
 public enum IsMemberShip {
     MEMBERSHIP, NOMEMBERSHIP

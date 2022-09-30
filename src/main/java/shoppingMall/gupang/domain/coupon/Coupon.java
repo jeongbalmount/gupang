@@ -27,6 +27,9 @@ public abstract class Coupon {
     private Item item;
     private LocalDateTime expireDate;
     private Boolean used;
+    private String couponType;
+
+    private int discountAmount;
 
     public Coupon(Member member, Item item, LocalDateTime expireDate) {
         this.member = member;
@@ -41,6 +44,14 @@ public abstract class Coupon {
     public void useCoupon() {
         checkCouponValid();
         this.used = true;
+    }
+
+    protected void setCouponType(String type){
+        this.couponType = type;
+    }
+
+    protected void setDiscountAmount(int discountAmount){
+        this.discountAmount = discountAmount;
     }
 
     public abstract int getCouponAppliedPrice(int price);

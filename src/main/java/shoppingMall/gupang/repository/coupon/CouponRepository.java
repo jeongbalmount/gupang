@@ -6,7 +6,7 @@ import shoppingMall.gupang.domain.coupon.Coupon;
 
 import java.util.List;
 
-public interface CouponRepository extends JpaRepository<Coupon, Long> {
+public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRepositoryCustom {
     List<Coupon> findByMember(Member member);
 
 }

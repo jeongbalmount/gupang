@@ -1,24 +1,33 @@
 package shoppingMall.gupang.domain.coupon;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
-@Entity
-public class FixCoupon extends Coupon {
+import static lombok.AccessLevel.PROTECTED;
 
-    private final int fixDiscountAmount;
+@Entity
+@Getter
+@NoArgsConstructor(access = PROTECTED)
+public class FixCoupon extends Coupon {
 
     public FixCoupon(Member member, Item item, LocalDateTime expireDate, int fixDiscountAmount) {
         super(member, item, expireDate);
-        this.fixDiscountAmount = fixDiscountAmount;
+        super.setDiscountAmount(fixDiscountAmount);
+        super.setCouponType("Fix");
     }
 
     @Override
     public int getCouponAppliedPrice(int price) {
-        int discountedPrice = price - fixDiscountAmount;
+        int discountedPrice = price - super.getDiscountAmount();
         return Math.max(discountedPrice, 0);
     }
 }

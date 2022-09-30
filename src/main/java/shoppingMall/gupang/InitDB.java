@@ -5,9 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.domain.*;
+import shoppingMall.gupang.domain.coupon.Coupon;
+import shoppingMall.gupang.domain.coupon.FixCoupon;
+import shoppingMall.gupang.domain.coupon.PercentCoupon;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +24,7 @@ public class InitDB {
     public void init(){
         initService.loginInit();
         initService.cartInit();
+        initService.couponInit();
     }
 
     @Component
@@ -79,6 +85,27 @@ public class InitDB {
             em.persist(cartItem4);
             em.persist(cartItem5);
 
+        }
+
+        public void couponInit(){
+            Address address = new Address("city", "st", "zip");
+            Member member = new Member("e", "p", "n", "010", address, IsMemberShip.NOMEMBERSHIP);
+
+            Seller seller = new Seller("010", "name");
+            Category category = new Category("name");
+            Item item = new Item("i", 1000, 100, seller, category);
+
+            em.persist(member);
+            em.persist(seller);
+            em.persist(category);
+            em.persist(item);
+
+            LocalDateTime time = LocalDateTime.of(2023, 1, 1, 10, 10);
+            Coupon coupon1 = new FixCoupon(member, item, time, 1000);
+            Coupon coupon2 = new PercentCoupon(member, item, time, 20);
+
+            em.persist(coupon1);
+            em.persist(coupon2);
         }
 
     }

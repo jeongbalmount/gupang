@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.item.ItemFindDto;
 import shoppingMall.gupang.controller.order.OrderDto;
 import shoppingMall.gupang.discount.DiscountPolicy;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
-import shoppingMall.gupang.exception.NoCouponException;
+import shoppingMall.gupang.domain.enums.DeliveryStatus;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.NoItemException;
 import shoppingMall.gupang.exception.NoMemberException;
 import shoppingMall.gupang.exception.NoOrderException;
@@ -21,9 +21,8 @@ import shoppingMall.gupang.repository.order.OrderRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-import static shoppingMall.gupang.domain.IsMemberShip.MEMBERSHIP;
+import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 
 @Service
 @Slf4j
@@ -109,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void getOrderItemsWithCoupons(List<OrderDto> orderDtos, List<Coupon> coupons,
-                                         IsMemberShip isMemberShip, List<OrderItem> orderItems) {
+                                          IsMemberShip isMemberShip, List<OrderItem> orderItems) {
 
         for (OrderDto dto : orderDtos) {
             Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
