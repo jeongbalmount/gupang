@@ -10,12 +10,15 @@ import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.domain.coupon.FixCoupon;
 import shoppingMall.gupang.domain.coupon.PercentCoupon;
-import shoppingMall.gupang.exception.NoItemException;
-import shoppingMall.gupang.exception.NoMemberException;
+import shoppingMall.gupang.exception.coupon.CouponExpireException;
+import shoppingMall.gupang.exception.coupon.NoCouponTypeException;
+import shoppingMall.gupang.exception.item.NoItemException;
+import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,29 +33,37 @@ public class CouponServiceImpl implements CouponService{
     private final ItemRepository itemRepository;
 
     @Override
-    public void registerCoupon(Long memberId, Long itemId, CouponDto couponDto) {
-        saveCoupon(memberId, itemId, couponDto);
+    public void registerCoupon(CouponDto couponDto) {
+        saveCoupon(couponDto);
     }
 
-    private void saveCoupon(Long memberId, Long itemId, CouponDto couponDto) {
+    private void saveCoupon(CouponDto couponDto) {
 
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (couponDto.getExpireDate().isBefore(LocalDateTime.now())) {
+            throw new CouponExpireException("쿠폰 허용 기한이 현재보다 과거입니다.");
+        }
+
+        Optional<Member> optionalMember = memberRepository.findById(couponDto.getMemberId());
         Member member = optionalMember.orElse(null);
         if (member == null) {
             throw new NoMemberException("해당하는 멤버가 없습니다.");
         }
 
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        Optional<Item> optionalItem = itemRepository.findById(couponDto.getItemId());
         Item item = optionalItem.orElse(null);
         if (item == null) {
             throw new NoItemException("해당 상품이 없습니다.");
         }
 
         Coupon coupon;
-        if (couponDto.isFixCoupon()) {
-            coupon = new FixCoupon(member, item, couponDto.getExpireDate(), couponDto.getDiscountAmount());
+        if (couponDto.getCouponType().equals("Fix")) {
+            coupon = new FixCoupon(member, item, couponDto.getExpireDate(),"Fix",
+                    couponDto.getDiscountAmount());
+        } else if (couponDto.getCouponType().equals("Percent")) {
+            coupon = new PercentCoupon(member, item, couponDto.getExpireDate(), "Percent",
+                    couponDto.getDiscountAmount());
         } else {
-            coupon = new PercentCoupon(member, item, couponDto.getExpireDate(), couponDto.getDiscountAmount());
+            throw new NoCouponTypeException("해당하는 쿠폰 타입이 없습니다.");
         }
 
         couponRepository.save(coupon);

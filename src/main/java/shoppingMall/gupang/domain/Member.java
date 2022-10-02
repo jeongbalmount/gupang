@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
-import shoppingMall.gupang.exception.AlreadyMemberException;
+import shoppingMall.gupang.exception.member.AlreadyMemberException;
 
 import javax.persistence.*;
 

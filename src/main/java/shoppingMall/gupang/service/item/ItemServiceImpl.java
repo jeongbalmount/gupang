@@ -3,16 +3,18 @@ package shoppingMall.gupang.service.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.item.ItemDto;
+import shoppingMall.gupang.controller.item.dto.ItemDto;
+import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Seller;
-import shoppingMall.gupang.exception.NoCategoryException;
-import shoppingMall.gupang.exception.NoSellerException;
+import shoppingMall.gupang.exception.category.NoCategoryException;
+import shoppingMall.gupang.exception.seller.NoSellerException;
 import shoppingMall.gupang.repository.category.CategoryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.seller.SellerRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +48,15 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public Item findItemByName(String name) {
-        return itemRepository.findByName(name);
+    public List<ItemReturnDto> findItemByName(String name) {
+
+        List<ItemReturnDto> returnDtos = new ArrayList<>();
+        List<Item> items = itemRepository.findItemsByName(name);
+        for (Item item : items) {
+            ItemReturnDto dto = new ItemReturnDto(item.getName(), item.getItemPrice(), item.getSeller().getManagerName(),
+                    item.getCategory().getName());
+            returnDtos.add(dto);
+        }
+        return returnDtos;
     }
 }

@@ -1,6 +1,7 @@
 package shoppingMall.gupang.controller.coupon.dto;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -8,22 +9,15 @@ import java.time.LocalDateTime;
 @Data
 public class CouponDto {
 
-    @NotEmpty
-    private Long applyItemId;
+    private Long memberId;
 
-    @NotEmpty
+    private Long itemId;
+
+//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime expireDate;
 
-    @NotEmpty
     private int discountAmount;
 
-    @NotEmpty
-    private boolean isFixCoupon;
+    private String couponType;
 
-    public CouponDto(Long applyItemId, LocalDateTime expireDate, boolean isFixCoupon, int discountAmount) {
-        this.applyItemId = applyItemId;
-        this.expireDate = expireDate;
-        this.isFixCoupon = isFixCoupon;
-        this.discountAmount = discountAmount;
-    }
 }

@@ -7,9 +7,7 @@ import shoppingMall.gupang.domain.Seller;
 
 import java.util.List;
 
-public interface ItemRepository extends JpaRepository<Item, Long> {
-
-    Item findByName(String name);
+public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositoryCustom {
 
     List<Item> findBySeller(Seller seller);
 

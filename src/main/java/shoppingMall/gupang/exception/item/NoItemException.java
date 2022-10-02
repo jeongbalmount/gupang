@@ -1,4 +1,4 @@
-package shoppingMall.gupang.exception;
+package shoppingMall.gupang.exception.item;
 
 public class NoItemException extends RuntimeException{
 

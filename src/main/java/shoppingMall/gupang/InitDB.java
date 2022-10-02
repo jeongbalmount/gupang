@@ -25,6 +25,7 @@ public class InitDB {
         initService.loginInit();
         initService.cartInit();
         initService.couponInit();
+        initService.itemInit();
     }
 
     @Component
@@ -101,11 +102,23 @@ public class InitDB {
             em.persist(item);
 
             LocalDateTime time = LocalDateTime.of(2023, 1, 1, 10, 10);
-            Coupon coupon1 = new FixCoupon(member, item, time, 1000);
-            Coupon coupon2 = new PercentCoupon(member, item, time, 20);
+            Coupon coupon1 = new FixCoupon(member, item, time, "Fix", 1000);
+            Coupon coupon2 = new PercentCoupon(member, item, time, "Percent", 20);
 
             em.persist(coupon1);
             em.persist(coupon2);
+        }
+
+        public void itemInit() {
+            Seller seller1 = new Seller("010-1111-1111", "managerName1");
+            Seller seller2 = new Seller("010-2222-2222", "managerName2");
+            em.persist(seller1);
+            em.persist(seller2);
+
+            Category category1 = new Category("category1");
+            Category category2 = new Category("category2");
+            em.persist(category1);
+            em.persist(category2);
         }
 
     }

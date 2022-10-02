@@ -3,8 +3,8 @@ package shoppingMall.gupang.domain.coupon;
 import lombok.Getter;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
-import shoppingMall.gupang.exception.AlreadyCouponUsedException;
-import shoppingMall.gupang.exception.CouponExpiredException;
+import shoppingMall.gupang.exception.coupon.AlreadyCouponUsedException;
+import shoppingMall.gupang.exception.coupon.CouponExpiredException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,13 +28,13 @@ public abstract class Coupon {
     private LocalDateTime expireDate;
     private Boolean used;
     private String couponType;
-
     private int discountAmount;
 
-    public Coupon(Member member, Item item, LocalDateTime expireDate) {
+    public Coupon(Member member, Item item, LocalDateTime expireDate, String couponType) {
         this.member = member;
         this.item = item;
         this.expireDate = expireDate;
+        this.couponType = couponType;
         this.used = false;
     }
     public Coupon() {

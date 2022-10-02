@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.domain.Address;
-import shoppingMall.gupang.domain.IsMemberShip;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.repository.member.MemberRepository;
 
@@ -32,7 +32,7 @@ public class MemberRepositoryTest {
 
         em.persist(member);
 
-        Optional<Member> emailMember = memberRepository.findByEmail("email");
+        Optional<Member> emailMember = memberRepository.findOptionalByEmail("email");
         Member m = emailMember.orElse(null);
         if (m == null) {
             log.info("null!");

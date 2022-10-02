@@ -1,4 +1,4 @@
-package shoppingMall.gupang.exception;
+package shoppingMall.gupang.exception.member;
 
 public class AlreadyMemberException extends RuntimeException{
 

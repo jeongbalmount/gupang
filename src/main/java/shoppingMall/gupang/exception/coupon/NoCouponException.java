@@ -1,4 +1,4 @@
-package shoppingMall.gupang.exception;
+package shoppingMall.gupang.exception.coupon;
 
 public class NoCouponException extends RuntimeException{
 

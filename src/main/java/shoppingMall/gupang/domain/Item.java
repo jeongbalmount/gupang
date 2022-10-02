@@ -1,15 +1,11 @@
 package shoppingMall.gupang.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import shoppingMall.gupang.exception.NotEnoughStockException;
+import shoppingMall.gupang.exception.item.NotEnoughStockException;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;

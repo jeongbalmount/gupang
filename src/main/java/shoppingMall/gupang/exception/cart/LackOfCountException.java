@@ -1,4 +1,4 @@
-package shoppingMall.gupang.exception;
+package shoppingMall.gupang.exception.cart;
 
 public class LackOfCountException extends RuntimeException{
 

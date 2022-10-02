@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Seller;
-import shoppingMall.gupang.exception.NoSellerException;
+import shoppingMall.gupang.exception.seller.NoSellerException;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.seller.SellerRepository;
 

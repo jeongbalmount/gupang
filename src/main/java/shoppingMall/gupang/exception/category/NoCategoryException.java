@@ -1,4 +1,4 @@
-package shoppingMall.gupang.exception;
+package shoppingMall.gupang.exception.category;
 
 public class NoCategoryException extends RuntimeException{
 

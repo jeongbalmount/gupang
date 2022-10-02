@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import shoppingMall.gupang.exception.LackOfCountException;
-import shoppingMall.gupang.exception.NoCartItemException;
-import shoppingMall.gupang.exception.NoItemException;
-import shoppingMall.gupang.exception.NoMemberException;
+import shoppingMall.gupang.exception.cart.LackOfCountException;
+import shoppingMall.gupang.exception.cart.NoCartItemException;
+import shoppingMall.gupang.exception.item.NoItemException;
+import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.exceptiondto.ErrorResult;
 
 @RestControllerAdvice(assignableTypes = {CartController.class})

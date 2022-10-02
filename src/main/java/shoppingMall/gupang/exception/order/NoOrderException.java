@@ -1,4 +1,4 @@
-package shoppingMall.gupang.exception;
+package shoppingMall.gupang.exception.order;
 
 public class NoOrderException extends RuntimeException{
 

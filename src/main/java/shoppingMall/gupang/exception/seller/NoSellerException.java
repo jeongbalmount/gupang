@@ -1,4 +1,4 @@
-package shoppingMall.gupang.exception;
+package shoppingMall.gupang.exception.seller;
 
 public class NoSellerException extends RuntimeException {
 

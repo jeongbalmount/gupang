@@ -1,15 +1,15 @@
 package shoppingMall.gupang.service.item;
 
-import shoppingMall.gupang.controller.item.ItemDto;
+import shoppingMall.gupang.controller.item.dto.ItemDto;
+import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.domain.Item;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ItemService {
 
     public void saveItem(ItemDto itemDto);
 
-    public Item findItemByName(String name);
+    public List<ItemReturnDto> findItemByName(String name);
 
 }

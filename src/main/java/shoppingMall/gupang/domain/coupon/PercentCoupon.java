@@ -18,10 +18,9 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 public class PercentCoupon extends Coupon{
 
-    public PercentCoupon(Member member, Item item, LocalDateTime expireDate, int percentDiscountAmount) {
-        super(member, item, expireDate);
-        super.setDiscountAmount(percentDiscountAmount);
-        super.setCouponType("Percent");
+    public PercentCoupon(Member member, Item item, LocalDateTime expireDate, String couponType, int discountAmount) {
+        super(member, item, expireDate, couponType);
+        super.setDiscountAmount(discountAmount);
     }
 
     @Override
