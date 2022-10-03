@@ -3,12 +3,14 @@ package shoppingMall.gupang.service.review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.review.ReviewDto;
+import shoppingMall.gupang.controller.review.dto.ReviewDto;
+import shoppingMall.gupang.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
+import shoppingMall.gupang.exception.review.NoEditedContentException;
 import shoppingMall.gupang.exception.review.NoReviewException;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
@@ -70,5 +72,29 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoReviewException("해당 리뷰가 없습니다.");
         }
         reviewRepository.delete(review);
+    }
+
+    @Override
+    public void addLike(Long reviewId) {
+        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+        Review review = optionalReview.orElse(null);
+        if (review == null) {
+            throw new NoReviewException("해당하는 리뷰가 없습니다.");
+        }
+        review.addGoodBtnCount();
+    }
+
+    @Override
+    public void editReview(ReviewEditDto dto) {
+        Optional<Review> optionalReview = reviewRepository.findById(dto.getReviewId());
+        Review review = optionalReview.orElse(null);
+        if (review == null) {
+            throw new NoReviewException("해당하는 리뷰가 없습니다.");
+        }
+        if (dto.getNewTitle().isBlank() || dto.getNewContent().isBlank()) {
+            throw new NoEditedContentException("수정된 제목과 내용은 내용이 있어야 합니다.");
+        }
+        review.changeTitle(dto.getNewTitle());
+        review.changeContents(dto.getNewContent());
     }
 }

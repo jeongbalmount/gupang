@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ItemRepositoryCustom {
 
-    List<Item> findItemsByName(String name);
+    List<Item> findItemsBySeller(String name);
 
 }

@@ -7,11 +7,14 @@ import shoppingMall.gupang.controller.item.dto.ItemDto;
 import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
+import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.domain.Seller;
 import shoppingMall.gupang.exception.category.NoCategoryException;
+import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.seller.NoSellerException;
 import shoppingMall.gupang.repository.category.CategoryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
+import shoppingMall.gupang.repository.review.ReviewRepository;
 import shoppingMall.gupang.repository.seller.SellerRepository;
 
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ public class ItemServiceImpl implements ItemService{
     private final ItemRepository itemRepository;
     private final SellerRepository sellerRepository;
     private final CategoryRepository categoryRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -51,12 +55,22 @@ public class ItemServiceImpl implements ItemService{
     public List<ItemReturnDto> findItemByName(String name) {
 
         List<ItemReturnDto> returnDtos = new ArrayList<>();
-        List<Item> items = itemRepository.findItemsByName(name);
+        List<Item> items = itemRepository.findByName(name);
         for (Item item : items) {
             ItemReturnDto dto = new ItemReturnDto(item.getName(), item.getItemPrice(), item.getSeller().getManagerName(),
                     item.getCategory().getName());
             returnDtos.add(dto);
         }
         return returnDtos;
+    }
+
+    @Override
+    public List<Review> getItemReviews(Long itemId) {
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        Item item = optionalItem.orElse(null);
+        if (item == null) {
+            throw new NoItemException("해당 상품이 없습니다.");
+        }
+        return reviewRepository.findByItem(item);
     }
 }

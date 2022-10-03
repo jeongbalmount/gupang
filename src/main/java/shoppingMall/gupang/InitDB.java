@@ -26,6 +26,7 @@ public class InitDB {
         initService.cartInit();
         initService.couponInit();
         initService.itemInit();
+        initService.reviewInit();
     }
 
     @Component
@@ -38,6 +39,9 @@ public class InitDB {
 
         private Member member1;
         private Member member2;
+
+        private Item item1;
+        private Item item2;
 
         public void loginInit(){
             Address address1 = new Address("city1", "st1", "zip1");
@@ -73,6 +77,9 @@ public class InitDB {
             em.persist(item4);
             em.persist(item5);
             em.persist(item6);
+
+            this.item1 = item1;
+            this.item2 = item2;
 
             CartItem cartItem1 = new CartItem(member1, item1, 50, item1.getItemPrice());
             CartItem cartItem2 = new CartItem(member1, item2, 50, item2.getItemPrice());
@@ -119,6 +126,30 @@ public class InitDB {
             Category category2 = new Category("category2");
             em.persist(category1);
             em.persist(category2);
+        }
+
+        public void reviewInit() {
+            String title1 = "title1";
+            String title2 = "title2";
+            String title3 = "title3";
+            String title4 = "title4";
+
+            String content1 = "content1";
+            String content2 = "content2";
+            String content3 = "content3";
+            String content4 = "content4";
+
+            Review review1 = new Review(member1, item1, title1, content1);
+            Review review2 = new Review(member2, item2, title2, content2);
+
+            Review review3 = new Review(member1, item2, title3, content3);
+            Review review4 = new Review(member2, item1, title4, content4);
+
+            em.persist(review1);
+            em.persist(review2);
+
+            em.persist(review3);
+            em.persist(review4);
         }
 
     }

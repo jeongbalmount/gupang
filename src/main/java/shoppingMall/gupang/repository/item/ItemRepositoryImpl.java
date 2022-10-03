@@ -25,7 +25,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
 
     @Override
-    public List<Item> findItemsByName(String itemName) {
+    public List<Item> findItemsBySeller(String itemName) {
         return queryFactory
                 .selectFrom(item)
                 .join(item.category, category).fetchJoin()

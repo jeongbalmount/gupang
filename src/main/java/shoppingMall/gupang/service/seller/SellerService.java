@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SellerService {
 
-    void registerSeller(Long sellerId);
+    void registerSeller(String managerName, String sellerNumber);
 
     void updateManagerName(Long sellerId, String name);
 

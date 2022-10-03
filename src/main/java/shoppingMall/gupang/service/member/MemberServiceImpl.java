@@ -4,11 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.member.MemberDto;
+import shoppingMall.gupang.controller.review.dto.ReviewReturnDto;
 import shoppingMall.gupang.domain.Address;
+import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.domain.Member;
+import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.repository.member.MemberRepository;
+import shoppingMall.gupang.repository.review.ReviewRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     public Long registerMember(MemberDto memberDto) {
@@ -33,7 +40,7 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);
         if (member == null) {
-            return;
+            throw new NoMemberException("해당 회원이 없습니다.");
         }
         member.registerMembership();
     }
@@ -42,17 +49,31 @@ public class MemberServiceImpl implements MemberService{
     public void memberOutService(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);
-        if (member == null) return;
+        if (member == null) {
+            throw new NoMemberException("해당 회원이 없습니다.");
+        }
         memberRepository.delete(member);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Member getMember(Long memberId) {
         Optional<Member> OptionalMember = memberRepository.findById(memberId);
         Member member = OptionalMember.orElse(null);
         if (member == null) {
-            return null;
+            throw new NoMemberException("해당 회원이 없습니다.");
         }
         return member;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Review> getMemberReviews(Long memberId) {
+        Optional<Member> OptionalMember = memberRepository.findById(memberId);
+        Member member = OptionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당 회원이 없습니다.");
+        }
+        return reviewRepository.findByMember(member);
     }
 }
