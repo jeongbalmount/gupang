@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.order.OrderDto;
+import shoppingMall.gupang.controller.order.dto.OrderCouponDto;
+import shoppingMall.gupang.controller.order.dto.OrderDto;
+import shoppingMall.gupang.controller.order.dto.OrderItemDto;
 import shoppingMall.gupang.discount.DiscountPolicy;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
@@ -38,8 +40,8 @@ public class OrderServiceImpl implements OrderService {
     private final CouponRepository couponRepository;
 
     @Override
-    public Long order(Long memberId, Address address, List<OrderDto> orderDtos) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
+    public Long order(OrderDto dto) {
+        Optional<Member> optionalMember = memberRepository.findById(dto.getMemberId());
         Member member = optionalMember.orElse(null);
         if (member == null) {
             throw new NoMemberException("해당 멤버가 없습니다.");
@@ -47,11 +49,11 @@ public class OrderServiceImpl implements OrderService {
 
         IsMemberShip isMemberShip = member.getIsMemberShip();
 
-        Delivery delivery = getDelivery(isMemberShip, address);
+        Delivery delivery = getDelivery(member.getIsMemberShip(), dto.getAddress());
 
         List<OrderItem> orderItems = new ArrayList<>();
 
-        getOrderItems(orderDtos, isMemberShip, orderItems);
+        getOrderItems(dto.getOrderItemDtos(), isMemberShip, orderItems);
 
         Order order = Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip,
                 OrderStatus.ORDER, orderItems);
@@ -59,8 +61,8 @@ public class OrderServiceImpl implements OrderService {
         return order.getId();
     }
 
-    private void getOrderItems(List<OrderDto> orderDtos, IsMemberShip isMemberShip, List<OrderItem> orderItems) {
-        for (OrderDto dto : orderDtos) {
+    private void getOrderItems(List<OrderItemDto> dtos, IsMemberShip isMemberShip, List<OrderItem> orderItems) {
+        for (OrderItemDto dto : dtos) {
             Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
             Item item = optionalItem.orElse(null);
             if (item != null) {
@@ -72,8 +74,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order orderWithCoupon(Long memberId, Address address, List<OrderDto> orderDtos,List<Long> couponIds) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
+    public Order orderWithCoupon(OrderCouponDto dto) {
+        Optional<Member> optionalMember = memberRepository.findById(dto.getMemberId());
         Member member = optionalMember.orElse(null);
         if (member == null) {
             throw new NoMemberException("해당하는 회원이 없습니다.");
@@ -81,12 +83,12 @@ public class OrderServiceImpl implements OrderService {
 
         IsMemberShip isMemberShip = member.getIsMemberShip();
 
-        Delivery delivery = getDelivery(isMemberShip, address);
+        Delivery delivery = getDelivery(isMemberShip, dto.getAddress());
         List<OrderItem> orderItems = new ArrayList<>();
 
-        List<Coupon> coupons = getCoupons(couponIds, member);
+        List<Coupon> coupons = getCoupons(dto.getCouponIds(), member);
 
-        getOrderItemsWithCoupons(orderDtos, coupons, isMemberShip, orderItems);
+        getOrderItemsWithCoupons(dto.getOrderItemDtos(), coupons, isMemberShip, orderItems);
 
         Order order = Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip, OrderStatus.ORDER,
                 orderItems);
@@ -107,10 +109,10 @@ public class OrderServiceImpl implements OrderService {
         return coupons;
     }
 
-    private void getOrderItemsWithCoupons(List<OrderDto> orderDtos, List<Coupon> coupons,
+    private void getOrderItemsWithCoupons(List<OrderItemDto> dtos, List<Coupon> coupons,
                                           IsMemberShip isMemberShip, List<OrderItem> orderItems) {
 
-        for (OrderDto dto : orderDtos) {
+        for (OrderItemDto dto : dtos) {
             Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
             Item item = optionalItem.orElse(null);
             if (item == null) {

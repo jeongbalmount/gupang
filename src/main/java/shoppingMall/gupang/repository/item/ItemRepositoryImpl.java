@@ -25,12 +25,22 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
 
     @Override
-    public List<Item> findItemsBySeller(String itemName) {
+    public List<Item> findItemsBySeller(Long seller_id) {
         return queryFactory
                 .selectFrom(item)
                 .join(item.category, category).fetchJoin()
                 .join(item.seller, seller).fetchJoin()
-                .where(item.name.eq(itemName))
+                .where(item.seller.id.eq(seller_id))
+                .fetch();
+    }
+
+    @Override
+    public List<Item> findItemsByCategory(Long category_id) {
+        return queryFactory
+                .selectFrom(item)
+                .join(item.category, category).fetchJoin()
+                .join(item.seller, seller).fetchJoin()
+                .where(item.category.id.eq(category_id))
                 .fetch();
     }
 }

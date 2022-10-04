@@ -43,6 +43,6 @@ public class SellerServiceImpl implements SellerService{
         if (seller == null) {
             throw new NoSellerException("해당하는 판매자가 없습니다.");
         }
-        return itemRepository.findBySeller(seller);
+        return itemRepository.findItemsBySeller(sellerId);
     }
 }
