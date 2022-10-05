@@ -13,7 +13,13 @@ public class OrderDto {
     private Long memberId;
 
     @NotNull
-    private Address address;
+    private String city;
+
+    @NotNull
+    private String street;
+
+    @NotNull
+    private String zipcode;
 
     @NotNull
     private List<OrderItemDto> orderItemDtos;

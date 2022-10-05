@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.controller.order.dto.OrderCouponDto;
 import shoppingMall.gupang.controller.order.dto.OrderDto;
 import shoppingMall.gupang.controller.order.dto.OrderReturnDto;
+import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.service.order.OrderService;
 
 import java.util.List;
@@ -20,7 +21,8 @@ public class OrderController {
 
     @PostMapping
     public String order(@RequestBody OrderDto orderDto) {
-        orderService.order(orderDto);
+        Address address = new Address(orderDto.getCity(), orderDto.getStreet(), orderDto.getZipcode());
+        orderService.order(address, orderDto);
         return "ok";
     }
 

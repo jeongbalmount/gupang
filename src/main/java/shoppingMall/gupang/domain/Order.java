@@ -58,7 +58,6 @@ public class Order {
                                     Delivery delivery, IsMemberShip memberShipOrder,
                                     OrderStatus orderStatus, List<OrderItem> orderItems) {
         Order order = new Order(orderDate, member, delivery, memberShipOrder, orderStatus);
-
         for (OrderItem orderItem : orderItems) {
             log.info(String.valueOf(orderItem.getItemPrice()));
             order.addOrderItem(orderItem);

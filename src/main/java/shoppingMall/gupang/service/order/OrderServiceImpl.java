@@ -20,6 +20,7 @@ import shoppingMall.gupang.repository.delivery.DeliveryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.order.OrderRepository;
+import shoppingMall.gupang.repository.orderItem.OrderItemRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,6 +34,8 @@ import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final DiscountPolicy discountPolicy;
@@ -40,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     private final CouponRepository couponRepository;
 
     @Override
-    public Long order(OrderDto dto) {
+    public Long order(Address address, OrderDto dto) {
         Optional<Member> optionalMember = memberRepository.findById(dto.getMemberId());
         Member member = optionalMember.orElse(null);
         if (member == null) {
@@ -49,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
         IsMemberShip isMemberShip = member.getIsMemberShip();
 
-        Delivery delivery = getDelivery(member.getIsMemberShip(), dto.getAddress());
+        Delivery delivery = getDelivery(member.getIsMemberShip(), address);
 
         List<OrderItem> orderItems = new ArrayList<>();
 
@@ -57,6 +60,8 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip,
                 OrderStatus.ORDER, orderItems);
+
+        orderRepository.save(order);
 
         return order.getId();
     }
@@ -68,6 +73,7 @@ public class OrderServiceImpl implements OrderService {
             if (item != null) {
                 OrderItem orderItem = OrderItem.createOrderItem(item,
                         getMembershipDiscountedPrice(isMemberShip, item.getItemPrice()), dto.getItemCount());
+                orderItemRepository.save(orderItem);
                 orderItems.add(orderItem);
             }
         }
@@ -113,23 +119,29 @@ public class OrderServiceImpl implements OrderService {
                                           IsMemberShip isMemberShip, List<OrderItem> orderItems) {
 
         for (OrderItemDto dto : dtos) {
+
             Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
             Item item = optionalItem.orElse(null);
             if (item == null) {
                 throw new NoItemException("해당 상품이 없습니다.");
             }
+            int itemCount = dto.getItemCount();
             int itemPrice = item.getItemPrice();
+            int totalItemPrice = itemPrice * (itemCount-1);
 
             for (Coupon coupon : coupons) {
                 // 쿠폰을 여러개 돌리면서 쿠폰이 지원하는 아이템과 같을 때 쿠폰 할인 적용
                 if (coupon.getItem().getId().equals(item.getId())) {
                     itemPrice = coupon.getCouponAppliedPrice(itemPrice);
                     coupon.useCoupon();
+                    break;
                 }
             }
+            totalItemPrice += itemPrice;
 
             OrderItem orderItem = OrderItem.createOrderItem(item,
-                    getMembershipDiscountedPrice(isMemberShip, itemPrice), dto.getItemCount());
+                    getMembershipDiscountedPrice(isMemberShip, totalItemPrice), dto.getItemCount());
+            orderItemRepository.save(orderItem);
             orderItems.add(orderItem);
         }
     }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    Long order(OrderDto dto);
+    Long order(Address address, OrderDto dto);
 
     Order orderWithCoupon(OrderCouponDto dto);
 

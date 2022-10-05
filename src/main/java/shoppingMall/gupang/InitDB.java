@@ -101,7 +101,7 @@ public class InitDB {
 
             Seller seller = new Seller("010", "name");
             Category category = new Category("name");
-            Item item = new Item("i", 1000, 100, seller, category);
+            Item item = new Item("i", 10000, 100, seller, category);
 
             em.persist(member);
             em.persist(seller);
