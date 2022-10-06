@@ -14,6 +14,8 @@ import shoppingMall.gupang.domain.enums.DeliveryStatus;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
+import shoppingMall.gupang.exception.order.AlreadyCanceledOrderException;
+import shoppingMall.gupang.exception.order.AlreadyDeliveredException;
 import shoppingMall.gupang.exception.order.NoOrderException;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
 import shoppingMall.gupang.repository.delivery.DeliveryRepository;
@@ -25,6 +27,8 @@ import shoppingMall.gupang.repository.orderItem.OrderItemRepository;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static shoppingMall.gupang.domain.OrderStatus.CANCEL;
+import static shoppingMall.gupang.domain.enums.DeliveryStatus.DELIVERED;
 import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 
 @Service
@@ -72,7 +76,8 @@ public class OrderServiceImpl implements OrderService {
             Item item = optionalItem.orElse(null);
             if (item != null) {
                 OrderItem orderItem = OrderItem.createOrderItem(item,
-                        getMembershipDiscountedPrice(isMemberShip, item.getItemPrice()), dto.getItemCount());
+                        getMembershipDiscountedPrice(isMemberShip, item.getItemPrice()),
+                        dto.getItemCount(), 0);
                 orderItemRepository.save(orderItem);
                 orderItems.add(orderItem);
             }
@@ -127,20 +132,23 @@ public class OrderServiceImpl implements OrderService {
             }
             int itemCount = dto.getItemCount();
             int itemPrice = item.getItemPrice();
-            int totalItemPrice = itemPrice * (itemCount-1);
+            int totalItemPrice = itemPrice * itemCount;
+            int discountAmount = 0;
 
             for (Coupon coupon : coupons) {
-                // 쿠폰을 여러개 돌리면서 쿠폰이 지원하는 아이템과 같을 때 쿠폰 할인 적용
+                // 쿠폰을 여러개 돌리면서 사용되지 않은 쿠폰이면서 쿠폰이 지원하는 상품과 현재 상품이 같을 때 쿠폰 할인 적용
                 if (coupon.getItem().getId().equals(item.getId())) {
-                    itemPrice = coupon.getCouponAppliedPrice(itemPrice);
-                    coupon.useCoupon();
-                    break;
+                    if (!coupon.getUsed()) {
+                        discountAmount = coupon.getDiscountAmount();
+                        coupon.useCoupon();
+                        break;
+                    }
                 }
             }
-            totalItemPrice += itemPrice;
 
             OrderItem orderItem = OrderItem.createOrderItem(item,
-                    getMembershipDiscountedPrice(isMemberShip, totalItemPrice), dto.getItemCount());
+                    getMembershipDiscountedPrice(isMemberShip, totalItemPrice),
+                    dto.getItemCount(), discountAmount);
             orderItemRepository.save(orderItem);
             orderItems.add(orderItem);
         }
@@ -160,18 +168,22 @@ public class OrderServiceImpl implements OrderService {
         if (member == null) {
             throw new NoMemberException("해당 멤버가 없습니다.");
         }
-        return orderRepository.findByMember(member);
+        return orderRepository.findOrderWithMember(member.getId());
     }
 
     @Override
     public void cancelOrder(Long orderId) {
-        Optional<Order> optionalOrder = orderRepository.findById(orderId);
-        Order order = optionalOrder.orElse(null);
-        if (order == null) {
+        List<Order> order = orderRepository.findOrderWithDelivery(orderId);
+        if (order.size() == 0) {
             throw new NoOrderException("해당하는 주문이 없습니다.");
         }
 
-        orderRepository.delete(order);
+        for (Order o : order) {
+            if (o.getOrderStatus() == CANCEL) {
+                throw new AlreadyCanceledOrderException("이미 취소된 주문입니다.");
+            }
+            o.cancel();
+        }
     }
 
     private int getMembershipDiscountedPrice(IsMemberShip isMemberShip, int price) {

@@ -56,6 +56,8 @@ public abstract class Coupon {
 
     public abstract int getCouponAppliedPrice(int price);
 
+    public abstract int getItemDiscountedAmount(int price);
+
     public void checkCouponValid() {
         checkExpireDate();
         checkUsed();

@@ -8,6 +8,7 @@ import shoppingMall.gupang.exception.exceptiondto.ErrorResult;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.item.NotEnoughStockException;
 import shoppingMall.gupang.exception.member.NoMemberException;
+import shoppingMall.gupang.exception.order.AlreadyCanceledOrderException;
 import shoppingMall.gupang.exception.order.NoOrderException;
 
 @RestControllerAdvice(assignableTypes = {OrderController.class})
@@ -35,6 +36,12 @@ public class OrderRestControllerAdvice {
     @ExceptionHandler
     public ErrorResult notEnoughStockException(NotEnoughStockException e) {
         return new ErrorResult("Not enough item stock", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResult alreadyCanceledOrderException(AlreadyCanceledOrderException e) {
+        return new ErrorResult("Already canceled order", e.getMessage());
     }
 
 }

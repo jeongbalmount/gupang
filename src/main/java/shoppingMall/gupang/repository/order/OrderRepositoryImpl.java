@@ -8,6 +8,7 @@ import java.util.List;
 
 import static shoppingMall.gupang.domain.QDelivery.delivery;
 import static shoppingMall.gupang.domain.QItem.item;
+import static shoppingMall.gupang.domain.QMember.member;
 import static shoppingMall.gupang.domain.QOrder.order;
 import static shoppingMall.gupang.domain.QOrderItem.orderItem;
 
@@ -24,17 +25,20 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         return queryFactory
                 .selectFrom(order)
                 .join(order.delivery, delivery).fetchJoin()
+                .join(order.orderItems, orderItem).fetchJoin()
+                .join(orderItem.item, item).fetchJoin()
                 .where(order.id.eq(orderId))
                 .fetch();
     }
 
     @Override
-    public List<Order> findOrderWithItems(Long orderId) {
+    public List<Order> findOrderWithMember(Long memberId) {
         return queryFactory
-                .selectFrom(order)
+                .selectFrom(order).distinct()
+                .join(order.member, member).fetchJoin()
                 .join(order.orderItems, orderItem).fetchJoin()
                 .join(orderItem.item, item).fetchJoin()
-                .where(order.id.eq(orderId))
+                .where(order.member.id.eq(memberId))
                 .fetch();
     }
 }

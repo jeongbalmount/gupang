@@ -10,6 +10,7 @@ import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.service.order.OrderService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping
+    @PostMapping("/add")
     public String order(@RequestBody OrderDto orderDto) {
         Address address = new Address(orderDto.getCity(), orderDto.getStreet(), orderDto.getZipcode());
         orderService.order(address, orderDto);
@@ -32,12 +33,17 @@ public class OrderController {
         return "ok";
     }
 
-//    @PostMapping("/")
-//    public OrderReturnDto getOrder(@RequestParam Long memberId) {
-//        orderService.getOrderByMember(memberId).stream()
-//                .map(o -> )
-//    }
+    @PostMapping
+    public List<OrderReturnDto> getOrder(@RequestParam(value = "memberId") Long memberId) {
+        return orderService.getOrderByMember(memberId).stream()
+                .map(o -> new OrderReturnDto(o.getId(), o.getOrderItems()))
+                .collect(Collectors.toList());
+    }
 
-
+    @PatchMapping
+    public String cancelOrder(@RequestParam Long orderId) {
+        orderService.cancelOrder(orderId);
+        return "ok";
+    }
 
 }

@@ -28,4 +28,11 @@ public class PercentCoupon extends Coupon{
         int percent = 100 - super.getDiscountAmount();
         return price * percent / 100;
     }
+
+    @Override
+    public int getItemDiscountedAmount(int price) {
+        return price * super.getDiscountAmount();
+    }
+
+
 }

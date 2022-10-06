@@ -29,4 +29,11 @@ public class FixCoupon extends Coupon {
         int discountedPrice = price - super.getDiscountAmount();
         return Math.max(discountedPrice, 0);
     }
+
+    @Override
+    public int getItemDiscountedAmount(int price) {
+        return super.getDiscountAmount();
+    }
+
+
 }

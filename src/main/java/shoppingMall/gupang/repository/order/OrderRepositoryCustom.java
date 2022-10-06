@@ -8,6 +8,6 @@ public interface OrderRepositoryCustom {
 
     List<Order> findOrderWithDelivery(Long orderId);
 
-    List<Order> findOrderWithItems(Long orderId);
+    List<Order> findOrderWithMember(Long memberId);
 
 }
