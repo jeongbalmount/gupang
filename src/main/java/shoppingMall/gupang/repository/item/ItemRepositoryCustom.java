@@ -10,4 +10,6 @@ public interface ItemRepositoryCustom {
 
     List<Item> findItemsByCategory(Long category_id);
 
+    List<Item> findItemByString(String subString);
+
 }

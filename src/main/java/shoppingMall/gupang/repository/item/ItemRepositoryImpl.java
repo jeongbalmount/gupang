@@ -43,4 +43,12 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(item.category.id.eq(category_id))
                 .fetch();
     }
+
+    @Override
+    public List<Item> findItemByString(String subString) {
+        return queryFactory
+                .selectFrom(item)
+                .where(item.name.contains(subString))
+                .fetch();
+    }
 }

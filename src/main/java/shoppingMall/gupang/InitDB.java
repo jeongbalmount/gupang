@@ -190,7 +190,7 @@ public class InitDB {
             em.persist(item33);
             em.persist(item44);
 
-            Item item11 = new Item("itemName111", 10000, 100, seller1, category1);
+            Item item11 = new Item("thisnameisgood", 10000, 100, seller1, category1);
             Item item22 = new Item("itemName222", 20000, 100, seller1, category1);
 
             em.persist(item11);

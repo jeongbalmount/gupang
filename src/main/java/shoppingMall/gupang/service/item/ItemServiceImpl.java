@@ -52,10 +52,10 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public List<ItemReturnDto> findItemByName(String name) {
+    public List<ItemReturnDto> findItemByName(String subString) {
 
         List<ItemReturnDto> returnDtos = new ArrayList<>();
-        List<Item> items = itemRepository.findByName(name);
+        List<Item> items = itemRepository.findItemByString(subString);
         for (Item item : items) {
             ItemReturnDto dto = new ItemReturnDto(item.getName(), item.getItemPrice(), item.getSeller().getManagerName(),
                     item.getCategory().getName());
