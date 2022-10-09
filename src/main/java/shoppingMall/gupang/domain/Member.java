@@ -3,10 +3,13 @@ package shoppingMall.gupang.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.member.AlreadyMemberException;
 
 import javax.persistence.*;
+
+import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
 
