@@ -8,9 +8,11 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @RequiredArgsConstructor
 @Configuration
+@EnableRedisHttpSession
 public class RedisConfig {
 
     @Value("${spring.redis.session.port}")
@@ -19,13 +21,13 @@ public class RedisConfig {
     @Value("${spring.redis.session.host}")
     private String redisHost;
 
-    @Value("${spring.redis.session.password}")
-    private String redisPassword;
+//    @Value("${spring.redis.session.password}")
+//    private String redisPassword;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setPassword(redisPassword);
+//        redisStandaloneConfiguration.setPassword(redisPassword);
         redisStandaloneConfiguration.setHostName(redisHost);
         redisStandaloneConfiguration.setPort(redisPort);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
