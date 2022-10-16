@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.controller.review.dto.ReviewEditDto;
@@ -22,15 +24,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/{memberId}")
-    public Result getMemberReviews(@PathVariable Long memberId) {
-        List<ReviewReturnDto> collect = reviewService.getMemberReviews(memberId).stream()
-                .map(r -> new ReviewReturnDto(r.getId(), r.getTitle(), r.getContents()))
-                .collect(Collectors.toList());
-
-        return new Result(collect);
-    }
-
     @PostMapping
     public String addReview(@RequestBody ReviewDto reviewDto) {
         reviewService.addReview(reviewDto);
@@ -44,8 +37,8 @@ public class ReviewController {
     }
 
     @PatchMapping
-    public String editReview(@Valid @RequestBody ReviewEditDto reviewEditDto){
-        reviewService.editReview(reviewEditDto);
+    public String editReview(@Valid @RequestBody ReviewEditDto dto){
+        reviewService.editReview(dto);
         return "ok";
     }
 
@@ -54,6 +47,25 @@ public class ReviewController {
         reviewService.removeReview(reviewId);
         return "ok";
     }
+
+    @GetMapping("/{memberId}")
+    public Result getMemberReviews(@PathVariable Long memberId) {
+        List<ReviewReturnDto> collect = reviewService.getMemberReviews(memberId).stream()
+                .map(r -> new ReviewReturnDto(r.getId(), r.getTitle(), r.getContents()))
+                .collect(Collectors.toList());
+
+        return new Result(collect);
+    }
+
+    @GetMapping("/item/{reviewId}")
+    public Result getItemReviews(@PathVariable Long reviewId) {
+        List<ReviewReturnDto> collect = reviewService.getItemReviews(reviewId).stream()
+                .map(r -> new ReviewReturnDto(r.getId(), r.getTitle(), r.getContents()))
+                .collect(Collectors.toList());
+
+        return new Result(collect);
+    }
+
 
     @Data
     @AllArgsConstructor

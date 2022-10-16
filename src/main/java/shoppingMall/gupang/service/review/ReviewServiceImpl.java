@@ -1,6 +1,8 @@
 package shoppingMall.gupang.service.review;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.review.dto.ReviewDto;
@@ -28,6 +30,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ItemRepository itemRepository;
 
     @Override
+    @CachePut(key = "#reviewDto.itemId", value = "reviewDto")
     public void addReview(ReviewDto reviewDto) {
         Optional<Member> optionalMember = memberRepository.findById(reviewDto.getMemberId());
         Member member = optionalMember.orElse(null);
@@ -55,6 +58,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
+    @Cacheable(key = "#itemId", value = "review")
     public List<Review> getItemReviews(Long itemId) {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         Item item = optionalItem.orElse(null);

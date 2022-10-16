@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import shoppingMall.gupang.controller.review.dto.ItemReviewDto;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.domain.coupon.FixCoupon;

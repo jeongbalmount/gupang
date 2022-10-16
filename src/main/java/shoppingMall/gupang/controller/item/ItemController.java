@@ -34,8 +34,8 @@ public class ItemController {
         return "ok";
     }
 
-    @PostMapping("review")
-    public Result getItemReviews(Long itemId) {
+    @PostMapping("/review/{id}")
+    public Result getItemReviews(@PathVariable Long itemId) {
         List<ReviewReturnDto> collect = itemService.getItemReviews(itemId).stream()
                 .map(r -> new ReviewReturnDto(r.getId(), r.getTitle(), r.getContents()))
                 .collect(Collectors.toList());
