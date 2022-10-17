@@ -158,11 +158,11 @@ public class InitDB {
             String content3 = "content3";
             String content4 = "content4";
 
-            Review review1 = new Review(member1, item1, title1, content1);
-            Review review2 = new Review(member2, item2, title2, content2);
+            Review review1 = new Review(item1, title1, content1);
+            Review review2 = new Review(item2, title2, content2);
 
-            Review review3 = new Review(member1, item2, title3, content3);
-            Review review4 = new Review(member2, item1, title4, content4);
+            Review review3 = new Review(item2, title3, content3);
+            Review review4 = new Review(item1, title4, content4);
 
             em.persist(review1);
             em.persist(review2);

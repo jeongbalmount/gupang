@@ -56,14 +56,14 @@ public class MemberController {
         throw new AlreadyMemberExistException("이미 아이디가 존재합니다.");
     }
 
-    @PostMapping("/review")
-    public Result getMemberReviews(Long memberId) {
-        List<ReviewReturnDto> collect = memberService.getMemberReviews(memberId).stream()
-                .map(r -> new ReviewReturnDto(r.getId(), r.getTitle(), r.getContents()))
-                .collect(Collectors.toList());
-
-        return new Result(collect);
-    }
+//    @PostMapping("/review")
+//    public Result getMemberReviews(Long memberId) {
+//        List<ReviewReturnDto> collect = memberService.getMemberReviews(memberId).stream()
+//                .map(r -> new ReviewReturnDto(r.getId(), r.getTitle(), r.getContents()))
+//                .collect(Collectors.toList());
+//
+//        return new Result(collect);
+//    }
 
     @Data
     @AllArgsConstructor
