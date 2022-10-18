@@ -37,7 +37,6 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewDtoRepository reviewDtoRepository;
 
     @Override
-    @Cacheable(value = "reviewItemDto", key = "#reviewItemDto.id", unless = "#result==null")
     public ReviewItemDto addReview(ReviewItemDto reviewItemDto) {
 
         Optional<Item> optionalItem = itemRepository.findById(reviewItemDto.getItemId());
@@ -49,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review review = new Review(item, reviewItemDto.getTitle(), reviewItemDto.getContent());
         reviewRepository.save(review);
 
-        return reviewItemDto;
+        return reviewDtoRepository.save(reviewItemDto);
     }
 
     @Override
@@ -63,14 +62,14 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    @Cacheable(value = "reviewItemDto", condition = "#reviewItemDto.itemId == itemId" ,unless = "#result==null || #result.empty")
-    public List<ReviewItemDto> getItemReviews(Long itemId) {
+    @Cacheable(value = "reviewItemDto", condition = "#reviewItemDto.itemId==id", unless = "#result==null || #result.empty")
+    public List<ReviewItemDto> getItemReviews(Long id) {
 //        Optional<Item> optionalItem = itemRepository.findById(itemId);
 //        Item item = optionalItem.orElse(null);
 //        if (item == null) {
 //            throw new NoItemException("해당 상품이 없습니다.");
 //        }
-        List<ReviewItemDto> dtos = reviewDtoRepository.findByItemId(itemId);
+        List<ReviewItemDto> dtos = reviewDtoRepository.findByItemId(id);
 
         if (dtos.size() == 0) {
             throw new NoItemException("해당 상품이 없습니다.");

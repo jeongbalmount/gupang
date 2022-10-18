@@ -28,9 +28,7 @@ public class ReviewController {
 
     @PostMapping
     public String addReview(@RequestBody ReviewItemDto reviewItemDto) {
-        reviewItemDto.setId(UUID.randomUUID().toString());
         ReviewItemDto dto = reviewService.addReview(reviewItemDto);
-        log.info(String.valueOf(dto.getId()));
         return "ok";
     }
 
