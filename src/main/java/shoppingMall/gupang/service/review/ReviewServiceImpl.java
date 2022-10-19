@@ -20,9 +20,12 @@ import shoppingMall.gupang.redis.ReviewDtoRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.review.ReviewRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,10 +36,10 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
-
-    private final ReviewDtoRepository reviewDtoRepository;
+//    private final ReviewDtoRepository reviewDtoRepository;
 
     @Override
+    @Cacheable(value = "reviewItemDto", key = "#reviewItemDto.id")
     public ReviewItemDto addReview(ReviewItemDto reviewItemDto) {
 
         Optional<Item> optionalItem = itemRepository.findById(reviewItemDto.getItemId());
@@ -48,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review review = new Review(item, reviewItemDto.getTitle(), reviewItemDto.getContent());
         reviewRepository.save(review);
 
-        return reviewDtoRepository.save(reviewItemDto);
+        return reviewItemDto;
     }
 
     @Override
@@ -62,22 +65,17 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    @Cacheable(value = "reviewItemDto", condition = "#reviewItemDto.itemId==id", unless = "#result==null || #result.empty")
+    @Cacheable(value = "reviewItemDto", unless = "#result==null || #result.empty")
     public List<ReviewItemDto> getItemReviews(Long id) {
-//        Optional<Item> optionalItem = itemRepository.findById(itemId);
-//        Item item = optionalItem.orElse(null);
-//        if (item == null) {
-//            throw new NoItemException("해당 상품이 없습니다.");
-//        }
-        List<ReviewItemDto> dtos = reviewDtoRepository.findByItemId(id);
-
-        if (dtos.size() == 0) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        Item item = optionalItem.orElse(null);
+        if (item == null) {
             throw new NoItemException("해당 상품이 없습니다.");
         }
 
-        log.info(dtos.get(0).getContent());
-
-        return dtos;
+        return reviewRepository.findByItem(item).stream()
+                .map(r -> new ReviewItemDto(r.getId(), item.getId(), r.getTitle(), r.getContents()))
+                .collect(Collectors.toList());
     }
 
     @Override

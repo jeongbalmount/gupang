@@ -28,8 +28,10 @@ public class ReviewController {
 
     @PostMapping
     public String addReview(@RequestBody ReviewItemDto reviewItemDto) {
+        reviewItemDto.setId(UUID.randomUUID().toString());
         ReviewItemDto dto = reviewService.addReview(reviewItemDto);
         return "ok";
+
     }
 
     @PostMapping("/like")
@@ -64,7 +66,7 @@ public class ReviewController {
         List<ReviewItemDto> collect = reviewService.getItemReviews(itemId);
         log.info(collect.get(0).getContent());
         List<ReviewReturnDto> returnCollect = collect.stream()
-                .map(rd -> new ReviewReturnDto(rd.getId(), rd.getTitle(), rd.getContent()))
+                .map(rd -> new ReviewReturnDto(rd.getReviewId(), rd.getTitle(), rd.getContent()))
                 .collect(Collectors.toList());
 
         return new Result(returnCollect);

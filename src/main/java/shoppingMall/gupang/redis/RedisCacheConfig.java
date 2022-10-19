@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -17,24 +19,27 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
-@EnableRedisRepositories
+@EnableCaching
 public class RedisCacheConfig {
 
     @Value("${spring.redis.cache.host}")
-    private String redisHost;
+    private String hostName;
 
     @Value("${spring.redis.cache.port}")
-    private int redisPort;
+    private int port;
 
     @Bean(name = "redisCacheConnectionFactory")
-    public RedisConnectionFactory redisCacheConnectionFactory() {
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisHost, redisPort);
-        return lettuceConnectionFactory;
+    RedisConnectionFactory redisCacheConnectionFactory() {
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+        redisStandaloneConfiguration.setHostName(hostName);
+        redisStandaloneConfiguration.setPort(port);
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
-    // https://minholee93.tistory.com/entry/Redis-Cache-with-Spring-Boot
     @Bean
     public CacheManager cacheManager(
             @Qualifier("redisCacheConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
@@ -49,5 +54,4 @@ public class RedisCacheConfig {
         builder.cacheDefaults(configuration);
         return builder.build();
     }
-
 }

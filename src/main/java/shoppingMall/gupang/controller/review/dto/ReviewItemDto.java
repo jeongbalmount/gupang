@@ -7,16 +7,17 @@ import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 
-@RedisHash("reviewItemDto")
+//@RedisHash("reviewItemDto")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
 public class ReviewItemDto implements Serializable {
-    @Id
+
     private String id;
 
-    @Indexed
+    private Long reviewId;
+
     private Long itemId;
 
     private Long memberId;
@@ -25,7 +26,8 @@ public class ReviewItemDto implements Serializable {
 
     private String content;
 
-    public ReviewItemDto(Long itemId, String title, String content) {
+    public ReviewItemDto(Long reviewId, Long itemId, String title, String content) {
+        this.reviewId = reviewId;
         this.itemId = itemId;
         this.title = title;
         this.content = content;
