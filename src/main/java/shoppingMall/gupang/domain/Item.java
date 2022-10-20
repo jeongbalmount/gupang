@@ -3,11 +3,13 @@ package shoppingMall.gupang.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Indexed;
 import shoppingMall.gupang.exception.item.NotEnoughStockException;
 
 import javax.persistence.*;
 
 import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -17,7 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Item {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private String name;

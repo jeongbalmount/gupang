@@ -15,6 +15,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = @Index(name = "memberIndex", columnList = "email"))
 public class Member {
 
     @Id @GeneratedValue
