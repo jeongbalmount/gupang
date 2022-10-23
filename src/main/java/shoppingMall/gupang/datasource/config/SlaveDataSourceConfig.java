@@ -20,5 +20,4 @@ public class SlaveDataSourceConfig {
                 .type(HikariDataSource.class)
                 .build();
     }
-
 }
