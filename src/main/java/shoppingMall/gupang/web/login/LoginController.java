@@ -2,6 +2,7 @@ package shoppingMall.gupang.web.login;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +42,11 @@ public class LoginController {
             session.invalidate();
         }
 
+        return "ok";
+    }
+
+    @GetMapping("/")
+    public String healthCheck(HttpServletRequest request) {
         return "ok";
     }
 

@@ -11,25 +11,14 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@RedisHash("reviewItemDto")
 public class ReviewItemDto implements Serializable {
 
-    private String id;
-
+    @Id
     private Long reviewId;
-
+    @Indexed
     private Long itemId;
-
-    private Long memberId;
-
     private String title;
-
     private String content;
-
-    public ReviewItemDto(Long reviewId, Long itemId, String title, String content) {
-        this.reviewId = reviewId;
-        this.itemId = itemId;
-        this.title = title;
-        this.content = content;
-    }
+    private int like = 0;
 }

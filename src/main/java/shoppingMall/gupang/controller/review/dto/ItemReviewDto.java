@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.util.List;
 
-@RedisHash("item")
 @Getter
 public class ItemReviewDto {
 

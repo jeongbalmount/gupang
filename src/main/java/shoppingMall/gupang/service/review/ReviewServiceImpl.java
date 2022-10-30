@@ -6,7 +6,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.review.dto.ReviewDto;
+import shoppingMall.gupang.controller.review.dto.ReviewDtoRepository;
 import shoppingMall.gupang.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.domain.Item;
@@ -16,15 +16,12 @@ import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.review.NoEditedContentException;
 import shoppingMall.gupang.exception.review.NoReviewException;
-import shoppingMall.gupang.redis.ReviewDtoRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.review.ReviewRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,10 +33,10 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
-//    private final ReviewDtoRepository reviewDtoRepository;
+
+    private final ReviewDtoRepository reviewDtoRepository;
 
     @Override
-    @Cacheable(value = "reviewItemDto", key = "#reviewItemDto.id")
     public ReviewItemDto addReview(ReviewItemDto reviewItemDto) {
 
         Optional<Item> optionalItem = itemRepository.findById(reviewItemDto.getItemId());
@@ -49,33 +46,22 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         Review review = new Review(item, reviewItemDto.getTitle(), reviewItemDto.getContent());
-        reviewRepository.save(review);
+        Review savedReview = reviewRepository.save(review);
+        reviewItemDto.setReviewId(savedReview.getId());
+        reviewDtoRepository.save(reviewItemDto);
 
         return reviewItemDto;
     }
 
     @Override
-    public List<Review> getMemberReviews(Long memberId) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
-        Member member = optionalMember.orElse(null);
-        if (member == null) {
-            throw new NoMemberException("해당 멤버가 없습니다.");
-        }
-        return reviewRepository.findByMember(member);
-    }
-
-    @Override
-    @Cacheable(value = "reviewItemDto", unless = "#result==null || #result.empty")
-    public List<ReviewItemDto> getItemReviews(Long id) {
-        Optional<Item> optionalItem = itemRepository.findById(id);
+    @Transactional(readOnly = true)
+    public List<ReviewItemDto> getItemReviews(Long itemId) {
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
         Item item = optionalItem.orElse(null);
         if (item == null) {
             throw new NoItemException("해당 상품이 없습니다.");
         }
-
-        return reviewRepository.findByItem(item).stream()
-                .map(r -> new ReviewItemDto(r.getId(), item.getId(), r.getTitle(), r.getContents()))
-                .collect(Collectors.toList());
+        return reviewDtoRepository.findReviewItemDtoByItemId(itemId);
     }
 
     @Override
@@ -85,7 +71,14 @@ public class ReviewServiceImpl implements ReviewService{
         if (review == null) {
             throw new NoReviewException("해당 리뷰가 없습니다.");
         }
+
         reviewRepository.delete(review);
+        Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(reviewId);
+        ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
+        if (reviewItemDto == null) {
+            throw new NoReviewException("해당 리뷰가 없습니다.(cache 오류)");
+        }
+        reviewDtoRepository.delete(reviewItemDto);
     }
 
     @Override
@@ -96,6 +89,15 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoReviewException("해당하는 리뷰가 없습니다.");
         }
         review.addGoodBtnCount();
+
+        Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(reviewId);
+        ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
+        if (reviewItemDto == null) {
+            throw new NoReviewException("해당하는 리뷰가 없습니다.(cache 문제)");
+        }
+        int reviewLike = reviewItemDto.getLike();
+        reviewItemDto.setLike(reviewLike+1);
+        reviewDtoRepository.save(reviewItemDto);
     }
 
     @Override
@@ -110,5 +112,15 @@ public class ReviewServiceImpl implements ReviewService{
         }
         review.changeTitle(dto.getNewTitle());
         review.changeContents(dto.getNewContent());
+
+        Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(dto.getReviewId());
+        ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
+        if (reviewItemDto == null) {
+            throw new NoReviewException("해당하는 리뷰가 없습니다.(cache 문제)");
+        }
+        reviewItemDto.setContent(dto.getNewContent());
+        reviewItemDto.setTitle(dto.getNewTitle());
+
+        reviewDtoRepository.save(reviewItemDto);
     }
 }

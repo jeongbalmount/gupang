@@ -11,8 +11,6 @@ public interface ReviewService {
 
     ReviewItemDto addReview(ReviewItemDto reviewItemDto);
 
-    List<Review> getMemberReviews(Long MemberId);
-
     List<ReviewItemDto> getItemReviews(Long MemberId);
 
     void removeReview(Long reviewId);

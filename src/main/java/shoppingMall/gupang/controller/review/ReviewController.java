@@ -42,7 +42,6 @@ public class ReviewController {
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @PostMapping
     public String addReview(@RequestBody ReviewItemDto reviewItemDto) {
-        reviewItemDto.setId(UUID.randomUUID().toString());
         ReviewItemDto dto = reviewService.addReview(reviewItemDto);
         return "ok";
 
@@ -54,8 +53,8 @@ public class ReviewController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 리뷰가 없습니다.")
     })
     @Parameter(name = "reviewId", description = "리뷰 아이디")
-    @PostMapping("/like")
-    public String addReviewLike(Long reviewId){
+    @PostMapping("/like/{reviewId}")
+    public String addReviewLike(@PathVariable Long reviewId){
         reviewService.addLike(reviewId);
         return "ok";
     }
@@ -79,8 +78,8 @@ public class ReviewController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 리뷰가 없습니다.")
     })
     @Parameter(name = "reviewId", description = "리뷰 아이디")
-    @DeleteMapping
-    public String removeReview(Long reviewId) {
+    @DeleteMapping("/{reviewId}")
+    public String removeReview(@PathVariable Long reviewId) {
         reviewService.removeReview(reviewId);
         return "ok";
     }
@@ -94,9 +93,8 @@ public class ReviewController {
     @GetMapping("/item/{itemId}")
     public Result getItemReviews(@PathVariable Long itemId) {
         List<ReviewItemDto> collect = reviewService.getItemReviews(itemId);
-        log.info(collect.get(0).getContent());
         List<ReviewReturnDto> returnCollect = collect.stream()
-                .map(rd -> new ReviewReturnDto(rd.getReviewId(), rd.getTitle(), rd.getContent()))
+                .map(rd -> new ReviewReturnDto(rd.getReviewId(), rd.getTitle(), rd.getContent(), rd.getLike()))
                 .collect(Collectors.toList());
 
         return new Result(returnCollect);

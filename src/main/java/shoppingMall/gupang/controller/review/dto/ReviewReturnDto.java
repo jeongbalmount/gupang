@@ -9,9 +9,12 @@ public class ReviewReturnDto {
     private String title;
     private String content;
 
-    public ReviewReturnDto(Long reviewId, String title, String content) {
+    private int like;
+
+    public ReviewReturnDto(Long reviewId, String title, String content, int like) {
         this.reviewId = reviewId;
         this.title = title;
         this.content = content;
+        this.like = like;
     }
 }
