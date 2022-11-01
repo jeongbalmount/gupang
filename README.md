@@ -20,13 +20,21 @@
   
   Test: `JUnit5`
   
- ## 데이터베이스 구조
+ ## 데이터베이스 
  
 <img width="596" alt="스크린샷 2022-11-01 오후 9 39 35" src="https://user-images.githubusercontent.com/52123195/199235086-74093c53-1d9b-41f4-8ce7-f0d76114ae94.png">
 
-<데이터 베이스 구조 정리>
+<데이터 베이스 구조 정리 및 data jpa, querydsl>
 
 ## API 구조
+
+<api 정리>
+
+## AWS 구조
+
+
+
+## 고민했던 부분
 
 
 
