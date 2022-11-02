@@ -25,19 +25,17 @@
 <img width="596" alt="스크린샷 2022-11-01 오후 9 39 35" src="https://user-images.githubusercontent.com/52123195/199235086-74093c53-1d9b-41f4-8ce7-f0d76114ae94.png">
 
   ### 개요
-    쇼핑몰의 기본 기능들을 구현해보았다. 
-    member를 통해 회원 가입, 로그인, 회원 정보 관리를 하고 상품은 item으로 관리한다.
-    회원은 item을 주문 및 검색할 수 있고, 주문시 다대다를 위한 연결 테이블인 orderItem 테이블과 배송을 위한 delivery 테이블을 같이 생성한다.
-    또한 주문시 회원이 갖고 있는 상품에 맞는 쿠폰을 적용해 할인된 가격으로 상품을 구매할 수 있다.
-    item은 category로 정리 되어 있고, seller가 파는 item들만 따로 확인할 수 있다.
-    
-    
-    
+  - 쇼핑몰의 기본 기능들을 구현해보았다. 
+  - member를 통해 회원 가입, 로그인, 회원 정보 관리를 하고 상품은 item으로 관리한다.
+  - 회원은 item을 주문 및 검색할 수 있고, 주문 시 연결 테이블인 orderItem 테이블과 배송을 위한 delivery 테이블을 같이 생성한다.
+  - 또한 주문시 회원이 갖고 있는 상품에 맞는 쿠폰을 적용해 할인된 가격으로 상품을 구매할 수 있다.
+  - item은 category로 정리 되어 있고, seller가 파는 item들만 따로 확인할 수 있다.
+  - 회원이 카트에 담아 놓은 상품과 상품의 수량은 cartItem을 통해 볼 수 있다.
   
   ### DB
   - order와 item은 다대다 관계이다. sql 방식으로 다대다 관계를 표현하기 어렵기 때문에 order_item 테이블을 만들어 1대다, 다대1 방식으로 풀어 설계했다.
   - coupon 검증시 coupon은 member 쿠폰 정보와 item 쿠폰 정보를 참고하고, review는 member가 작성한 review들, item에 작성된 review들을 불러오기 위해 member와 item 정보를 이용한다.
-  - member는 cartItem을 이용해 cart에 어떤 item, 그리고 item의 수량을 참조한다.
+  - member는 cartItem을 이용해 cart에 담겨있는 item, 그리고 item의 수량을 참조한다.
   - member의 name에 인덱스를 걸어 member 검색시에 속도를 빠르게 한다.
   
   ### 그외
@@ -47,7 +45,69 @@
 ## API 구조
 
   ### Member
-  - 
+  |Method|URL|Desc.|
+  |------|---|---|
+  |POST|/member/checkId|중복되는 아이디 확인|
+  |POST|/member/signup|회원가입|
+  
+  ### Login
+  |Method|URL|Desc.|
+  |------|---|---|
+  |POST|/login|로그인|
+  |POST|/logout|로그아웃|
+  
+  ### Cart
+  |Method|URL|Desc.|
+  |------|---|---|
+  |GET|/cart/{memberId}|회원의 카트 상품 목록 불러오기|
+  |POST|/cart/add|카트에 새로운 물품 등록|
+  |PATCH|/cart|카트에 물품 개수 업데이트|
+  |DELETE|/cart|카트에 물품 삭제|
+  
+  ### Category
+  |Method|URL|Desc.|
+  |------|---|---|
+  |GET|/category|카테고리 해당 상품 불러오기|
+  
+  ### Coupon
+  |Method|URL|Desc.|
+  |------|---|---|
+  |GET|/coupon/{memberId}|회원이 갖고 있는 쿠폰 불러오기|
+  |POST|/coupon/add|새로운 쿠폰 등록|
+  
+  ### Item
+  |Method|URL|Desc.|
+  |------|---|---|
+  |GET|/cart/{memberId}|회원의 카트 상품 목록 불러오기|
+  |POST|/cart/add|카트에 새로운 물품 등록|
+  |PATCH|/cart|카트에 물품 개수 업데이트|
+  |DELETE|/cart|카트에 물품 삭제|
+  
+  ### Order
+  |Method|URL|Desc.|
+  |------|---|---|
+  |GET|/cart/{memberId}|회원의 카트 상품 목록 불러오기|
+  |POST|/cart/add|카트에 새로운 물품 등록|
+  |PATCH|/cart|카트에 물품 개수 업데이트|
+  |DELETE|/cart|카트에 물품 삭제|
+  
+  ### Review
+  |Method|URL|Desc.|
+  |------|---|---|
+  |GET|/cart/{memberId}|회원의 카트 상품 목록 불러오기|
+  |POST|/cart/add|카트에 새로운 물품 등록|
+  |PATCH|/cart|카트에 물품 개수 업데이트|
+  |DELETE|/cart|카트에 물품 삭제|
+  
+  ### Seller
+  |Method|URL|Desc.|
+  |------|---|---|
+  |GET|/cart/{memberId}|회원의 카트 상품 목록 불러오기|
+  |POST|/cart/add|카트에 새로운 물품 등록|
+  |PATCH|/cart|카트에 물품 개수 업데이트|
+  |DELETE|/cart|카트에 물품 삭제|
+  
+  
 
 ## AWS 구조
 
