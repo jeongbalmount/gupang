@@ -2,11 +2,14 @@ package shoppingMall.gupang.service.order;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.order.dto.OrderCouponDto;
 import shoppingMall.gupang.controller.order.dto.OrderDto;
 import shoppingMall.gupang.controller.order.dto.OrderItemDto;
+import shoppingMall.gupang.controller.order.dto.OrderReturnDto;
 import shoppingMall.gupang.discount.DiscountPolicy;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
@@ -160,13 +163,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Order> getOrderByMember(Long memberId) {
+    public Page<OrderReturnDto> getOrderByMember(Long memberId, Pageable pageable) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);
         if (member == null) {
             throw new NoMemberException("해당 멤버가 없습니다.");
         }
-        return orderRepository.findOrderWithMember(member.getId());
+        Page<Order> page = orderRepository.findByMember(member, pageable);
+        return page.map(OrderReturnDto::new);
     }
 
     @Override

@@ -31,7 +31,8 @@ public class Order {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    // , cascade = CascadeType.ALL, orphanRemoval = true
+    @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @OneToOne(fetch = LAZY)
@@ -59,7 +60,7 @@ public class Order {
                                     OrderStatus orderStatus, List<OrderItem> orderItems) {
         Order order = new Order(orderDate, member, delivery, memberShipOrder, orderStatus);
         for (OrderItem orderItem : orderItems) {
-            log.info(String.valueOf(orderItem.getItemPrice()));
+//            log.info(String.valueOf(orderItem.getItemPrice()));
             order.addOrderItem(orderItem);
         }
 

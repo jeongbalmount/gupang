@@ -7,8 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.controller.order.dto.OrderCouponDto;
@@ -63,10 +67,8 @@ public class OrderController {
     })
     @Parameter(name = "memberId", description = "회원 아이디")
     @GetMapping("/{memberId}")
-    public List<OrderReturnDto> getOrder(@PathVariable Long memberId) {
-        return orderService.getOrderByMember(memberId).stream()
-                .map(o -> new OrderReturnDto(o.getId(), o.getOrderItems()))
-                .collect(Collectors.toList());
+    public Page<OrderReturnDto> getOrder(@PathVariable Long memberId, Pageable pageable) {
+        return orderService.getOrderByMember(memberId, pageable);
     }
 
     @Operation(summary = "cancel order", description = "주문 취소하기")
