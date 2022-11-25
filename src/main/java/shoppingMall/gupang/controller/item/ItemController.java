@@ -15,6 +15,7 @@ import shoppingMall.gupang.controller.coupon.dto.CouponMemberDto;
 import shoppingMall.gupang.controller.item.dto.ItemDto;
 import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.controller.review.dto.ReviewReturnDto;
+import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.service.item.ItemService;
 
 import javax.validation.Valid;
@@ -28,14 +29,15 @@ import java.util.stream.Collectors;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
     @Operation(summary = "search items", description = "이름에 맞는 상품 가져오기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ItemReturnDto.class))),
     })
     @Parameter(name = "itemName", description = "상품 이름")
-    @PostMapping
-    public List<ItemReturnDto> searchItems(@RequestParam String itemName) {
+    @GetMapping("/{itemName}")
+    public List<ItemReturnDto> searchItems(@PathVariable String itemName) {
         log.info(itemName);
         return itemService.findItemByName(itemName);
     }

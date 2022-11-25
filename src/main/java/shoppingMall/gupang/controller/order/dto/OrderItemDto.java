@@ -10,8 +10,6 @@ import javax.validation.constraints.NotNull;
 public class OrderItemDto {
     @NotNull
     private Long itemId;
-
     @NotNull
     private int itemCount;
-
 }

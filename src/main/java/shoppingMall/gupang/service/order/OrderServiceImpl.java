@@ -39,7 +39,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final DiscountPolicy discountPolicy;
@@ -124,7 +123,6 @@ public class OrderServiceImpl implements OrderService {
                                           IsMemberShip isMemberShip, List<OrderItem> orderItems) {
 
         for (OrderItemDto dto : dtos) {
-
             Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
             Item item = optionalItem.orElse(null);
             if (item == null) {

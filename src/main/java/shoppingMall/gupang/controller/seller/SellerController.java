@@ -34,11 +34,11 @@ public class SellerController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 판매자가 없습니다.")
     })
     @Parameter(name = "sellerId", description = "판매자 아이디")
-    @PostMapping
-    public Result getSellerItems(Long sellerId) {
+    @GetMapping("/{sellerId}")
+    public Result getSellerItems(@PathVariable Long sellerId) {
         List<ItemReturnDto> collect = sellerService.getSellerItems(sellerId).stream()
                 .map(i -> new ItemReturnDto(i.getName(), i.getItemPrice(), i.getSeller().getManagerName(),
-                        i.getCategory().getName()))
+                        i.getCategory().getName(), i.getId()))
                 .collect(Collectors.toList());
 
         return new Result(collect);

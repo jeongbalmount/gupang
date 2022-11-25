@@ -45,7 +45,7 @@ public class Order {
     private OrderStatus orderStatus;
 
     private Order(LocalDateTime orderDate, Member member, Delivery delivery, IsMemberShip memberShipOrder,
-                 OrderStatus orderStatus) {
+                  OrderStatus orderStatus) {
         this.orderDate = orderDate;
         this.member = member;
         this.delivery = delivery;

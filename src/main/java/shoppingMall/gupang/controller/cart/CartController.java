@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.controller.cart.dto.*;
 import shoppingMall.gupang.domain.CartItem;
@@ -36,13 +38,18 @@ public class CartController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 멤버가 존재하지 않음")
     })
     @Parameter(content = @Content(schema = @Schema(implementation = CartItemMemberDto.class)))
-    @PostMapping
-    public Result getMemberCartItems(@RequestBody CartItemMemberDto cartItemMemberDto){
-        List<CartItemDto> cartItemDtos = cartService.getAllCartItems(cartItemMemberDto.getMemberId()).stream()
+    @GetMapping("/{cartId}")
+    public Result getMemberCartItems(@PathVariable Long memberId){
+        List<CartItemDto> cartItemDtos = cartService.getAllCartItems(memberId).stream()
                 .map(CartItemDto::new)
                 .collect(Collectors.toList());
 
         return new Result(cartItemDtos);
+    }
+
+    @GetMapping("/page/{memberId}")
+    public Page<CartItemDto> getMemberCartItemsNoFetch(@PathVariable Long memberId, Pageable pageable) {
+        return cartService.getAllCartItemsNoFetch(memberId, pageable);
     }
 
     @Data

@@ -31,9 +31,7 @@ import java.util.stream.Collectors;
 public class ReviewServiceImpl implements ReviewService{
 
     private final ReviewRepository reviewRepository;
-    private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
-
     private final ReviewDtoRepository reviewDtoRepository;
 
     @Override
@@ -59,6 +57,7 @@ public class ReviewServiceImpl implements ReviewService{
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         Item item = optionalItem.orElse(null);
         if (item == null) {
+            log.warn("no item");
             throw new NoItemException("해당 상품이 없습니다.");
         }
         return reviewDtoRepository.findReviewItemDtoByItemId(itemId);

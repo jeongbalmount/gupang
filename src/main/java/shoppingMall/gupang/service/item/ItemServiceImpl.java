@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService{
         List<Item> items = itemRepository.findItemByString(subString);
         for (Item item : items) {
             ItemReturnDto dto = new ItemReturnDto(item.getName(), item.getItemPrice(), item.getSeller().getManagerName(),
-                    item.getCategory().getName());
+                    item.getCategory().getName(), item.getId());
             returnDtos.add(dto);
         }
         return returnDtos;

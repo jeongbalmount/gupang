@@ -31,8 +31,8 @@ public class CouponController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 멤버가 존재하지 않음"),
     })
     @Parameter(name = "memberId", description = "카테고리 id")
-    @PostMapping
-    public List<CouponMemberDto> getMemberCoupons(Long memberId) {
+    @GetMapping("/{memberId}")
+    public List<CouponMemberDto> getMemberCoupons(@PathVariable Long memberId) {
         return couponService.getUnusedCoupons(memberId);
     }
 

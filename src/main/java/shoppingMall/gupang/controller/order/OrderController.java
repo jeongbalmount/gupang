@@ -62,8 +62,8 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 회원이 없습니다."),
     })
     @Parameter(name = "memberId", description = "회원 아이디")
-    @PostMapping
-    public List<OrderReturnDto> getOrder(@RequestParam(value = "memberId") Long memberId) {
+    @GetMapping("/{memberId}")
+    public List<OrderReturnDto> getOrder(@PathVariable Long memberId) {
         return orderService.getOrderByMember(memberId).stream()
                 .map(o -> new OrderReturnDto(o.getId(), o.getOrderItems()))
                 .collect(Collectors.toList());
@@ -76,8 +76,8 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 이미 취소된 주문입니다.")
     })
     @Parameter(name = "orderId", description = "주문 아이디")
-    @PatchMapping
-    public String cancelOrder(@RequestParam Long orderId) {
+    @DeleteMapping("/{orderId}")
+    public String cancelOrder(@PathVariable Long orderId) {
         orderService.cancelOrder(orderId);
         return "ok";
     }

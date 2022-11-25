@@ -23,7 +23,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     @Override
     public List<Order> findOrderWithDelivery(Long orderId) {
         return queryFactory
-                .selectFrom(order)
+                .selectFrom(order).distinct()
                 .join(order.delivery, delivery).fetchJoin()
                 .join(order.orderItems, orderItem).fetchJoin()
                 .join(orderItem.item, item).fetchJoin()

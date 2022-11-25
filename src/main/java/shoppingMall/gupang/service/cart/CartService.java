@@ -1,5 +1,8 @@
 package shoppingMall.gupang.service.cart;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import shoppingMall.gupang.controller.cart.dto.CartItemDto;
 import shoppingMall.gupang.controller.cart.dto.CartItemsMemberDto;
 import shoppingMall.gupang.domain.CartItem;
 import java.util.List;
@@ -16,5 +19,7 @@ public interface CartService {
 
     // 장바구니 아이템 삭제 => 여러 카트 아이템
     List<CartItem> removeCartItems(CartItemsMemberDto cartItemsMemberDto);
+
+    Page<CartItemDto> getAllCartItemsNoFetch(Long memberId, Pageable pageable);
 
 }

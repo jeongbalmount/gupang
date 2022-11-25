@@ -18,11 +18,12 @@ public class CartRepositoryImpl implements CartRepositoryCustom {
     }
 
     @Override
-    public List<CartItem> findCartItemsByMember(Long memberId) {
+    public List<CartItem> findCartItemsByMemberId(Long memberId) {
         return queryFactory
                 .selectFrom(cartItem)
                 .join(cartItem.item, item).fetchJoin()
                 .where(cartItem.member.id.eq(memberId))
                 .fetch();
     }
+
 }

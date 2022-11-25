@@ -1,8 +1,11 @@
 package shoppingMall.gupang.service.cart;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shoppingMall.gupang.controller.cart.dto.CartItemDto;
 import shoppingMall.gupang.controller.cart.dto.CartItemsDto;
 import shoppingMall.gupang.controller.cart.dto.CartItemsMemberDto;
 import shoppingMall.gupang.domain.CartItem;
@@ -18,6 +21,7 @@ import shoppingMall.gupang.repository.member.MemberRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,7 +42,7 @@ public class CartServiceImpl implements CartService{
             throw new NoMemberException("해당 회원이 없습니다.");
         }
 
-        return cartRepository.findCartItemsByMember(memberId);
+        return cartRepository.findCartItemsByMemberId(memberId);
     }
 
     @Override
@@ -78,7 +82,7 @@ public class CartServiceImpl implements CartService{
     @Override
     public List<CartItem> removeCartItems(CartItemsMemberDto cartItemsMemberDto) {
 
-        for (CartItemsDto dto : cartItemsMemberDto.getCartItemIds()) {
+        for (CartItemDto dto : cartItemsMemberDto.getCartItemIds()) {
             Optional<CartItem> optionalCartItem = cartRepository.findById(dto.getCartItemId());
             CartItem cartItem = optionalCartItem.orElse(null);
             if (cartItem == null) {
@@ -93,6 +97,18 @@ public class CartServiceImpl implements CartService{
             throw new NoMemberException("해당하는 멤버가 없습니다.");
         }
 
-        return cartRepository.findCartItemsByMember(memberId);
+        return cartRepository.findCartItemsByMemberId(memberId);
+    }
+
+    @Override
+    public Page<CartItemDto> getAllCartItemsNoFetch(Long memberId, Pageable pageable) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member member = optionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당 회원이 없습니다.");
+        }
+        Page<CartItem> page = cartRepository.findByMember(member, pageable);
+
+        return page.map(CartItemDto::new);
     }
 }

@@ -13,7 +13,6 @@ import shoppingMall.gupang.web.exception.AuthenticationsException;
 @RestControllerAdvice
 @Slf4j
 public class GlobalControllerAdvice {
-
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AuthenticationsException.class)

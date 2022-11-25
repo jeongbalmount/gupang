@@ -45,7 +45,7 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public String Signup(@RequestBody MemberDto memberDto) {
+    public String signup(@RequestBody MemberDto memberDto) {
         Optional<Member> optionalMember = memberRepository.findOptionalByEmail(memberDto.getEmail());
         Member member = optionalMember.orElse(null);
         if (member == null) {
