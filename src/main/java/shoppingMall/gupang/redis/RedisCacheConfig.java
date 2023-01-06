@@ -53,4 +53,11 @@ public class RedisCacheConfig {
         builder.cacheDefaults(configuration);
         return builder.build();
     }
+
+//    @Bean
+    public RedisTemplate<?, ?> redisTemplate() {
+        RedisTemplate<?, ?> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisCacheConnectionFactory());
+        return redisTemplate;
+    }
 }

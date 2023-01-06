@@ -13,6 +13,7 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity @Getter @Slf4j
@@ -22,7 +23,7 @@ public class Order {
 
     public static Order Builder;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private LocalDateTime orderDate;
@@ -73,9 +74,9 @@ public class Order {
         }
 
         this.orderStatus = OrderStatus.CANCEL;
-        for (OrderItem orderItem : orderItems) {
-            orderItem.cancel();
-        }
+//        for (OrderItem orderItem : orderItems) {
+//            orderItem.cancel();
+//        }
     }
 
     // 연관관계 메서드

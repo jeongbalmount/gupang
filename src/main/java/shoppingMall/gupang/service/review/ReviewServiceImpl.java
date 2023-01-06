@@ -14,6 +14,7 @@ import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
+import shoppingMall.gupang.exception.review.LikeLimitException;
 import shoppingMall.gupang.exception.review.NoEditedContentException;
 import shoppingMall.gupang.exception.review.NoReviewException;
 import shoppingMall.gupang.repository.item.ItemRepository;
@@ -60,7 +61,27 @@ public class ReviewServiceImpl implements ReviewService{
             log.warn("no item");
             throw new NoItemException("해당 상품이 없습니다.");
         }
-        return reviewDtoRepository.findReviewItemDtoByItemId(itemId);
+
+        List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(item.getId());
+        int dbReviewDtoCount = 5 - reviewDtos.size();
+        int lessNum = 1000;
+        if (dbReviewDtoCount > 0) {
+            for (ReviewItemDto dto : reviewDtos) {
+                if (dto.getLike() < lessNum) {
+                    lessNum = dto.getLike();
+                }
+            }
+            List<Review> leftReviews = reviewRepository.findByItemAndLikeLessThan(item, lessNum);
+
+            for (Review r : leftReviews) {
+                ReviewItemDto newDto = new ReviewItemDto(r.getId(),
+                        r.getItem().getId(), r.getTitle(), r.getContents(), r.getLike());
+                reviewDtoRepository.save(newDto);
+                reviewDtos.add(newDto);
+            }
+        }
+
+        return reviewDtos;
     }
 
     @Override
@@ -87,7 +108,7 @@ public class ReviewServiceImpl implements ReviewService{
         if (review == null) {
             throw new NoReviewException("해당하는 리뷰가 없습니다.");
         }
-        review.addGoodBtnCount();
+        review.addLike();
 
         Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(reviewId);
         ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
@@ -95,6 +116,9 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoReviewException("해당하는 리뷰가 없습니다.(cache 문제)");
         }
         int reviewLike = reviewItemDto.getLike();
+        if (reviewLike+1 > 999) {
+            throw new LikeLimitException("좋아요 개수는 999이하만 가능합니다.");
+        }
         reviewItemDto.setLike(reviewLike+1);
         reviewDtoRepository.save(reviewItemDto);
     }

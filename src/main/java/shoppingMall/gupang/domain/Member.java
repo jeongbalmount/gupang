@@ -12,13 +12,14 @@ import javax.persistence.*;
 import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = @Index(name = "memberIndex", columnList = "email"))
 public class Member {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private String email;

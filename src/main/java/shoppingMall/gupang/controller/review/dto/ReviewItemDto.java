@@ -21,4 +21,9 @@ public class ReviewItemDto implements Serializable {
     private String title;
     private String content;
     private int like = 0;
+
+    public String toString() {
+        return "reviewID = " + reviewId + " itemId = " + itemId + " title = " + title + " content = " + content +
+                " like = " + like;
+    }
 }

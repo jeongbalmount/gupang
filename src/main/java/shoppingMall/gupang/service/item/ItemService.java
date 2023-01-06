@@ -13,6 +13,9 @@ public interface ItemService {
 
     public List<ItemReturnDto> findItemByName(String name);
 
-    public List<Review> getItemReviews(Long itemId);
+    public void decreaseQuantity(Long id, int quantity);
+
+    public void increaseQuantity(Long id, int quantity);
+
 
 }

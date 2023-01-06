@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+
+import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -12,7 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class OrderItem {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,7 +34,7 @@ public class OrderItem {
 
     public static OrderItem createOrderItem(Item item, int itemPrice, int count, int couponDiscountAmount) {
         OrderItem orderItem = new OrderItem(item, itemPrice, count, couponDiscountAmount);
-        item.removeStock(count);
+//        item.removeStock(count);
 
         return orderItem;
     }
@@ -52,7 +54,7 @@ public class OrderItem {
         return itemCount * itemPrice;
     }
 
-    public void cancel() {
-        getItem().addStock(itemCount);
-    }
+//    public void cancel() {
+//        getItem().addStock(itemCount);
+//    }
 }

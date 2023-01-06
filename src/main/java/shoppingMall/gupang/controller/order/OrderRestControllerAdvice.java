@@ -9,6 +9,7 @@ import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.item.NotEnoughStockException;
 import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.order.AlreadyCanceledOrderException;
+import shoppingMall.gupang.exception.order.KeyAttemptFailException;
 import shoppingMall.gupang.exception.order.NoOrderException;
 
 @RestControllerAdvice(assignableTypes = {OrderController.class})
@@ -37,11 +38,16 @@ public class OrderRestControllerAdvice {
     public ErrorResult notEnoughStockException(NotEnoughStockException e) {
         return new ErrorResult("Not enough item stock", e.getMessage());
     }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResult alreadyCanceledOrderException(AlreadyCanceledOrderException e) {
         return new ErrorResult("Already canceled order", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResult keyAttemptFailException(KeyAttemptFailException e) {
+        return new ErrorResult("Redis key attempt failed", e.getMessage());
     }
 
 }

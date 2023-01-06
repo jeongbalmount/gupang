@@ -1,5 +1,6 @@
 package shoppingMall.gupang.controller.review;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.Like;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import shoppingMall.gupang.exception.exceptiondto.ErrorResult;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
+import shoppingMall.gupang.exception.review.LikeLimitException;
 import shoppingMall.gupang.exception.review.NoEditedContentException;
 import shoppingMall.gupang.exception.review.NoReviewException;
 
@@ -36,5 +38,11 @@ public class ReviewRestControllerAdvice {
     @ExceptionHandler
     public ErrorResult noEditedContentException(NoEditedContentException e) {
         return new ErrorResult("No edited contents", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResult likeLimitException(LikeLimitException e) {
+        return new ErrorResult("Like count exceeded", e.getMessage());
     }
 }

@@ -64,13 +64,25 @@ public class ItemServiceImpl implements ItemService{
         return returnDtos;
     }
 
+    @Transactional
     @Override
-    public List<Review> getItemReviews(Long itemId) {
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
+    public void decreaseQuantity(Long id, int quantity) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
         Item item = optionalItem.orElse(null);
         if (item == null) {
             throw new NoItemException("해당 상품이 없습니다.");
         }
-        return reviewRepository.findByItem(item);
+        item.removeStock(quantity);
+    }
+
+    @Transactional
+    @Override
+    public void increaseQuantity(Long id, int quantity) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        Item item = optionalItem.orElse(null);
+        if (item == null) {
+            throw new NoItemException("해당 상품이 없습니다.");
+        }
+        item.addStock(quantity);
     }
 }

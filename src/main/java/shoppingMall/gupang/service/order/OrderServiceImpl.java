@@ -19,7 +19,9 @@ import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.order.AlreadyCanceledOrderException;
 import shoppingMall.gupang.exception.order.AlreadyDeliveredException;
+import shoppingMall.gupang.exception.order.KeyAttemptFailException;
 import shoppingMall.gupang.exception.order.NoOrderException;
+import shoppingMall.gupang.redis.facade.LettuceLockStockFacade;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
 import shoppingMall.gupang.repository.delivery.DeliveryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
@@ -47,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
     private final DiscountPolicy discountPolicy;
     private final DeliveryRepository deliveryRepository;
     private final CouponRepository couponRepository;
+    private final LettuceLockStockFacade lettuceLockStockFacade;
 
     @Override
     public Long order(Address address, OrderDto dto) {
@@ -80,9 +83,26 @@ public class OrderServiceImpl implements OrderService {
                 OrderItem orderItem = OrderItem.createOrderItem(item,
                         getMembershipDiscountedPrice(isMemberShip, item.getItemPrice()),
                         dto.getItemCount(), 0);
+                decreaseItemQuantity(dto.getItemId(), dto.getItemCount());
                 orderItemRepository.save(orderItem);
                 orderItems.add(orderItem);
             }
+        }
+    }
+
+    private void decreaseItemQuantity(Long itemId, int quantity) {
+        try {
+            lettuceLockStockFacade.decrease(itemId, quantity);
+        } catch (Exception e) {
+            throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
+        }
+    }
+
+    private void increaseItemQuantity(Long itemId, int quantity) {
+        try {
+            lettuceLockStockFacade.increase(itemId, quantity);
+        } catch (Exception e) {
+            throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
         }
     }
 
@@ -150,6 +170,7 @@ public class OrderServiceImpl implements OrderService {
             OrderItem orderItem = OrderItem.createOrderItem(item,
                     getMembershipDiscountedPrice(isMemberShip, totalItemPrice),
                     dto.getItemCount(), discountAmount);
+            decreaseItemQuantity(dto.getItemId(), dto.getItemCount());
             orderItemRepository.save(orderItem);
             orderItems.add(orderItem);
         }
@@ -185,6 +206,9 @@ public class OrderServiceImpl implements OrderService {
                 throw new AlreadyCanceledOrderException("이미 취소된 주문입니다.");
             }
             o.cancel();
+            for(OrderItem oi : o.getOrderItems()) {
+                increaseItemQuantity(oi.getItem().getId(), oi.getItemCount());
+            }
         }
     }
 
