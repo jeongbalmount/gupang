@@ -61,7 +61,6 @@ public class Order {
                                     OrderStatus orderStatus, List<OrderItem> orderItems) {
         Order order = new Order(orderDate, member, delivery, memberShipOrder, orderStatus);
         for (OrderItem orderItem : orderItems) {
-//            log.info(String.valueOf(orderItem.getItemPrice()));
             order.addOrderItem(orderItem);
         }
 
@@ -74,9 +73,6 @@ public class Order {
         }
 
         this.orderStatus = OrderStatus.CANCEL;
-//        for (OrderItem orderItem : orderItems) {
-//            orderItem.cancel();
-//        }
     }
 
     // 연관관계 메서드

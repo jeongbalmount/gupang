@@ -14,4 +14,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByItem(Item item);
 //    List<Review> findTop5ByItemOrderByGoodBtnCountDesc(Item item);
     List<Review> findByItemAndLikeLessThan(Item item, int like);
+    Long countBy();
 }

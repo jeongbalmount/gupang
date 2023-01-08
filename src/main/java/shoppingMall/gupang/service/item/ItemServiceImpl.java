@@ -1,14 +1,17 @@
 package shoppingMall.gupang.service.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.controller.item.dto.ItemDto;
 import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
+import shoppingMall.gupang.controller.item.dto.ItemSearchDto;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.domain.Seller;
+import shoppingMall.gupang.elasticsearch.itemSearch.ItemSearchRepository;
 import shoppingMall.gupang.exception.category.NoCategoryException;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.seller.NoSellerException;
@@ -24,12 +27,13 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService{
 
     private final ItemRepository itemRepository;
     private final SellerRepository sellerRepository;
     private final CategoryRepository categoryRepository;
-    private final ReviewRepository reviewRepository;
+    private final ItemSearchRepository itemSearchRepository;
 
     @Override
     @Transactional
@@ -49,19 +53,19 @@ public class ItemServiceImpl implements ItemService{
 
         Item item = new Item(itemDto.getName(), itemDto.getPrice(), itemDto.getQuantity(), seller, category);
         itemRepository.save(item);
+        ItemSearchDto itemSearchDto =
+                new ItemSearchDto(item.getId(), item.getName(), item.getItemPrice(), item.getCategory().getName());
+        itemSearchRepository.save(itemSearchDto);
     }
 
     @Override
-    public List<ItemReturnDto> findItemByName(String subString) {
-
-        List<ItemReturnDto> returnDtos = new ArrayList<>();
-        List<Item> items = itemRepository.findItemByString(subString);
-        for (Item item : items) {
-            ItemReturnDto dto = new ItemReturnDto(item.getName(), item.getItemPrice(), item.getSeller().getManagerName(),
-                    item.getCategory().getName(), item.getId());
-            returnDtos.add(dto);
+    public List<ItemSearchDto> findItemByName(String subString) {
+        List<ItemSearchDto> items = itemSearchRepository.findByItemname(subString);
+        log.info(String.valueOf(items.size()));
+        for (ItemSearchDto dto : items) {
+            log.info(dto.getItemname());
         }
-        return returnDtos;
+        return items;
     }
 
     @Transactional

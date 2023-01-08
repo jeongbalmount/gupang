@@ -33,10 +33,7 @@ public class OrderItem {
     }
 
     public static OrderItem createOrderItem(Item item, int itemPrice, int count, int couponDiscountAmount) {
-        OrderItem orderItem = new OrderItem(item, itemPrice, count, couponDiscountAmount);
-//        item.removeStock(count);
-
-        return orderItem;
+        return new OrderItem(item, itemPrice, count, couponDiscountAmount);
     }
 
     public void registerOrder(Order order) {
@@ -54,7 +51,4 @@ public class OrderItem {
         return itemCount * itemPrice;
     }
 
-//    public void cancel() {
-//        getItem().addStock(itemCount);
-//    }
 }

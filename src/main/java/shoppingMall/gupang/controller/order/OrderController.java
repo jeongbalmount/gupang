@@ -78,7 +78,7 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 이미 취소된 주문입니다.")
     })
     @Parameter(name = "orderId", description = "주문 아이디")
-    @DeleteMapping("/{orderId}")
+    @PostMapping("/{orderId}")
     public String cancelOrder(@PathVariable Long orderId) {
         orderService.cancelOrder(orderId);
         return "ok";

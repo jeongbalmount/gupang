@@ -71,7 +71,6 @@ public class OrderServiceImpl implements OrderService {
                 OrderStatus.ORDER, orderItems);
 
         orderRepository.save(order);
-
         return order.getId();
     }
 

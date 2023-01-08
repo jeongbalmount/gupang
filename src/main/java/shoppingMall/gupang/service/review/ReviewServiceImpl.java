@@ -46,8 +46,12 @@ public class ReviewServiceImpl implements ReviewService{
 
         Review review = new Review(item, reviewItemDto.getTitle(), reviewItemDto.getContent());
         Review savedReview = reviewRepository.save(review);
+
         reviewItemDto.setReviewId(savedReview.getId());
-        reviewDtoRepository.save(reviewItemDto);
+        List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(reviewItemDto.getItemId());
+        if (reviewDtos.size() < 5) {
+            reviewDtoRepository.save(reviewItemDto);
+        }
 
         return reviewItemDto;
     }
@@ -64,7 +68,7 @@ public class ReviewServiceImpl implements ReviewService{
 
         List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(item.getId());
         int dbReviewDtoCount = 5 - reviewDtos.size();
-        int lessNum = 1000;
+        int lessNum = 1000000;
         if (dbReviewDtoCount > 0) {
             for (ReviewItemDto dto : reviewDtos) {
                 if (dto.getLike() < lessNum) {
@@ -91,8 +95,8 @@ public class ReviewServiceImpl implements ReviewService{
         if (review == null) {
             throw new NoReviewException("해당 리뷰가 없습니다.");
         }
-
         reviewRepository.delete(review);
+
         Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(reviewId);
         ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
         if (reviewItemDto == null) {
@@ -116,8 +120,8 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoReviewException("해당하는 리뷰가 없습니다.(cache 문제)");
         }
         int reviewLike = reviewItemDto.getLike();
-        if (reviewLike+1 > 999) {
-            throw new LikeLimitException("좋아요 개수는 999이하만 가능합니다.");
+        if (reviewLike+1 > 999999) {
+            throw new LikeLimitException("좋아요 개수는 999999이하만 가능합니다.");
         }
         reviewItemDto.setLike(reviewLike+1);
         reviewDtoRepository.save(reviewItemDto);

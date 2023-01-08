@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.controller.coupon.dto.CouponMemberDto;
 import shoppingMall.gupang.controller.item.dto.ItemDto;
 import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
+import shoppingMall.gupang.controller.item.dto.ItemSearchDto;
 import shoppingMall.gupang.controller.review.dto.ReviewReturnDto;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.service.item.ItemService;
@@ -37,8 +38,7 @@ public class ItemController {
     })
     @Parameter(name = "itemName", description = "상품 이름")
     @GetMapping("/{itemName}")
-    public List<ItemReturnDto> searchItems(@PathVariable String itemName) {
-        log.info(itemName);
+    public List<ItemSearchDto> searchItems(@PathVariable String itemName) {
         return itemService.findItemByName(itemName);
     }
 

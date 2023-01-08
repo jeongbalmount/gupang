@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.controller.coupon.dto.CouponDto;
 import shoppingMall.gupang.controller.coupon.dto.CouponMemberDto;
-import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.service.coupon.CouponService;
 
 import javax.validation.Valid;

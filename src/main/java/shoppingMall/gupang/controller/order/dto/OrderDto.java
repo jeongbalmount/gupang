@@ -23,6 +23,4 @@ public class OrderDto {
 
     @NotNull
     private List<OrderItemDto> orderItemDtos;
-
-
 }
