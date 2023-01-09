@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "id" : {"type":  "keyword"},
+    "itemid": {"type":  "keyword"},
+    "itemname": {
+      "type": "text",
+      "analyzer": "autocomplete"
+    }
+  }
+}

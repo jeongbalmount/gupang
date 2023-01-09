@@ -74,5 +74,4 @@ public abstract class Coupon {
             throw new CouponExpiredException("이미 기한이 지난 쿠폰입니다.");
         }
     };
-
 }

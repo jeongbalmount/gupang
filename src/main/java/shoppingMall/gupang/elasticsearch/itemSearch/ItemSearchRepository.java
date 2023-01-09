@@ -5,7 +5,7 @@ import shoppingMall.gupang.controller.item.dto.ItemSearchDto;
 
 import java.util.List;
 
-public interface ItemSearchRepository  extends ElasticsearchRepository<ItemSearchDto, String> {
+public interface ItemSearchRepository extends ElasticsearchRepository<ItemSearchDto, String> {
     List<ItemSearchDto> findByItemname(String name);
 
 }

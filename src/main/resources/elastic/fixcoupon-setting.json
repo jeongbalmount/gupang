@@ -1,0 +1,13 @@
+{
+  "properties" : {
+    "id" : {"type" : "keyword"},
+    "memberid" : {"type" : "keyword"},
+    "itemid" : {"type" : "keyword"},
+    "used" : {"type" : "keyword"},
+    "discountamount" : {"type" : "keyword"},
+    "expiredate": {
+      "type": "date",
+      "format": "uuuu-MM-dd'T'HH:mm:ss.SSS||epoch_mills"
+    }
+  }
+}
