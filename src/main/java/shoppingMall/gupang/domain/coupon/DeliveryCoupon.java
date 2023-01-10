@@ -1,64 +1,44 @@
 package shoppingMall.gupang.domain.coupon;
 
 import lombok.Getter;
-import shoppingMall.gupang.domain.Item;
+import lombok.NoArgsConstructor;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.exception.coupon.AlreadyCouponUsedException;
 import shoppingMall.gupang.exception.coupon.CouponExpiredException;
 
 import javax.persistence.*;
+
 import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.PROTECTED;
 
-@Entity @Getter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Coupon {
+@Entity
+@Getter
+@NoArgsConstructor(access = PROTECTED)
+public class DeliveryCoupon {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "item_id")
-    private Item item;
     private LocalDateTime expireDate;
-    private Boolean used;
-    private String couponType;
-    private int discountAmount;
-    private String couponName;
 
-    public Coupon(Member member, Item item, LocalDateTime expireDate, String couponType, String couponName) {
+    private Boolean used = false;
+
+    public DeliveryCoupon(Member member, LocalDateTime expireDate) {
         this.member = member;
-        this.item = item;
         this.expireDate = expireDate;
-        this.couponType = couponType;
-        this.used = false;
-        this.couponName = couponName;
-    }
-    public Coupon() {
-
     }
 
     public void useCoupon() {
         checkCouponValid();
         this.used = true;
     }
-
-    protected void setCouponType(String type){
-        this.couponType = type;
-    }
-
-    protected void setDiscountAmount(int discountAmount){
-        this.discountAmount = discountAmount;
-    }
-
-    public abstract int getCouponAppliedPrice(int price);
-
-    public abstract int getItemDiscountedAmount(int price);
 
     public void checkCouponValid() {
         checkExpireDate();

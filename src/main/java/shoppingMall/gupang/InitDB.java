@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import shoppingMall.gupang.controller.item.dto.ItemSearchDto;
 import shoppingMall.gupang.controller.review.dto.ItemReviewDto;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
@@ -11,6 +12,7 @@ import shoppingMall.gupang.domain.coupon.FixCoupon;
 import shoppingMall.gupang.domain.coupon.PercentCoupon;
 import shoppingMall.gupang.domain.enums.DeliveryStatus;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
+import shoppingMall.gupang.elasticsearch.itemSearch.ItemSearchRepository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -29,7 +31,7 @@ public class InitDB {
         initService.loginInit();
         initService.cartInit();
         initService.couponInit();
-//        initService.itemInit();
+        initService.itemInit();
 //        initService.reviewInit();
         initService.orderInit();
     }
@@ -41,6 +43,7 @@ public class InitDB {
     static class InitService {
 
         private final EntityManager em;
+        private final ItemSearchRepository itemSearchRepository;
 
         private Member member1;
         private Member member2;
@@ -125,8 +128,8 @@ public class InitDB {
             em.persist(item);
 
             LocalDateTime time = LocalDateTime.of(2023, 1, 1, 10, 10);
-            Coupon coupon1 = new FixCoupon(member, item, time, "Fix", 1000);
-            Coupon coupon2 = new PercentCoupon(member, item, time, "Percent", 20);
+            Coupon coupon1 = new FixCoupon(member, item, time, "Fix", 1000, "coupon1");
+            Coupon coupon2 = new PercentCoupon(member, item, time, "Percent", 20, "coupon2");
 
             em.persist(coupon1);
             em.persist(coupon2);
@@ -190,19 +193,20 @@ public class InitDB {
             em.persist(category9);
             em.persist(category10);
             em.persist(category11);
+            em.persist(category12);
             em.persist(category13);
             em.persist(category14);
             em.persist(category15);
 
-            Item item7 = new Item("itemName7", 10000, 100, seller7, category7);
+            Item item7 = new Item("item Name7", 10000, 100, seller7, category7);
             Item item8 = new Item("itemName8", 10000, 100, seller8, category8);
-            Item item9 = new Item("itemName9", 10000, 100, seller9, category9);
-            Item item10 = new Item("itemName10", 10000, 100, seller10, category10);
-            Item item11 = new Item("itemName11", 10000, 100, seller11, category11);
-            Item item12 = new Item("itemName12", 10000, 100, seller12, category12);
-            Item item13 = new Item("itemName13", 10000, 100, seller13, category13);
-            Item item14 = new Item("itemName14", 10000, 100, seller14, category14);
-            Item item15 = new Item("itemName15", 10000, 100, seller15, category15);
+            Item item9 = new Item("item Name9", 10000, 100, seller9, category9);
+            Item item10 = new Item("itemN ame10", 10000, 100, seller10, category10);
+            Item item11 = new Item("item Name11", 10000, 100, seller11, category11);
+            Item item12 = new Item("아이 템", 10000, 100, seller12, category12);
+            Item item13 = new Item("아이템입니다", 10000, 100, seller13, category13);
+            Item item14 = new Item("아이템 이다", 10000, 100, seller14, category14);
+            Item item15 = new Item("아 이 템", 10000, 100, seller15, category15);
 
             em.persist(item7);
             em.persist(item8);
@@ -214,8 +218,17 @@ public class InitDB {
             em.persist(item14);
             em.persist(item15);
 
-            this.item3 = item3;
-            this.item4 = item4;
+            itemSearchRepository.deleteAll();
+            itemSearchRepository.save(new ItemSearchDto(item7.getId(), item7.getName(), item7.getItemPrice(), item7.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item8.getId(), item8.getName(), item8.getItemPrice(), item8.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item9.getId(), item9.getName(), item9.getItemPrice(), item9.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item10.getId(), item10.getName(), item10.getItemPrice(), item10.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item11.getId(), item11.getName(), item11.getItemPrice(), item11.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item12.getId(), item12.getName(), item12.getItemPrice(), item12.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item13.getId(), item13.getName(), item13.getItemPrice(), item13.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item14.getId(), item14.getName(), item14.getItemPrice(), item14.getCategory().getName()));
+            itemSearchRepository.save(new ItemSearchDto(item15.getId(), item15.getName(), item15.getItemPrice(), item15.getCategory().getName()));
+
         }
 
         public void reviewInit() {

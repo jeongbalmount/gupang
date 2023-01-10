@@ -19,8 +19,9 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 public class FixCoupon extends Coupon {
 
-    public FixCoupon(Member member, Item item, LocalDateTime expireDate, String couponType, int discountAmount) {
-        super(member, item, expireDate, couponType);
+    public FixCoupon(Member member, Item item, LocalDateTime expireDate, String couponType, int discountAmount,
+                     String couponName) {
+        super(member, item, expireDate, couponType, couponName);
         super.setDiscountAmount(discountAmount);
     }
 

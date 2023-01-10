@@ -4,12 +4,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import shoppingMall.gupang.domain.Item;
-import shoppingMall.gupang.domain.Member;
+import org.springframework.data.elasticsearch.annotations.Setting;
 import shoppingMall.gupang.exception.coupon.AlreadyCouponUsedException;
 import shoppingMall.gupang.exception.coupon.CouponExpiredException;
 
@@ -21,10 +19,13 @@ import static org.springframework.data.elasticsearch.annotations.DateFormat.epoc
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(indexName = "fixcoupon")
+@Setting(settingPath = "elastic/fixcoupon-setting.json")
 public class FixCoupon {
 
     @Id
     private String id;
+
+    private String couponname;
 
     private Long memberid;
 
@@ -37,11 +38,12 @@ public class FixCoupon {
 
     private int discountamount;
 
-    public FixCoupon(Long member_id, Long item_id, LocalDateTime expireDate, int discountAmount) {
+    public FixCoupon(Long member_id, Long item_id, LocalDateTime expireDate, int discountAmount, String couponname) {
         this.memberid = member_id;
         this.itemid = item_id;
         this.expiredate = expireDate;
         this.discountamount = discountAmount;
+        this.couponname = couponname;
     }
 
     public void useCoupon() {

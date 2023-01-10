@@ -22,4 +22,7 @@ public class OrderCouponDto {
     @NotNull
     private List<Long> couponIds;
 
+    @NotNull
+    private List<Long> deliveryCouponIds;
+
 }

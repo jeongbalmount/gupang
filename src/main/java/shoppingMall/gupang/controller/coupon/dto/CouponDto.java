@@ -20,4 +20,6 @@ public class CouponDto {
 
     private String couponType;
 
+    private String couponName;
+
 }

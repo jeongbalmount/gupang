@@ -13,16 +13,17 @@ import shoppingMall.gupang.controller.order.dto.OrderReturnDto;
 import shoppingMall.gupang.discount.DiscountPolicy;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
+import shoppingMall.gupang.domain.coupon.DeliveryCoupon;
 import shoppingMall.gupang.domain.enums.DeliveryStatus;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.order.AlreadyCanceledOrderException;
-import shoppingMall.gupang.exception.order.AlreadyDeliveredException;
 import shoppingMall.gupang.exception.order.KeyAttemptFailException;
 import shoppingMall.gupang.exception.order.NoOrderException;
 import shoppingMall.gupang.redis.facade.LettuceLockStockFacade;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
+import shoppingMall.gupang.repository.coupon.DeliveryCouponRepository;
 import shoppingMall.gupang.repository.delivery.DeliveryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
@@ -33,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static shoppingMall.gupang.domain.OrderStatus.CANCEL;
-import static shoppingMall.gupang.domain.enums.DeliveryStatus.DELIVERED;
 import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 
 @Service
@@ -41,7 +41,6 @@ import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 @RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService {
-
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final MemberRepository memberRepository;
@@ -49,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
     private final DiscountPolicy discountPolicy;
     private final DeliveryRepository deliveryRepository;
     private final CouponRepository couponRepository;
+    private final DeliveryCouponRepository deliveryCouponRepository;
     private final LettuceLockStockFacade lettuceLockStockFacade;
 
     @Override
@@ -119,8 +119,9 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
 
         List<Coupon> coupons = getCoupons(dto.getCouponIds(), member);
+        List<DeliveryCoupon> deliveryCoupons = getDeliveryCoupons(dto.getDeliveryCouponIds(), member);
 
-        getOrderItemsWithCoupons(dto.getOrderItemDtos(), coupons, isMemberShip, orderItems);
+        getOrderItemsWithCoupons(dto.getOrderItemDtos(), coupons,deliveryCoupons, isMemberShip, orderItems);
 
         Order order = Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip, OrderStatus.ORDER,
                 orderItems);
@@ -130,6 +131,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private List<Coupon> getCoupons(List<Long> couponIds, Member member) {
+        // 멤버가 갖고 있는 쿠폰인지 매칭하고 갖고 있는 쿠폰이라면 coupons 리스트에 추가하기
         List<Coupon> memberCoupons = couponRepository.findByMember(member);
         List<Coupon> coupons = new ArrayList<>();
         for (Coupon memberCoupon : memberCoupons) {
@@ -141,8 +143,21 @@ public class OrderServiceImpl implements OrderService {
         return coupons;
     }
 
+    private List<DeliveryCoupon> getDeliveryCoupons(List<Long> deliveryCouponIds, Member member){
+        List<DeliveryCoupon> memberDeliveryCoupons = deliveryCouponRepository.findByMember(member);
+        List<DeliveryCoupon> deliveryCoupons = new ArrayList<>();
+        for (DeliveryCoupon memberDeliveryCoupon : memberDeliveryCoupons) {
+            if (deliveryCouponIds.contains(memberDeliveryCoupon.getId())){
+                memberDeliveryCoupon.checkCouponValid();
+                deliveryCoupons.add(memberDeliveryCoupon);
+            }
+        }
+        return deliveryCoupons;
+    }
+
     private void getOrderItemsWithCoupons(List<OrderItemDto> dtos, List<Coupon> coupons,
-                                          IsMemberShip isMemberShip, List<OrderItem> orderItems) {
+                                          List<DeliveryCoupon> deliveryCoupons, IsMemberShip isMemberShip,
+                                          List<OrderItem> orderItems) {
 
         for (OrderItemDto dto : dtos) {
             Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
@@ -165,6 +180,18 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
             }
+
+            if (deliveryCoupons.size() == 0) {
+                totalItemPrice += 3000;
+            } else {
+                for (DeliveryCoupon deliveryCoupon : deliveryCoupons) {
+                    if (!deliveryCoupon.getUsed()) {
+                        deliveryCoupon.useCoupon();
+                        break;
+                    }
+                }
+            }
+
 
             OrderItem orderItem = OrderItem.createOrderItem(item,
                     getMembershipDiscountedPrice(isMemberShip, totalItemPrice),

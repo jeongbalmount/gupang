@@ -8,13 +8,17 @@ import shoppingMall.gupang.controller.coupon.dto.CouponMemberDto;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.coupon.Coupon;
+import shoppingMall.gupang.domain.coupon.DeliveryCoupon;
 import shoppingMall.gupang.domain.coupon.FixCoupon;
 import shoppingMall.gupang.domain.coupon.PercentCoupon;
+import shoppingMall.gupang.elasticsearch.coupon.repository.FixCouponRepository;
+import shoppingMall.gupang.elasticsearch.coupon.repository.PercentCouponRepository;
 import shoppingMall.gupang.exception.coupon.CouponExpireException;
 import shoppingMall.gupang.exception.coupon.NoCouponTypeException;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
+import shoppingMall.gupang.repository.coupon.DeliveryCouponRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.member.MemberRepository;
 
@@ -29,6 +33,7 @@ import java.util.Optional;
 public class CouponServiceImpl implements CouponService{
 
     private final CouponRepository couponRepository;
+    private final DeliveryCouponRepository deliveryCouponRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
 
@@ -58,10 +63,10 @@ public class CouponServiceImpl implements CouponService{
         Coupon coupon;
         if (couponDto.getCouponType().equals("Fix")) {
             coupon = new FixCoupon(member, item, couponDto.getExpireDate(),"Fix",
-                    couponDto.getDiscountAmount());
+                    couponDto.getDiscountAmount(), couponDto.getCouponName());
         } else if (couponDto.getCouponType().equals("Percent")) {
             coupon = new PercentCoupon(member, item, couponDto.getExpireDate(), "Percent",
-                    couponDto.getDiscountAmount());
+                    couponDto.getDiscountAmount(), couponDto.getCouponName());
         } else {
             throw new NoCouponTypeException("해당하는 쿠폰 타입이 없습니다.");
         }
@@ -79,15 +84,24 @@ public class CouponServiceImpl implements CouponService{
         }
 
         List<CouponMemberDto> couponMemberDtos = new ArrayList<>();
-        couponRepository.findCouponByMemberWithItem(memberId);
-        return transformToDto(couponMemberDtos, couponRepository.findCouponByMemberWithItem(memberId));
+        return transformToDto(couponMemberDtos, couponRepository.findCouponByMemberWithItem(memberId),
+                deliveryCouponRepository.findByMember(member));
     }
 
-    private List<CouponMemberDto> transformToDto(List<CouponMemberDto> dtoList, List<Coupon> coupons) {
+    private List<CouponMemberDto> transformToDto(List<CouponMemberDto> dtoList, List<Coupon> coupons,
+                                                 List<DeliveryCoupon> deliveryCoupons) {
         for (Coupon c : coupons) {
             if (!c.getUsed()) {
                 CouponMemberDto dto = new CouponMemberDto(c.getId(), c.getItem().getName(),
-                        c.getCouponType(), c.getDiscountAmount(), c.getExpireDate());
+                        c.getCouponType(), c.getDiscountAmount(), c.getExpireDate(), c.getCouponName());
+                dtoList.add(dto);
+            }
+        }
+        for (DeliveryCoupon deliveryCoupon : deliveryCoupons) {
+            if (!deliveryCoupon.getUsed()) {
+                CouponMemberDto dto = new CouponMemberDto(deliveryCoupon.getId(), "배송비무료",
+                        "Delivery", 3000,
+                        deliveryCoupon.getExpireDate(), "배송비쿠폰");
                 dtoList.add(dto);
             }
         }
