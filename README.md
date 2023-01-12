@@ -39,17 +39,17 @@
 <img width="596" alt="스크린샷 2022-11-01 오후 9 39 35" src="https://user-images.githubusercontent.com/52123195/199235086-74093c53-1d9b-41f4-8ce7-f0d76114ae94.png">
 
   ### 개요
-  - member를 통해 회원 가입, 로그인, 회원 정보 관리를 하고 상품은 item으로 관리한다.
-  - 회원은 item을 주문 및 검색할 수 있고, 주문 시 연결 테이블인 orderItem 테이블과 배송을 위한 delivery 테이블을 같이 생성한다.
-  - 또한 주문시 회원이 갖고 있는 상품에 맞는 쿠폰을 적용해 할인된 가격으로 상품을 구매할 수 있다.
-  - item은 category로 정리 되어 있고, seller가 파는 item들만 따로 확인할 수 있다.
-  - 회원이 카트에 담아 놓은 상품과 상품의 수량은 cartItem을 통해 볼 수 있다.
+  - member를 통해 회원 가입, 로그인, 회원 정보 관리를 하고 상품은 item으로 관리합니다.
+  - 회원은 item을 주문 및 검색할 수 있고, 주문 시 연결 테이블인 orderItem 테이블과 배송을 위한 delivery 테이블을 같이 생성합니다.
+  - 또한 주문시 회원이 갖고 있는 상품에 맞는 쿠폰을 적용해 할인된 가격으로 상품을 구매할 수 있습니다.
+  - item은 category로 정리 되어 있고, seller가 파는 item들만 따로 확인할 수 있습니다.
+  - 회원이 카트에 담아 놓은 상품과 상품의 수량은 cartItem을 통해 볼 수 있습니다.
   
   ### DB
-  - order와 item은 다대다 관계이다. sql 방식으로 다대다 관계를 표현하기 어렵기 때문에 order_item 테이블을 만들어 1대다, 다대1 방식으로 풀어 설계했다.
-  - coupon 검증시 coupon은 member 쿠폰 정보와 item 쿠폰 정보를 참고하고, review는 member가 작성한 review들, item에 작성된 review들을 불러오기 위해 member와 item 정보를 이용한다.
-  - member는 cartItem을 이용해 cart에 담겨있는 item, 그리고 item의 수량을 참조한다.
-  - member의 name에 인덱스를 걸어 member 검색시에 속도를 빠르게 한다.
+  - order와 item은 다대다 관계이다. sql 방식으로 다대다 관계를 표현하기 어렵기 때문에 order_item 테이블을 만들어 1대다, 다대1 방식으로 풀어 설계했습니다.
+  - coupon 검증시 coupon은 member 쿠폰 정보와 item 쿠폰 정보를 참고하고, review는 member가 작성한 review들, item에 작성된 review들을 불러오기 위해 member와 item 정보를 이용합니다.
+  - member는 cartItem을 이용해 cart에 담겨있는 item, 그리고 item의 수량을 참조합니다.
+  - member의 email과 name에 인덱스를 걸어 member 검색시에 속도를 빠르게 합니다.
 
 ## API 구조
 
