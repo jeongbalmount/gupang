@@ -50,10 +50,6 @@
   - coupon 검증시 coupon은 member 쿠폰 정보와 item 쿠폰 정보를 참고하고, review는 member가 작성한 review들, item에 작성된 review들을 불러오기 위해 member와 item 정보를 이용한다.
   - member는 cartItem을 이용해 cart에 담겨있는 item, 그리고 item의 수량을 참조한다.
   - member의 name에 인덱스를 걸어 member 검색시에 속도를 빠르게 한다.
-  
-  ### 그외
-  - jpa 및 spring data jpa를 사용해 객체와 sql 간에 차이를 극복하여 데이터베이스를 더 빠르고 직관적으로 설계할 수 있었다.
-  - Querydsl을 사용해 긴 쿼리 문장도 런타임 에러 없이 작성하였다. 또한 쿼리 코드를 이해하기가 훨씬 쉬워졌다.
 
 ## API 구조
 
