@@ -46,7 +46,7 @@
   - 회원이 카트에 담아 놓은 상품과 상품의 수량은 cartItem을 통해 볼 수 있습니다.
   
   ### DB
-  - order와 item은 다대다 관계이다. sql 방식으로 다대다 관계를 표현하기 어렵기 때문에 order_item 테이블을 만들어 1대다, 다대1 방식으로 풀어 설계했습니다.
+  - order와 item은 다대다 관계입니다. sql 방식으로 다대다 관계를 표현하기 어렵기 때문에 order_item 테이블을 만들어 1대다, 다대1 방식으로 풀어 설계했습니다.
   - coupon 검증시 coupon은 member 쿠폰 정보와 item 쿠폰 정보를 참고하고, review는 member가 작성한 review들, item에 작성된 review들을 불러오기 위해 member와 item 정보를 이용합니다.
   - member는 cartItem을 이용해 cart에 담겨있는 item, 그리고 item의 수량을 참조합니다.
   - member의 email과 name에 인덱스를 걸어 member 검색시에 속도를 빠르게 합니다.
