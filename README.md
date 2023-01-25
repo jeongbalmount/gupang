@@ -53,6 +53,7 @@ Spring 프레임워크를 이용하여 만든 쇼핑몰 백엔드 프로젝트�
   - member의 email과 name에 인덱스를 걸어 member 검색시에 속도를 빠르게 합니다.
 
 ## API 구조
+<details>
 
   ### Member
   |Method|URL|Desc.|
@@ -115,7 +116,7 @@ Spring 프레임워크를 이용하여 만든 쇼핑몰 백엔드 프로젝트�
   |GET|/seller/{sellerId}|판매자가 판매하는 상품 불러오기|
   |POST|/seller/add|새로운 판매자 생성|
   |PATCH|/seller|판매자 정보 수정|
-  
+</details>
 
 ## AWS 구조
 
