@@ -57,8 +57,8 @@ Spring 프레임워크를 이용하여 만든 쇼핑몰 백엔드 프로젝트�
   ### Member
   |Method|URL|Desc.|
   |------|---|---|
-  |POST|/member/checkId|중복되는 아이디 확인|
-  |POST|/member/signup|회원가입|
+  |GET|/member|중복되는 아이디 확인|
+  |POST|/member|회원가입|
   
   ### Login
   |Method|URL|Desc.|
@@ -70,7 +70,7 @@ Spring 프레임워크를 이용하여 만든 쇼핑몰 백엔드 프로젝트�
   |Method|URL|Desc.|
   |------|---|---|
   |GET|/cart/{memberId}|회원의 카트 상품 목록 불러오기|
-  |POST|/cart/add|카트에 새로운 물품 등록|
+  |POST|/cart|카트에 새로운 물품 등록|
   |PATCH|/cart|카트에 물품 개수 업데이트|
   |DELETE|/cart|카트에 물품 삭제|
   
