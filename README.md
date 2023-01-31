@@ -8,7 +8,7 @@ Spring 프레임워크를 이용하여 만든 쇼핑몰 백엔드 프로젝트�
 ## 사용한 기술 및 클라우드
 
   - 언어 및 프레임워크: `JAVA`, `Spring`, `Springboot`
-    - JAVA 11, Springframeword boot 2.7.2 사용
+    - JAVA 17, Springframeword boot 2.7.2 사용
     
 - 클라우드 서비스: `AWS EC2`, `AWS ELB`, `AWS RDS`, `AWS Elasticache`
     - AWS EC2 클라우드 사용
