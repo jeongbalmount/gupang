@@ -11,8 +11,6 @@ import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.domain.coupon.DeliveryCoupon;
 import shoppingMall.gupang.domain.coupon.FixCoupon;
 import shoppingMall.gupang.domain.coupon.PercentCoupon;
-import shoppingMall.gupang.elasticsearch.coupon.repository.FixCouponRepository;
-import shoppingMall.gupang.elasticsearch.coupon.repository.PercentCouponRepository;
 import shoppingMall.gupang.exception.coupon.CouponExpireException;
 import shoppingMall.gupang.exception.coupon.NoCouponTypeException;
 import shoppingMall.gupang.exception.item.NoItemException;

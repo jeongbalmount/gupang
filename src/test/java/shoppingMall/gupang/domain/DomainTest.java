@@ -3,13 +3,13 @@ package shoppingMall.gupang.domain;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.domain.*;
-import shoppingMall.gupang.exception.NotEnoughStockException;
+import shoppingMall.gupang.domain.enums.DeliveryStatus;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
+import shoppingMall.gupang.exception.item.NotEnoughStockException;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -82,7 +82,7 @@ public class DomainTest {
         em.persist(seller);
         em.persist(category);
         em.persist(item);
-        OrderItem orderItem = OrderItem.createOrderItem(item, item.getItemPrice(), 10);
+        OrderItem orderItem = OrderItem.createOrderItem(item, item.getItemPrice(), 10, 0);
         em.persist(orderItem);
     }
 
@@ -101,9 +101,9 @@ public class DomainTest {
         em.persist(seller);
         em.persist(category);
         em.persist(item);
-        OrderItem orderItem1 = OrderItem.createOrderItem(item, item.getItemPrice(), 1);
+        OrderItem orderItem1 = OrderItem.createOrderItem(item, item.getItemPrice(), 1,0);
         em.persist(orderItem1);
-        OrderItem orderItem2 = OrderItem.createOrderItem(item, item.getItemPrice(), 2);
+        OrderItem orderItem2 = OrderItem.createOrderItem(item, item.getItemPrice(), 2,0);
         em.persist(orderItem2);
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -126,7 +126,7 @@ public class DomainTest {
         em.persist(item);
 
         Assertions.assertThrows(NotEnoughStockException.class,
-                () -> OrderItem.createOrderItem(item, item.getItemPrice(), 100));
+                () -> OrderItem.createOrderItem(item, item.getItemPrice(), 100,0));
     }
 
 

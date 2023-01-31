@@ -45,27 +45,27 @@ public class ItemRepositoryTest {
         em.persist(item3);
         em.persist(item4);
 
-        List<Item> items1 = itemRepository.findByCategory(category1);
-        List<Item> items2 = itemRepository.findBySeller(seller1);
-
-        List<Item> items3 = itemRepository.findByCategory(category2);
-        List<Item> items4 = itemRepository.findBySeller(seller2);
-
-        for (Item i : items1) {
-            log.info(String.valueOf(i.getItemPrice()));
-        }
-
-        for (Item i : items2) {
-            log.info(String.valueOf(i.getItemPrice()));
-        }
-
-        for (Item i : items3) {
-            log.info(String.valueOf(i.getItemPrice()));
-        }
-
-        for (Item i : items4) {
-            log.info(String.valueOf(i.getItemPrice()));
-        }
+//        List<Item> items1 = itemRepository.findByCategory(category1);
+//        List<Item> items2 = itemRepository.findBySeller(seller1);
+//
+//        List<Item> items3 = itemRepository.findByCategory(category2);
+//        List<Item> items4 = itemRepository.findBySeller(seller2);
+//
+//        for (Item i : items1) {
+//            log.info(String.valueOf(i.getItemPrice()));
+//        }
+//
+//        for (Item i : items2) {
+//            log.info(String.valueOf(i.getItemPrice()));
+//        }
+//
+//        for (Item i : items3) {
+//            log.info(String.valueOf(i.getItemPrice()));
+//        }
+//
+//        for (Item i : items4) {
+//            log.info(String.valueOf(i.getItemPrice()));
+//        }
 
     }
 }

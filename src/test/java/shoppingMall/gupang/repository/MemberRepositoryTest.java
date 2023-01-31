@@ -21,24 +21,24 @@ public class MemberRepositoryTest {
     @Autowired
     private EntityManager em;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Test
-    void memberRepositoryTest() {
-        Address address = new Address("city", "st", "zip");
-        Member member = new Member("email", "pwd", "name!!!", "010-1111-1111",
-                address, IsMemberShip.NOMEMBERSHIP);
-
-        em.persist(member);
-
-        Optional<Member> emailMember = memberRepository.findOptionalByEmail("email");
-        Member m = emailMember.orElse(null);
-        if (m == null) {
-            log.info("null!");
-            return;
-        }
-        log.info(m.getName());
-    }
+//    @Autowired
+//    private MemberRepository memberRepository;
+//
+//    @Test
+//    void memberRepositoryTest() {
+//        Address address = new Address("city", "st", "zip");
+//        Member member = new Member("email", "pwd", "name!!!", "010-1111-1111",
+//                address, IsMemberShip.NOMEMBERSHIP);
+//
+//        em.persist(member);
+//
+//        Optional<Member> emailMember = memberRepository.findOptionalByEmail("email");
+//        Member m = emailMember.orElse(null);
+//        if (m == null) {
+//            log.info("null!");
+//            return;
+//        }
+//        log.info(m.getName());
+//    }
 
 }

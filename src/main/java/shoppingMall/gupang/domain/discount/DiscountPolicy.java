@@ -1,4 +1,4 @@
-package shoppingMall.gupang.discount;
+package shoppingMall.gupang.domain.discount;
 
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 

@@ -1,0 +1,92 @@
+// 1. queryDsl version 정보 추가
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
+
+plugins {
+	id 'org.springframework.boot' version '2.7.2'
+	id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+	// 2. querydsl plugins 추가
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	id 'java'
+}
+
+group = 'shoppingMall'
+version = '0.2.2-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// 3. querydsl dependencies 추가
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'mysql:mysql-connector-java'
+
+	implementation 'org.redisson:redisson-spring-boot-starter:3.18.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// spring에서 redis를 session storage로 사용하기 위한 의존성
+	implementation 'org.springframework.session:spring-session-data-redis'
+	testImplementation 'it.ozimov:embedded-redis:0.7.2'
+
+	implementation 'org.springframework.data:spring-data-elasticsearch:4.4.0'
+
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
+
+//	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// querydsl에서 사용할 경로 설정
+def querydslDir = "$buildDir/generated/querydsl"
+// JPA 사용 여부와 사용할 경로를 설정
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+// build 시 사용할 sourceSet 추가
+sourceSets {
+	main.java.srcDir querydslDir
+}
+// querydsl 컴파일시 사용할 옵션 설정
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+// querydsl 이 compileClassPath 를 상속하도록 설정
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+test {
+	exclude '**/*'
+}
+

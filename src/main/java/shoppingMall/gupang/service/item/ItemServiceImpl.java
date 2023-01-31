@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService{
@@ -36,7 +36,6 @@ public class ItemServiceImpl implements ItemService{
     private final ItemSearchRepository itemSearchRepository;
 
     @Override
-    @Transactional
     public void saveItem(ItemDto itemDto) {
 
         Optional<Seller> optionalSeller = sellerRepository.findById(itemDto.getSeller_id());
@@ -59,6 +58,7 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemSearchDto> findItemByName(String subString) {
         List<ItemSearchDto> items = itemSearchRepository.findByItemname(subString);
         log.info(String.valueOf(items.size()));
@@ -68,9 +68,9 @@ public class ItemServiceImpl implements ItemService{
         return items;
     }
 
-    @Transactional
     @Override
     public void decreaseQuantity(Long id, int quantity) {
+//        Optional<Item> optionalItem = itemRepository.findByIdWithOptimisticLock(id);
         Optional<Item> optionalItem = itemRepository.findById(id);
         Item item = optionalItem.orElse(null);
         if (item == null) {
@@ -79,7 +79,6 @@ public class ItemServiceImpl implements ItemService{
         item.removeStock(quantity);
     }
 
-    @Transactional
     @Override
     public void increaseQuantity(Long id, int quantity) {
         Optional<Item> optionalItem = itemRepository.findById(id);

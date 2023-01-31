@@ -10,7 +10,7 @@ import shoppingMall.gupang.controller.order.dto.OrderCouponDto;
 import shoppingMall.gupang.controller.order.dto.OrderDto;
 import shoppingMall.gupang.controller.order.dto.OrderItemDto;
 import shoppingMall.gupang.controller.order.dto.OrderReturnDto;
-import shoppingMall.gupang.discount.DiscountPolicy;
+import shoppingMall.gupang.domain.discount.DiscountPolicy;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.domain.coupon.DeliveryCoupon;
@@ -21,7 +21,7 @@ import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.order.AlreadyCanceledOrderException;
 import shoppingMall.gupang.exception.order.KeyAttemptFailException;
 import shoppingMall.gupang.exception.order.NoOrderException;
-import shoppingMall.gupang.redis.facade.LettuceLockStockFacade;
+import shoppingMall.gupang.redis.facade.RedissonLockStockFacade;
 import shoppingMall.gupang.repository.coupon.CouponRepository;
 import shoppingMall.gupang.repository.coupon.DeliveryCouponRepository;
 import shoppingMall.gupang.repository.delivery.DeliveryRepository;
@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     private final DeliveryRepository deliveryRepository;
     private final CouponRepository couponRepository;
     private final DeliveryCouponRepository deliveryCouponRepository;
-    private final LettuceLockStockFacade lettuceLockStockFacade;
+    private final RedissonLockStockFacade redissonLockStockFacade;
 
     @Override
     public Long order(Address address, OrderDto dto) {
@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void decreaseItemQuantity(Long itemId, int quantity) {
         try {
-            lettuceLockStockFacade.decrease(itemId, quantity);
+            redissonLockStockFacade.decrease(itemId, quantity);
         } catch (Exception e) {
             throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
         }
@@ -99,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void increaseItemQuantity(Long itemId, int quantity) {
         try {
-            lettuceLockStockFacade.increase(itemId, quantity);
+            redissonLockStockFacade.increase(itemId, quantity);
         } catch (Exception e) {
             throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
         }

@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(indexes = @Index(name = "memberIndex", columnList = "email"))
+@Table(indexes = @Index(name = "memberIndex", columnList = "email, name"))
 public class Member {
 
     @Id @GeneratedValue(strategy = IDENTITY)

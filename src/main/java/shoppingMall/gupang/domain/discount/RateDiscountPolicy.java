@@ -1,4 +1,4 @@
-package shoppingMall.gupang.discount;
+package shoppingMall.gupang.domain.discount;
 
 import org.springframework.stereotype.Component;
 import shoppingMall.gupang.domain.enums.IsMemberShip;

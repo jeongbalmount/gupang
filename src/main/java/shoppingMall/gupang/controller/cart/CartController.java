@@ -65,7 +65,7 @@ public class CartController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 존재하지 않음")
     })
     @Parameter(content = @Content(schema = @Schema(implementation = CartItemMemberItemDto.class)))
-    @PostMapping("/add")
+    @PostMapping
     public void addCartItem(@RequestBody CartItemMemberItemDto cartItemMemberItemDto) {
         cartService.addCartItem(cartItemMemberItemDto.getMemberId(), cartItemMemberItemDto.getItemId(),
                 cartItemMemberItemDto.getCount());

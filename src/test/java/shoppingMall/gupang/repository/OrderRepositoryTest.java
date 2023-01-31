@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.domain.*;
+import shoppingMall.gupang.domain.enums.DeliveryStatus;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.repository.order.OrderRepository;
 
 import javax.persistence.EntityManager;
@@ -46,9 +48,9 @@ public class OrderRepositoryTest {
         em.persist(item1);
         em.persist(item2);
         em.persist(item3);
-        OrderItem orderItem1 = OrderItem.createOrderItem(item1, item1.getItemPrice(), 1000);
-        OrderItem orderItem2 = OrderItem.createOrderItem(item2, item2.getItemPrice(), 2000);
-        OrderItem orderItem3 = OrderItem.createOrderItem(item3, item3.getItemPrice(), 3000);
+        OrderItem orderItem1 = OrderItem.createOrderItem(item1, item1.getItemPrice(), 1000, 0);
+        OrderItem orderItem2 = OrderItem.createOrderItem(item2, item2.getItemPrice(), 2000,0);
+        OrderItem orderItem3 = OrderItem.createOrderItem(item3, item3.getItemPrice(), 3000,0);
         em.persist(orderItem1);
         em.persist(orderItem2);
         em.persist(orderItem3);
@@ -71,13 +73,13 @@ public class OrderRepositoryTest {
     @Test
     void orderRepositoryTest() {
         // 로그에 update가 뜨는 이유는 createOrder에서 orderItem 추가 및 orderItem에 order 등록하는 과정 때문
-        List<Order> orders = orderRepository.findOrderWithItems(order.getId());
-//        Order order = orders.get(0);
-//        List<OrderItem> orderItems = order.getOrderItems();
-//        for (OrderItem oi : orderItems) {
-//            log.info(String.valueOf(oi.getItemPrice()));
-//        }
+        List<Order> orders = orderRepository.findOrderWithDelivery(order.getId());
+        Order order = orders.get(0);
+        List<OrderItem> orderItems = order.getOrderItems();
+        for (OrderItem oi : orderItems) {
+            log.info(String.valueOf(oi.getItemPrice()));
+        }
 
-//        orderRepository.findOrderWithDelivery(order.getId());
+        orderRepository.findOrderWithDelivery(order.getId());
     }
 }

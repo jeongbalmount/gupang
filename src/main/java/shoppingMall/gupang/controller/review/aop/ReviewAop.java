@@ -23,22 +23,11 @@ public class ReviewAop {
 
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
-//        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-//        Method method = methodSignature.getMethod();
-//        Object[] args = joinPoint.getArgs();
-//        log.info("Method name={}", method.getName());
         startTime = System.currentTimeMillis();
-
-//        for (Object arg : args) {
-//            log.info("type={}", arg.getClass().getSimpleName());
-//            log.info("value={}", arg);
-//        }
     }
 
     @AfterReturning(value = "pointCut()", returning = "obj")
     public void afterReturning(JoinPoint joinPoint, Object obj) {
-
-//        log.info((String) obj);
         long endTime = System.currentTimeMillis();
 
         if ((endTime-startTime) >= 50) {
