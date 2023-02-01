@@ -120,7 +120,7 @@ Spring 프레임워크를 이용하여 만든 쇼핑몰 백엔드 프로젝트�
 
 ## AWS 구조
 
-<img width="360" alt="스크린샷 2022-11-01 오후 7 41 30" src="https://user-images.githubusercontent.com/52123195/199496831-2211e41d-c233-4580-b740-ff9b6e4305ba.png">
+![스크린샷 2023-02-01 오후 9 04 21](https://user-images.githubusercontent.com/52123195/216037874-6d3666e5-575c-4d0e-b9fd-4ddd1983d269.png)
 
 - Elb를 사용하여 오토 스케일링을 구현했다. 그렇기 때문에 서버 사용량이 많아져도 수동으로 새로운 서버를 할당할 필요 없이 서버가 할당된다.
 - 캐시서버는 Aws Elasticache를 사용하였고 Elasticache 2개를 띄워 캐시 서버와 세션 서버를 분리했다.
