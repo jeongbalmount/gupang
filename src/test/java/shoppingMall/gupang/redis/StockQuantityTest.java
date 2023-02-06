@@ -11,6 +11,7 @@ import shoppingMall.gupang.redis.facade.RedissonLockStockFacade;
 import shoppingMall.gupang.repository.category.CategoryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.seller.SellerRepository;
+import shoppingMall.gupang.service.item.ItemService;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 public class StockQuantityTest {
 
+    @Autowired
+    private ItemService itemService;
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
@@ -62,7 +65,28 @@ public class StockQuantityTest {
     }
 
     @Test
-    void 동시에_100개의_요청() throws InterruptedException {
+    void 동시에_100개의_요청_캐시사용_X() throws InterruptedException {
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    itemService.decreaseQuantity(theItem.getId(), 1);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        Item item2 = itemRepository.findById(theItem.getId()).orElseThrow();
+        assertEquals(0, item2.getItemQuantity());
+    }
+
+    @Test
+    void 동시에_100개의_요청_캐시사용() throws InterruptedException {
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(threadCount);

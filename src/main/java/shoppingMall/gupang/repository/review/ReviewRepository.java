@@ -8,11 +8,8 @@ import shoppingMall.gupang.domain.Review;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom {
 
     List<Review> findByMember(Member member);
-    List<Review> findByItem(Item item);
-//    List<Review> findTop5ByItemOrderByGoodBtnCountDesc(Item item);
     List<Review> findByItemAndLikeLessThan(Item item, int like);
-    Long countBy();
 }

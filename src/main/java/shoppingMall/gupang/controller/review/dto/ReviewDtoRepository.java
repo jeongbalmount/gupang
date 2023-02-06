@@ -11,16 +11,6 @@ public interface ReviewDtoRepository extends CrudRepository<ReviewItemDto, Long>
 
     List<ReviewItemDto> findByItemIdOrderByLikeDesc(Long itemId);
 
-    List<ReviewItemDto> findTop5ByItemIdOrderByLike(Long itemId);
-
-    List<ReviewItemDto> findReviewItemDtoByItemId(Long itemId);
-
-    List<ReviewItemDto> findTop5ByItemIdOrderByLikeDesc(Long itemId);
-
     List<ReviewItemDto> findFirst5ByItemIdOrderByLikeDesc(Long itemId);
-
-    List<ReviewItemDto> findTop5ByItemId(Long itemId);
-
-    Page<ReviewItemDto> findByItemIdOrderByLikeDesc(Long itemId, Pageable pageable);
 
 }

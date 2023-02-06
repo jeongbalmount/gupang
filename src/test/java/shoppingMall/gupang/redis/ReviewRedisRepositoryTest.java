@@ -51,16 +51,16 @@ public class ReviewRedisRepositoryTest {
 
         List<Review> reviews = makeReviews(item);
 
-        ReviewItemDto reviewItemDto1 = new ReviewItemDto(reviews.get(0).getId(), item.getId(), reviews.get(0).getTitle(), reviews.get(0).getContents(), reviews.get(0).getLike());
-        ReviewItemDto reviewItemDto2 = new ReviewItemDto(reviews.get(1).getId(), item.getId(), reviews.get(1).getTitle(), reviews.get(1).getContents(), reviews.get(1).getLike());
-        ReviewItemDto reviewItemDto3 = new ReviewItemDto(reviews.get(2).getId(), item.getId(), reviews.get(2).getTitle(), reviews.get(2).getContents(), reviews.get(2).getLike());
-        ReviewItemDto reviewItemDto4 = new ReviewItemDto(reviews.get(3).getId(), item.getId(), reviews.get(3).getTitle(), reviews.get(3).getContents(), reviews.get(3).getLike());
-        ReviewItemDto reviewItemDto5 = new ReviewItemDto(reviews.get(4).getId(), item.getId(), reviews.get(4).getTitle(), reviews.get(4).getContents(), reviews.get(4).getLike());
-        ReviewItemDto reviewItemDto6 = new ReviewItemDto(reviews.get(5).getId(), item.getId(), reviews.get(5).getTitle(), reviews.get(5).getContents(), reviews.get(5).getLike());
-        ReviewItemDto reviewItemDto7 = new ReviewItemDto(reviews.get(6).getId(), item.getId(), reviews.get(6).getTitle(), reviews.get(6).getContents(), reviews.get(6).getLike());
-        ReviewItemDto reviewItemDto8 = new ReviewItemDto(reviews.get(7).getId(), item.getId(), reviews.get(7).getTitle(), reviews.get(7).getContents(), reviews.get(7).getLike());
-        ReviewItemDto reviewItemDto9 = new ReviewItemDto(reviews.get(8).getId(), item.getId(), reviews.get(8).getTitle(), reviews.get(8).getContents(), reviews.get(8).getLike());
-        ReviewItemDto reviewItemDto10 = new ReviewItemDto(reviews.get(9).getId(), item.getId(), reviews.get(9).getTitle(), reviews.get(9).getContents(), reviews.get(9).getLike());
+        ReviewItemDto reviewItemDto1 = new ReviewItemDto(reviews.get(0).getId(), item.getId(), reviews.get(0).getTitle(), reviews.get(0).getContent(), reviews.get(0).getLike());
+        ReviewItemDto reviewItemDto2 = new ReviewItemDto(reviews.get(1).getId(), item.getId(), reviews.get(1).getTitle(), reviews.get(1).getContent(), reviews.get(1).getLike());
+        ReviewItemDto reviewItemDto3 = new ReviewItemDto(reviews.get(2).getId(), item.getId(), reviews.get(2).getTitle(), reviews.get(2).getContent(), reviews.get(2).getLike());
+        ReviewItemDto reviewItemDto4 = new ReviewItemDto(reviews.get(3).getId(), item.getId(), reviews.get(3).getTitle(), reviews.get(3).getContent(), reviews.get(3).getLike());
+        ReviewItemDto reviewItemDto5 = new ReviewItemDto(reviews.get(4).getId(), item.getId(), reviews.get(4).getTitle(), reviews.get(4).getContent(), reviews.get(4).getLike());
+        ReviewItemDto reviewItemDto6 = new ReviewItemDto(reviews.get(5).getId(), item.getId(), reviews.get(5).getTitle(), reviews.get(5).getContent(), reviews.get(5).getLike());
+        ReviewItemDto reviewItemDto7 = new ReviewItemDto(reviews.get(6).getId(), item.getId(), reviews.get(6).getTitle(), reviews.get(6).getContent(), reviews.get(6).getLike());
+        ReviewItemDto reviewItemDto8 = new ReviewItemDto(reviews.get(7).getId(), item.getId(), reviews.get(7).getTitle(), reviews.get(7).getContent(), reviews.get(7).getLike());
+        ReviewItemDto reviewItemDto9 = new ReviewItemDto(reviews.get(8).getId(), item.getId(), reviews.get(8).getTitle(), reviews.get(8).getContent(), reviews.get(8).getLike());
+        ReviewItemDto reviewItemDto10 = new ReviewItemDto(reviews.get(9).getId(), item.getId(), reviews.get(9).getTitle(), reviews.get(9).getContent(), reviews.get(9).getLike());
 
         reviewDtoRepository.save(reviewItemDto1);
         reviewDtoRepository.save(reviewItemDto2);
@@ -78,14 +78,6 @@ public class ReviewRedisRepositoryTest {
     void after() {
         reviewDtoRepository.deleteAll();
     }
-
-//    @Test
-//    void reviewSortTopTest() {
-//        List<Review> reviews = reviewRepository.findTop5ByItemOrderByGoodBtnCountDesc(theItem);
-//        for (Review review : reviews) {
-//            log.info(review.toString());
-//        }
-//    }
 
     @Test
     void getAllData() {
@@ -114,6 +106,15 @@ public class ReviewRedisRepositoryTest {
     }
 
     @Test
+    void reviewLikeTest(){
+        List<ReviewItemDto> reviews = reviewDtoRepository.findByItemIdOrderByLikeDesc(theItem.getId());
+        for (ReviewItemDto review : reviews) {
+            log.info(review.getContent());
+            log.info(String.valueOf(review.getLike()));
+        }
+    }
+
+    @Test
     void findByItem() {
         List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(theItem.getId());
         int dbReviewDtoCount = 5 - reviewDtos.size();
@@ -128,7 +129,7 @@ public class ReviewRedisRepositoryTest {
 
             for (Review r : leftReviews) {
                 ReviewItemDto newDto = new ReviewItemDto(r.getId(),
-                        r.getItem().getId(), r.getTitle(), r.getContents(), r.getLike());
+                        r.getItem().getId(), r.getTitle(), r.getContent(), r.getLike());
                 reviewDtoRepository.save(newDto);
                 reviewDtos.add(newDto);
             }
@@ -142,15 +143,10 @@ public class ReviewRedisRepositoryTest {
 
     @Test
     void getTop5() {
-//        List<ReviewItemDto> reviews = reviewDtoRepository.findTop5ByItemIdOrderByLikeDesc(theItem.getId());
         List<ReviewItemDto> reviews = reviewDtoRepository.findFirst5ByItemIdOrderByLikeDesc(theItem.getId());
         for (ReviewItemDto reviewDto : reviews) {
             log.info(reviewDto.toString());
         }
-//        List<Review> reviews = reviewRepository.findTop5ByItemOrderByGoodBtnCountDesc(theItem);
-//        for (Review review : reviews) {
-//            log.info(review.toString());
-//        }
     }
 
     @Test
@@ -213,7 +209,7 @@ public class ReviewRedisRepositoryTest {
         review3.setLike(32);
         review4.setLike(464);
         review5.setLike(51);
-        review6.setLike(6);
+        review6.setLike(66);
         review7.setLike(713);
         review8.setLike(84);
         review9.setLike(93);

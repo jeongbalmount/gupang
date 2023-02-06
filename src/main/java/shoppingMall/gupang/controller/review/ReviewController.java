@@ -42,7 +42,7 @@ public class ReviewController {
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @PostMapping
     public String addReview(@RequestBody ReviewItemDto reviewItemDto) {
-        ReviewItemDto dto = reviewService.addReview(reviewItemDto);
+        ReviewReturnDto dto = reviewService.addReview(reviewItemDto);
         return "ok";
 
     }
@@ -92,8 +92,8 @@ public class ReviewController {
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @GetMapping("/item/{itemId}")
     public Result getItemReviews(@PathVariable Long itemId) {
-        List<ReviewItemDto> collect = reviewService.getItemReviews(itemId);
-        List<ReviewReturnDto> returnCollect = collect.stream()
+        List<ReviewReturnDto> returnCollect = reviewService.getItemReviews(itemId)
+                .stream()
                 .map(rd -> new ReviewReturnDto(rd.getReviewId(), rd.getTitle(), rd.getContent(), rd.getLike()))
                 .collect(Collectors.toList());
 

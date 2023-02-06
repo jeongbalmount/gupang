@@ -192,7 +192,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-
             OrderItem orderItem = OrderItem.createOrderItem(item,
                     getMembershipDiscountedPrice(isMemberShip, totalItemPrice),
                     dto.getItemCount(), discountAmount);

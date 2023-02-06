@@ -14,12 +14,4 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositoryCustom {
     List<Item> findByName(String itemName);
-
-    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    @Query(value = "select i from Item i where i.id = :id")
-    Optional<Item> findByIdWithPessimisticLock(@Param("id") Long id);
-
-    @Lock(value = LockModeType.OPTIMISTIC)
-    @Query(value = "select i from Item i where i.id = :id")
-    Optional<Item> findByIdWithOptimisticLock(@Param("id") Long id);
 }

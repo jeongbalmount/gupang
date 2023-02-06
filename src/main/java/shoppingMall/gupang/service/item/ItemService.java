@@ -17,6 +17,4 @@ public interface ItemService {
     public void decreaseQuantity(Long id, int quantity);
 
     public void increaseQuantity(Long id, int quantity);
-
-
 }

@@ -33,14 +33,14 @@ public class Review {
     private String title;
 
     @Column(length = 2000)
-    private String contents;
+    private String content;
 
     private LocalDateTime writeDate;
 
-    public Review(Item item, String title, String contents) {
+    public Review(Item item, String title, String content) {
         this.item = item;
         this.title = title;
-        this.contents = contents;
+        this.content = content;
         this.writeDate = LocalDateTime.now();
     }
 
@@ -52,16 +52,12 @@ public class Review {
         this.title = newTitle;
     }
 
-    public void changeContents(String newContents) {
-        this.contents = newContents;
+    public void changeContents(String newContent) {
+        this.content = newContent;
     }
 
     public void setLike(int likes) {
         like = likes;
-    }
-
-    public String toString() {
-        return "id = " + getId() + " like = " + like + " title = " + getTitle();
     }
 
 }
