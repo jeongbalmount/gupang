@@ -51,7 +51,6 @@ dependencies {
 	// spring에서 redis를 session storage로 사용하기 위한 의존성
 	implementation 'org.springframework.session:spring-session-data-redis'
 	testImplementation 'it.ozimov:embedded-redis:0.7.2'
-
 	implementation 'org.springframework.data:spring-data-elasticsearch:4.4.0'
 
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'

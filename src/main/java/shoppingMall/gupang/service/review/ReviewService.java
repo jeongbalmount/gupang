@@ -1,10 +1,8 @@
 package shoppingMall.gupang.service.review;
 
-import shoppingMall.gupang.controller.review.dto.ReviewDto;
-import shoppingMall.gupang.controller.review.dto.ReviewEditDto;
-import shoppingMall.gupang.controller.review.dto.ReviewItemDto;
-import shoppingMall.gupang.controller.review.dto.ReviewReturnDto;
-import shoppingMall.gupang.domain.Review;
+import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
+import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
+import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
 
 import java.util.List;
 

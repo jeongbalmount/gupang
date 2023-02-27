@@ -1,8 +1,7 @@
 package shoppingMall.gupang.service.coupon;
 
-import shoppingMall.gupang.controller.coupon.dto.CouponDto;
-import shoppingMall.gupang.controller.coupon.dto.CouponMemberDto;
-import shoppingMall.gupang.domain.coupon.Coupon;
+import shoppingMall.gupang.web.controller.coupon.dto.CouponDto;
+import shoppingMall.gupang.web.controller.coupon.dto.CouponMemberDto;
 
 import java.util.List;
 

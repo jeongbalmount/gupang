@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Seller;
-import shoppingMall.gupang.lock.OptimisticLockStockFacade;
 import shoppingMall.gupang.repository.category.CategoryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.seller.SellerRepository;

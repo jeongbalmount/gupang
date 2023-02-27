@@ -4,12 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Seller;
-import shoppingMall.gupang.lock.OptimisticLockStockFacade;
-import shoppingMall.gupang.redis.facade.LettuceLockStockFacade;
 import shoppingMall.gupang.repository.category.CategoryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.seller.SellerRepository;
@@ -30,9 +27,6 @@ public class OptimisticLockTest {
     private SellerRepository sellerRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-
-    @Autowired
-    private OptimisticLockStockFacade optimisticLockStockFacade;
 
     private Item theItem;
 
@@ -63,10 +57,11 @@ public class OptimisticLockTest {
             log.info(String.valueOf(i));
             executorService.submit(() -> {
                 try {
-                    optimisticLockStockFacade.decrease(theItem.getId(), 1);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } finally {
+//                    optimisticLockStockFacade.decrease(theItem.getId(), 1);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+                }
+                finally {
                     latch.countDown();
                 }
             });

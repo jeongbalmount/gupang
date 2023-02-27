@@ -21,7 +21,6 @@ public class Category {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @NotNull
     private String name;
 
     public Category(String name) {

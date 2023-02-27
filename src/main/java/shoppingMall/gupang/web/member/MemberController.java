@@ -5,16 +5,13 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import shoppingMall.gupang.controller.member.MemberDto;
-import shoppingMall.gupang.controller.review.dto.ReviewReturnDto;
+import shoppingMall.gupang.web.controller.member.MemberDto;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.service.member.MemberService;
 import shoppingMall.gupang.web.exception.AlreadyMemberExistException;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

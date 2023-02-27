@@ -5,9 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.cart.dto.CartItemDto;
-import shoppingMall.gupang.controller.cart.dto.CartItemsDto;
-import shoppingMall.gupang.controller.cart.dto.CartItemsMemberDto;
+import shoppingMall.gupang.web.controller.cart.dto.CartItemDto;
+import shoppingMall.gupang.web.controller.cart.dto.CartItemsMemberDto;
 import shoppingMall.gupang.domain.CartItem;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
@@ -21,7 +20,6 @@ import shoppingMall.gupang.repository.member.MemberRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

@@ -2,8 +2,8 @@ package shoppingMall.gupang.service.cart;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import shoppingMall.gupang.controller.cart.dto.CartItemDto;
-import shoppingMall.gupang.controller.cart.dto.CartItemsMemberDto;
+import shoppingMall.gupang.web.controller.cart.dto.CartItemDto;
+import shoppingMall.gupang.web.controller.cart.dto.CartItemsMemberDto;
 import shoppingMall.gupang.domain.CartItem;
 import java.util.List;
 

@@ -1,10 +1,7 @@
 package shoppingMall.gupang.service.item;
 
-import shoppingMall.gupang.controller.item.dto.ItemDto;
-import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
-import shoppingMall.gupang.controller.item.dto.ItemSearchDto;
-import shoppingMall.gupang.domain.Item;
-import shoppingMall.gupang.domain.Review;
+import shoppingMall.gupang.web.controller.item.dto.ItemDto;
+import shoppingMall.gupang.web.controller.item.dto.ItemSearchDto;
 
 import java.util.List;
 

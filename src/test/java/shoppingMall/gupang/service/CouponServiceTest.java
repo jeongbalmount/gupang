@@ -6,13 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.coupon.dto.CouponDto;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.service.coupon.CouponService;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 
 @SpringBootTest
 @Slf4j

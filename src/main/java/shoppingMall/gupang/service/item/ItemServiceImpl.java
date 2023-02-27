@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.item.dto.ItemDto;
-import shoppingMall.gupang.controller.item.dto.ItemReturnDto;
-import shoppingMall.gupang.controller.item.dto.ItemSearchDto;
+import shoppingMall.gupang.web.controller.item.dto.ItemDto;
+import shoppingMall.gupang.web.controller.item.dto.ItemSearchDto;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
-import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.domain.Seller;
 import shoppingMall.gupang.elasticsearch.itemSearch.ItemSearchRepository;
 import shoppingMall.gupang.exception.category.NoCategoryException;
@@ -17,10 +15,8 @@ import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.seller.NoSellerException;
 import shoppingMall.gupang.repository.category.CategoryRepository;
 import shoppingMall.gupang.repository.item.ItemRepository;
-import shoppingMall.gupang.repository.review.ReviewRepository;
 import shoppingMall.gupang.repository.seller.SellerRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

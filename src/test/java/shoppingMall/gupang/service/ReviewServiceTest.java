@@ -8,9 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.review.dto.ReviewDtoRepository;
-import shoppingMall.gupang.controller.review.dto.ReviewItemDto;
+import shoppingMall.gupang.web.controller.review.dto.ReviewDtoRepository;
+import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.redis.facade.RedissonLockLikeFacade;
@@ -24,12 +23,9 @@ import shoppingMall.gupang.service.review.ReviewService;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Slf4j

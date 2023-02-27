@@ -3,8 +3,7 @@ package shoppingMall.gupang.service.member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.controller.member.MemberDto;
-import shoppingMall.gupang.controller.review.dto.ReviewReturnDto;
+import shoppingMall.gupang.web.controller.member.MemberDto;
 import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
@@ -13,7 +12,6 @@ import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.review.ReviewRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
