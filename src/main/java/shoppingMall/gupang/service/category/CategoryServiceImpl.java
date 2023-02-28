@@ -24,16 +24,17 @@ public class CategoryServiceImpl implements CategoryService{
     private final ItemRepository itemRepository;
 
     @Override
-    public List<Item> getCategoryItems(Long categoryId) {
-        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+    public List<Item> getCategoryItems(String name) {
+        Optional<Category> optionalCategory = categoryRepository.findByName(name);
         Category category = optionalCategory.orElse(null);
         if (category == null) {
             throw new NoCategoryException("해당하는 카테고리가 없습니다.");
         }
 
-        return itemRepository.findItemsByCategory(categoryId);
+        return itemRepository.findItemsByCategory(category.getId());
     }
 
+    @Transactional
     @Override
     public void addCategory(CategoryDto categoryDto) {
         categoryRepository.save(new Category(categoryDto.getName()));

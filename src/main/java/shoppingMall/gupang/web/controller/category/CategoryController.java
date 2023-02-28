@@ -35,20 +35,20 @@ public class CategoryController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 카테고리가 존재하지 않음"),
     })
     @Parameter(name = "catetoryId", description = "카테고리 id")
-    @GetMapping("/{categoryId}")
-    public Result getCategoryItems(@PathVariable Long categoryId) {
-        List<ItemReturnDto> collect = categoryService.getCategoryItems(categoryId).stream()
+    @GetMapping("/{categoryName}")
+    public List<ItemReturnDto> getCategoryItems(@PathVariable(value = "categoryName") String categoryName) {
+        List<ItemReturnDto> collect = categoryService.getCategoryItems(categoryName).stream()
                 .map(i -> new ItemReturnDto(i.getName(), i.getItemPrice(), i.getSeller().getManagerName(),
                         i.getCategory().getName(), i.getId()))
                 .collect(Collectors.toList());
 
-        return new Result(collect);
+        return collect;
     }
 
     @PostMapping("/add")
-    public CategoryDto addCategory(@Valid @RequestBody CategoryDto categoryDto) {
-//        categoryService.addCategory(categoryDto);
-        return categoryDto;
+    public String addCategory(@Valid @RequestBody CategoryDto categoryDto) {
+        categoryService.addCategory(categoryDto);
+        return "ok";
     }
 
     @Data

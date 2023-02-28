@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<Item> getCategoryItems(Long categoryId);
+    List<Item> getCategoryItems(String categoryName);
     void addCategory(CategoryDto categoryDto);
 
 }
