@@ -35,7 +35,7 @@ public class ItemController {
     })
     @Parameter(name = "itemName", description = "상품 이름")
     @GetMapping("/{itemName}")
-    public List<ItemSearchDto> searchItems(@PathVariable String itemName) {
+    public List<ItemSearchDto> searchItems(@PathVariable(name = "itemName") String itemName) {
         return itemService.findItemByName(itemName);
     }
 

@@ -1,6 +1,7 @@
 package shoppingMall.gupang.service.coupon;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.web.controller.coupon.dto.CouponDto;
@@ -24,10 +25,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+/*
+    쿠폰 생성시 쿠폰 허용 기간, 멤버, 상품, 종류등을 모두 확인하고 저장하기 때문에
+    멤버가 갖고 있는 쿠폰을 유효기간 제외하고 다른 부분을 확인할 필요는 없다.
+ */
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class CouponServiceImpl implements CouponService{
 
     private final CouponRepository couponRepository;
@@ -41,7 +49,7 @@ public class CouponServiceImpl implements CouponService{
     }
 
     private void saveCoupon(CouponDto couponDto) {
-
+        log.info(String.valueOf(couponDto.getExpireDate()));
         if (couponDto.getExpireDate().isBefore(LocalDateTime.now())) {
             throw new CouponExpireException("쿠폰 허용 기한이 현재보다 과거입니다.");
         }
@@ -82,27 +90,9 @@ public class CouponServiceImpl implements CouponService{
         }
 
         List<CouponMemberDto> couponMemberDtos = new ArrayList<>();
-        return transformToDto(couponMemberDtos, couponRepository.findCouponByMemberWithItem(memberId),
-                deliveryCouponRepository.findByMember(member));
-    }
-
-    private List<CouponMemberDto> transformToDto(List<CouponMemberDto> dtoList, List<Coupon> coupons,
-                                                 List<DeliveryCoupon> deliveryCoupons) {
-        for (Coupon c : coupons) {
-            if (!c.getUsed()) {
-                CouponMemberDto dto = new CouponMemberDto(c.getId(), c.getItem().getName(),
-                        c.getCouponType(), c.getDiscountAmount(), c.getExpireDate(), c.getCouponName());
-                dtoList.add(dto);
-            }
-        }
-        for (DeliveryCoupon deliveryCoupon : deliveryCoupons) {
-            if (!deliveryCoupon.getUsed()) {
-                CouponMemberDto dto = new CouponMemberDto(deliveryCoupon.getId(), "배송비무료",
-                        "Delivery", 3000,
-                        deliveryCoupon.getExpireDate(), "배송비쿠폰");
-                dtoList.add(dto);
-            }
-        }
-        return dtoList;
+        List<Coupon> coupons = couponRepository.findCouponByMemberWithItem(memberId);
+        return coupons.stream().map(c -> new CouponMemberDto(c.getId(), c.getItem().getName(), c.getCouponType(),
+                c.getDiscountAmount(), c.getExpireDate(), c.getUsed(), c.getCouponName()))
+                .collect(Collectors.toList());
     }
 }

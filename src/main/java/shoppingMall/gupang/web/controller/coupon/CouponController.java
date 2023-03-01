@@ -31,7 +31,7 @@ public class CouponController {
     })
     @Parameter(name = "memberId", description = "카테고리 id")
     @GetMapping("/{memberId}")
-    public List<CouponMemberDto> getMemberCoupons(@PathVariable Long memberId) {
+    public List<CouponMemberDto> getMemberCoupons(@PathVariable(name = "memberId") Long memberId) {
         return couponService.getUnusedCoupons(memberId);
     }
 

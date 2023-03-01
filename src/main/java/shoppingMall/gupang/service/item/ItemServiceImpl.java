@@ -57,16 +57,11 @@ public class ItemServiceImpl implements ItemService{
     @Transactional(readOnly = true)
     public List<ItemSearchDto> findItemByName(String subString) {
         List<ItemSearchDto> items = itemSearchRepository.findByItemname(subString);
-        log.info(String.valueOf(items.size()));
-        for (ItemSearchDto dto : items) {
-            log.info(dto.getItemname());
-        }
         return items;
     }
 
     @Override
     public void decreaseQuantity(Long id, int quantity) {
-//        Optional<Item> optionalItem = itemRepository.findByIdWithOptimisticLock(id);
         Optional<Item> optionalItem = itemRepository.findById(id);
         Item item = optionalItem.orElse(null);
         if (item == null) {

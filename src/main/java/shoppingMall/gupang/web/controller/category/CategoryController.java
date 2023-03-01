@@ -36,13 +36,13 @@ public class CategoryController {
     })
     @Parameter(name = "catetoryId", description = "카테고리 id")
     @GetMapping("/{categoryName}")
-    public List<ItemReturnDto> getCategoryItems(@PathVariable(value = "categoryName") String categoryName) {
+    public Result getCategoryItems(@PathVariable(value = "categoryName") String categoryName) {
         List<ItemReturnDto> collect = categoryService.getCategoryItems(categoryName).stream()
                 .map(i -> new ItemReturnDto(i.getName(), i.getItemPrice(), i.getSeller().getManagerName(),
                         i.getCategory().getName(), i.getId()))
                 .collect(Collectors.toList());
 
-        return collect;
+        return new Result(collect);
     }
 
     @PostMapping("/add")

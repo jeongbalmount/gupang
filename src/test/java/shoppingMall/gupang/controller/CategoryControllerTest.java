@@ -22,6 +22,7 @@ import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Seller;
 import shoppingMall.gupang.service.category.CategoryService;
+import shoppingMall.gupang.service.item.ItemService;
 import shoppingMall.gupang.web.controller.category.CategoryController;
 import shoppingMall.gupang.web.controller.category.dto.CategoryDto;
 
@@ -57,6 +58,10 @@ public class CategoryControllerTest {
 
     @BeforeEach
     void init() {
+        /*
+        elasticsearch의 검색기능을 사용하려면 itemService의 addItem을 통해 item을 등록해야
+        elasticsearch에도 저장되기 때문에 itemService를 통해 item을 등록해야 한다.
+         */
       Category category = new Category("food");
       Seller seller = new Seller("010-111-222", "manager");
       Item item1 = new Item("apple", 1000, 100, seller, category);
@@ -88,6 +93,9 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("카테고리 속한 상품 불러오기 테스트")
     void getCategoryItemsTest() throws Exception {
+        /*
+        CategoryController 리턴 타입 List<ItemReturnDto>로 바꿔야 test 통과
+         */
         String name = "food";
         MvcResult result = mvc.perform(get(BASE_URL + "/" +name))
                 .andExpect(status().isOk())
