@@ -24,7 +24,7 @@ public class MemberController {
 
     @GetMapping
     public String checkExistEmail(@RequestBody EmailDto emailDto) {
-        Optional<Member> optionalMember = memberRepository.findOptionalByEmail(emailDto.getEmail());
+        Optional<Member> optionalMember = memberRepository.findByEmail(emailDto.getEmail());
         Member member = optionalMember.orElse(null);
         if (member == null){
             return "ok";
@@ -40,7 +40,7 @@ public class MemberController {
 
     @PostMapping
     public String signup(@RequestBody MemberDto memberDto) {
-        Optional<Member> optionalMember = memberRepository.findOptionalByEmail(memberDto.getEmail());
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberDto.getEmail());
         Member member = optionalMember.orElse(null);
         if (member == null) {
             memberService.registerMember(memberDto);

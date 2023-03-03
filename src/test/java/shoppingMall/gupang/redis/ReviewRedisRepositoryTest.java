@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.web.controller.review.dto.ReviewDtoRepository;
+import shoppingMall.gupang.repository.review.ReviewDtoRepository;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;

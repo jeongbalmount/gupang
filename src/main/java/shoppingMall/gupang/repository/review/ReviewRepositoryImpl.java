@@ -1,13 +1,13 @@
 package shoppingMall.gupang.repository.review;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import shoppingMall.gupang.domain.QItem;
 import shoppingMall.gupang.domain.Review;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 import static shoppingMall.gupang.domain.QItem.item;
+import static shoppingMall.gupang.domain.QMember.member;
 import static shoppingMall.gupang.domain.QReview.*;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
@@ -25,5 +25,23 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
                 .join(review.item, item).fetchJoin()
                 .where(review.id.eq(reviewId))
                 .fetch();
+    }
+
+    @Override
+    public List<Review> findReviewWithMember(Long reviewId) {
+        return queryFactory
+                .selectFrom(review)
+                .join(review.member, member).fetchJoin()
+                .where(review.id.eq(reviewId))
+                .fetch();
+    }
+
+    @Override
+    public List<Review> findReviewsWithLikeLessThanWithMember(int like) {
+//        queryFactory
+//                .selectFrom(review)
+//                .join(review.member, member).fetchJoin()
+//                .where(review.)
+        return null;
     }
 }

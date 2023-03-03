@@ -1,6 +1,7 @@
-package shoppingMall.gupang.web.controller.review.dto;
+package shoppingMall.gupang.repository.review;
 
 import org.springframework.data.repository.CrudRepository;
+import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 
 import java.util.List;
 

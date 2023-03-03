@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import shoppingMall.gupang.web.controller.cart.dto.CartItemMemberItemDto;
 import shoppingMall.gupang.web.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.service.seller.SellerService;
 
@@ -32,15 +33,15 @@ public class SellerController {
                     content = @Content(schema = @Schema(implementation = ItemReturnDto.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 판매자가 없습니다.")
     })
-    @Parameter(name = "sellerId", description = "판매자 아이디")
     @GetMapping("/{sellerId}")
-    public Result getSellerItems(@PathVariable Long sellerId) {
+    public List<ItemReturnDto> getSellerItems(@Parameter(description = "seller id", required = true)
+                                                  @PathVariable Long sellerId) {
         List<ItemReturnDto> collect = sellerService.getSellerItems(sellerId).stream()
                 .map(i -> new ItemReturnDto(i.getName(), i.getItemPrice(), i.getSeller().getManagerName(),
                         i.getCategory().getName(), i.getId()))
                 .collect(Collectors.toList());
 
-        return new Result(collect);
+        return collect;
     }
 
     @Operation(summary = "add serller", description = "판매자 추가")
@@ -51,7 +52,7 @@ public class SellerController {
             @Parameter(name = "managerName", description = "판매 매니저 이름"),
             @Parameter(name = "sellerNumber", description = "판매처 전화번호")
     })
-    @PostMapping("/add")
+    @PostMapping
     public String addSeller(@RequestParam(value = "managerName") String managerName,
                             @RequestParam(value = "sellerNumber") String sellerNumber) {
         sellerService.registerSeller(managerName, sellerNumber);

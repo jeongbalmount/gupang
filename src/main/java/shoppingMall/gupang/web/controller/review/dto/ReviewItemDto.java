@@ -18,6 +18,7 @@ public class ReviewItemDto implements Serializable {
     private Long reviewId;
     @Indexed
     private Long itemId;
+    private String memberEmail;
     private String title;
     private String content;
     private int like = 0;

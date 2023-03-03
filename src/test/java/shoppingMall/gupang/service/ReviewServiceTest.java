@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import shoppingMall.gupang.web.controller.review.dto.ReviewDtoRepository;
+import shoppingMall.gupang.repository.review.ReviewDtoRepository;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.enums.IsMemberShip;

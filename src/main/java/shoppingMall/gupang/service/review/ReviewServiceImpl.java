@@ -4,7 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.web.controller.review.dto.ReviewDtoRepository;
+import shoppingMall.gupang.domain.Member;
+import shoppingMall.gupang.exception.member.NoMemberException;
+import shoppingMall.gupang.exception.review.NoMatchEmailException;
+import shoppingMall.gupang.repository.member.MemberRepository;
+import shoppingMall.gupang.repository.review.ReviewDtoRepository;
+import shoppingMall.gupang.web.SessionConst;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
@@ -17,6 +22,8 @@ import shoppingMall.gupang.exception.review.NoReviewException;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.review.ReviewRepository;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,17 +37,26 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
     private final ReviewDtoRepository reviewDtoRepository;
+    private final MemberRepository memberRepository;
 
     @Override
-    public ReviewReturnDto addReview(ReviewItemDto reviewItemDto) {
+    public ReviewReturnDto addReview(ReviewItemDto reviewItemDto, HttpServletRequest request) {
 
         Optional<Item> optionalItem = itemRepository.findById(reviewItemDto.getItemId());
         Item item = optionalItem.orElse(null);
         if (item == null) {
             throw new NoItemException("해당 상품이 없습니다.");
         }
+        HttpSession session = request.getSession();
+        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
-        Review review = new Review(item, reviewItemDto.getTitle(), reviewItemDto.getContent());
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberEmail);
+        Member member = optionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당 사용자가 없습니다.");
+        }
+
+        Review review = new Review(member, item, reviewItemDto.getTitle(), reviewItemDto.getContent());
         Review savedReview = reviewRepository.save(review);
 
         reviewItemDto.setReviewId(savedReview.getId());
@@ -72,10 +88,10 @@ public class ReviewServiceImpl implements ReviewService{
                 }
             }
             List<Review> leftReviews = reviewRepository.findByItemAndLikeLessThan(item, lessNum);
-
+            String email = "email";
             for (Review r : leftReviews) {
                 ReviewItemDto newDto = new ReviewItemDto(r.getId(),
-                        r.getItem().getId(), r.getTitle(), r.getContent(), r.getLike());
+                        r.getItem().getId(), email, r.getTitle(), r.getContent(), r.getLike());
                 reviewDtoRepository.save(newDto);
                 reviewDtos.add(newDto);
             }
@@ -86,11 +102,17 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void removeReview(Long reviewId) {
-        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
-        Review review = optionalReview.orElse(null);
-        if (review == null) {
-            throw new NoReviewException("해당 리뷰가 없습니다.");
+    public void removeReview(Long reviewId, HttpServletRequest request) {
+        List<Review> reviews = reviewRepository.findReviewWithMember(reviewId);
+        if (reviews.size() == 0) {
+            throw new NoReviewException("해당하는 리뷰가 없습니다.");
+        }
+        Review review = reviews.get(0);
+        // 세션 저장소에 저장되어 있는 멤버 이메일 값과 review 작성자의 이메일 값이 같아야 삭제 가능하다.
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (review.getMember().getEmail().equals(email)) {
+            throw new NoMatchEmailException("리뷰 작성자가 아닙니다.");
         }
         reviewRepository.delete(review);
 
@@ -127,8 +149,9 @@ public class ReviewServiceImpl implements ReviewService{
             List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(review.getItem().getId());
             for (ReviewItemDto reviewDto : reviewDtos) {
                 if (reviewDto.getLike() < like) {
+                    String email = "email";
                     reviewDtoRepository.delete(reviewDto);
-                    reviewDtoRepository.save(new ReviewItemDto(review.getId(), review.getItem().getId(),
+                    reviewDtoRepository.save(new ReviewItemDto(review.getId(), review.getItem().getId(),email,
                             review.getTitle(), review.getContent(), review.getLike()));
                     break;
                 }
@@ -137,11 +160,17 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void editReview(ReviewEditDto dto) {
-        Optional<Review> optionalReview = reviewRepository.findById(dto.getReviewId());
-        Review review = optionalReview.orElse(null);
-        if (review == null) {
+    public void editReview(ReviewEditDto dto, HttpServletRequest request) {
+        List<Review> reviews = reviewRepository.findReviewWithMember(dto.getReviewId());
+        if (reviews.size() == 0) {
             throw new NoReviewException("해당하는 리뷰가 없습니다.");
+        }
+        Review review = reviews.get(0);
+        // 세션 저장소에 저장되어 있는 멤버 이메일 값과 review 작성자의 이메일 값이 같아야 삭제 가능하다.
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (review.getMember().getEmail().equals(email)) {
+            throw new NoMatchEmailException("리뷰 작성자가 아닙니다.");
         }
         if (dto.getNewTitle().isBlank() || dto.getNewContent().isBlank()) {
             throw new NoEditedContentException("수정된 제목과 내용은 내용이 있어야 합니다.");

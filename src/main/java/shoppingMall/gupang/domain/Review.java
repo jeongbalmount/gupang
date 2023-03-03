@@ -37,7 +37,8 @@ public class Review {
 
     private LocalDateTime writeDate;
 
-    public Review(Item item, String title, String content) {
+    public Review(Member member, Item item, String title, String content) {
+        this.member = member;
         this.item = item;
         this.title = title;
         this.content = content;

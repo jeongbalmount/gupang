@@ -2,17 +2,12 @@ package shoppingMall.gupang.repository.item;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import shoppingMall.gupang.domain.Item;
-import shoppingMall.gupang.domain.QCategory;
-import shoppingMall.gupang.domain.QItem;
-import shoppingMall.gupang.domain.QSeller;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 import static shoppingMall.gupang.domain.QCategory.category;
 import static shoppingMall.gupang.domain.QItem.item;
-import static shoppingMall.gupang.domain.QOrder.order;
-import static shoppingMall.gupang.domain.QOrderItem.orderItem;
 import static shoppingMall.gupang.domain.QSeller.seller;
 
 public class ItemRepositoryImpl implements ItemRepositoryCustom {

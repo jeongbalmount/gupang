@@ -11,6 +11,7 @@ import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.review.LikeLimitException;
 import shoppingMall.gupang.exception.review.NoEditedContentException;
+import shoppingMall.gupang.exception.review.NoMatchEmailException;
 import shoppingMall.gupang.exception.review.NoReviewException;
 
 @RestControllerAdvice
@@ -44,5 +45,11 @@ public class ReviewRestControllerAdvice {
     @ExceptionHandler
     public ErrorResult likeLimitException(LikeLimitException e) {
         return new ErrorResult("Like count exceeded", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResult noMatchEmailException(NoMatchEmailException e) {
+        return new ErrorResult("Can't update review", e.getMessage());
     }
 }

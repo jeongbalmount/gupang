@@ -17,6 +17,7 @@ import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
 import shoppingMall.gupang.service.review.ReviewService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,8 +38,8 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @PostMapping
-    public String addReview(@RequestBody ReviewItemDto reviewItemDto) {
-        ReviewReturnDto dto = reviewService.addReview(reviewItemDto);
+    public String addReview(@RequestBody ReviewItemDto reviewItemDto, HttpServletRequest request) {
+        ReviewReturnDto dto = reviewService.addReview(reviewItemDto, request);
         return "ok";
 
     }
@@ -63,8 +64,8 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewEditDto.class)))
     @PatchMapping
-    public String editReview(@Valid @RequestBody ReviewEditDto dto){
-        reviewService.editReview(dto);
+    public String editReview(@Valid @RequestBody ReviewEditDto dto, HttpServletRequest request){
+        reviewService.editReview(dto, request);
         return "ok";
     }
 
@@ -75,8 +76,8 @@ public class ReviewController {
     })
     @Parameter(name = "reviewId", description = "리뷰 아이디")
     @DeleteMapping("/{reviewId}")
-    public String removeReview(@PathVariable Long reviewId) {
-        reviewService.removeReview(reviewId);
+    public String removeReview(@PathVariable Long reviewId, HttpServletRequest request) {
+        reviewService.removeReview(reviewId, request);
         return "ok";
     }
 

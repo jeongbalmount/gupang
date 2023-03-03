@@ -3,7 +3,6 @@ package shoppingMall.gupang.repository.cartItem;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import shoppingMall.gupang.domain.CartItem;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import java.util.List;
 
