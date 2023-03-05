@@ -7,7 +7,9 @@ import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 
-//@RedisHash("reviewItemDto")
+/*
+    - redis에 저장 될 review dto
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,13 +20,9 @@ public class ReviewItemDto implements Serializable {
     private Long reviewId;
     @Indexed
     private Long itemId;
-    private String memberEmail;
+    private String email;
     private String title;
     private String content;
     private int like = 0;
 
-    public String toString() {
-        return "reviewID = " + reviewId + " itemId = " + itemId + " title = " + title + " content = " + content +
-                " like = " + like;
-    }
 }

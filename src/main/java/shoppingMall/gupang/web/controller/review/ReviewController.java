@@ -11,7 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
@@ -20,7 +22,6 @@ import shoppingMall.gupang.service.review.ReviewService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,10 +39,8 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @PostMapping
-    public String addReview(@RequestBody ReviewItemDto reviewItemDto, HttpServletRequest request) {
-        ReviewReturnDto dto = reviewService.addReview(reviewItemDto, request);
-        return "ok";
-
+    public void addReview(@RequestBody ReviewDto reviewDto, HttpServletRequest request) {
+        reviewService.addReview(reviewDto, request);
     }
 
     @Operation(summary = "add like", description = "리뷰 좋아요 더하기")
@@ -88,15 +87,10 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @GetMapping("/item/{itemId}")
-    public Result getItemReviews(@PathVariable Long itemId) {
-        List<ReviewReturnDto> returnCollect = reviewService.getItemReviews(itemId)
-                .stream()
-                .map(rd -> new ReviewReturnDto(rd.getReviewId(), rd.getTitle(), rd.getContent(), rd.getLike()))
-                .collect(Collectors.toList());
-
+    public Result getItemReviews(@PathVariable Long itemId, HttpServletRequest request, Pageable pageable) {
+        List<ReviewReturnDto> returnCollect = reviewService.getItemReviews(itemId, request, pageable);
         return new Result(returnCollect);
     }
-
 
     @Data
     @AllArgsConstructor

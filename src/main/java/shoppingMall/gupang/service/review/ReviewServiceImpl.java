@@ -2,6 +2,7 @@ package shoppingMall.gupang.service.review;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.domain.Member;
@@ -10,6 +11,7 @@ import shoppingMall.gupang.exception.review.NoMatchEmailException;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.review.ReviewDtoRepository;
 import shoppingMall.gupang.web.SessionConst;
+import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
@@ -24,6 +26,7 @@ import shoppingMall.gupang.repository.review.ReviewRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,13 +43,14 @@ public class ReviewServiceImpl implements ReviewService{
     private final MemberRepository memberRepository;
 
     @Override
-    public ReviewReturnDto addReview(ReviewItemDto reviewItemDto, HttpServletRequest request) {
+    public void addReview(ReviewDto reviewDto, HttpServletRequest request) {
 
-        Optional<Item> optionalItem = itemRepository.findById(reviewItemDto.getItemId());
+        Optional<Item> optionalItem = itemRepository.findById(reviewDto.getItemId());
         Item item = optionalItem.orElse(null);
         if (item == null) {
             throw new NoItemException("해당 상품이 없습니다.");
         }
+        // 리뷰를 적은 회원은 현재 로그인한 회원이다.
         HttpSession session = request.getSession();
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
@@ -56,48 +60,94 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoMemberException("해당 사용자가 없습니다.");
         }
 
-        Review review = new Review(member, item, reviewItemDto.getTitle(), reviewItemDto.getContent());
+        Review review = new Review(member, item, reviewDto.getTitle(), reviewDto.getContent());
         Review savedReview = reviewRepository.save(review);
 
+        ReviewItemDto reviewItemDto = new ReviewItemDto(review.getId(), reviewDto.getItemId(), memberEmail,
+                reviewDto.getTitle(), reviewDto.getContent(), 0);
         reviewItemDto.setReviewId(savedReview.getId());
-        List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(reviewItemDto.getItemId());
+        List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(reviewDto.getItemId());
         if (reviewDtos.size() < 5) {
             reviewDtoRepository.save(reviewItemDto);
         }
-
-        return new ReviewReturnDto(review.getId(), review.getTitle(), review.getContent(), review.getLike());
     }
 
+    /*
+        - 상품에 맞는 리뷰들을 Page에 맞춰 가져온다.
+     */
     @Override
     @Transactional(readOnly = true)
-    public List<ReviewReturnDto> getItemReviews(Long itemId) {
+    public List<ReviewReturnDto> getItemReviews(Long itemId, HttpServletRequest request, Pageable pageable) {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         Item item = optionalItem.orElse(null);
         if (item == null) {
             log.warn("no item");
             throw new NoItemException("해당 상품이 없습니다.");
         }
+        // 첫 페이지의 like 가장 많은 5개 리뷰들은 캐시에서 꺼내서 보여준다. 만약 캐시에 5개 미만의 리뷰만
+        // 저장 되어 있다면 캐시에 빈 리뷰들 채워 넣고 리뷰들 리턴
+        List<ReviewReturnDto> reviewReturnDtos = new ArrayList<>();
+        if (pageable.getPageNumber() == 0) {
+            reviewReturnDtos = getFirstPageReviewReturnDtos(request, item, pageable);
+        } else {
+            reviewReturnDtos = getPageReviewReturnDtos(request, item, pageable);
+        }
 
+        return reviewReturnDtos;
+    }
+
+    /*
+        - 첫번째 페이지의 5개 리뷰는 캐시에서 리턴한다.
+     */
+    private List<ReviewReturnDto> getFirstPageReviewReturnDtos(HttpServletRequest request, Item item,
+                                                               Pageable pageable) {
+        // reviewDtoRepository => redis repository
         List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(item.getId());
+        // 캐시에 저장된 리뷰 개수가 5개 미만이면 비어 있는 리뷰 수 만큼 db에서 꺼내와 캐시에 저장
         int dbReviewDtoCount = 5 - reviewDtos.size();
-        int lessNum = 1000000;
+        int leastLike = 1000000;
         if (dbReviewDtoCount > 0) {
+            // 캐시에 들어간 리뷰들 중 가장 like가 적은 리뷰의 like 찾기
             for (ReviewItemDto dto : reviewDtos) {
-                if (dto.getLike() < lessNum) {
-                    lessNum = dto.getLike();
+                if (dto.getLike() < leastLike) {
+                    leastLike = dto.getLike();
                 }
             }
-            List<Review> leftReviews = reviewRepository.findByItemAndLikeLessThan(item, lessNum);
-            String email = "email";
+            List<Review> leftReviews = reviewRepository.
+                    findReviewsWithLikeLessThanWithMember(item, dbReviewDtoCount, pageable);
             for (Review r : leftReviews) {
                 ReviewItemDto newDto = new ReviewItemDto(r.getId(),
-                        r.getItem().getId(), email, r.getTitle(), r.getContent(), r.getLike());
+                        r.getItem().getId(), r.getMember().getEmail(), r.getTitle(), r.getContent(), r.getLike());
                 reviewDtoRepository.save(newDto);
                 reviewDtos.add(newDto);
             }
         }
+        HttpSession session = request.getSession();
+        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        // 리턴 dto에 flag를 집어 넣어서 만약 리뷰 중 현재 로그인한 회원의 이메일과 일치한다면
+        // true flag를 넣어 프론트에서 수정/삭제 버튼이 보이도록 설계
         return reviewDtos.stream()
-                .map(r -> new ReviewReturnDto(r.getReviewId(), r.getTitle(), r.getContent(), r.getLike()))
+                .map(r -> {
+                    boolean flag = r.getEmail().equals(memberEmail);
+                    return new ReviewReturnDto(r.getReviewId(), r.getTitle(), r.getContent(), flag, r.getLike());
+                })
+                .collect(Collectors.toList());
+    }
+
+    /*
+        - 1페이지 이후 페이지들은 pagable을 이용해 review들을 리턴한다.
+     */
+    private List<ReviewReturnDto> getPageReviewReturnDtos(HttpServletRequest request, Item item, Pageable pageable) {
+        List<Review> reviews = reviewRepository.findReviewWithMemberWithPage(item, pageable);
+        HttpSession session = request.getSession();
+        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        // 리턴 dto에 flag를 집어 넣어서 만약 리뷰 중 현재 로그인한 회원의 이메일과 일치한다면
+        // true flag를 넣어 프론트에서 수정/삭제 버튼이 보이도록 설계
+        return reviews.stream()
+                .map(r -> {
+                    boolean flag = r.getMember().getEmail().equals(memberEmail);
+                    return new ReviewReturnDto(r.getId(), r.getTitle(), r.getContent(), flag, r.getLike());
+                })
                 .collect(Collectors.toList());
     }
 
