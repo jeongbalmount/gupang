@@ -43,16 +43,13 @@ public class ReviewServiceImpl implements ReviewService{
     private final MemberRepository memberRepository;
 
     @Override
-    public void addReview(ReviewDto reviewDto, HttpServletRequest request) {
+    public void addReview(ReviewDto reviewDto, String memberEmail) {
 
         Optional<Item> optionalItem = itemRepository.findById(reviewDto.getItemId());
         Item item = optionalItem.orElse(null);
         if (item == null) {
             throw new NoItemException("해당 상품이 없습니다.");
         }
-        // 리뷰를 적은 회원은 현재 로그인한 회원이다.
-        HttpSession session = request.getSession();
-        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         Optional<Member> optionalMember = memberRepository.findByEmail(memberEmail);
         Member member = optionalMember.orElse(null);
@@ -77,7 +74,7 @@ public class ReviewServiceImpl implements ReviewService{
      */
     @Override
     @Transactional(readOnly = true)
-    public List<ReviewReturnDto> getItemReviews(Long itemId, HttpServletRequest request, Pageable pageable) {
+    public List<ReviewReturnDto> getItemReviews(Long itemId, String memberEmail, Pageable pageable) {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         Item item = optionalItem.orElse(null);
         if (item == null) {
@@ -88,9 +85,9 @@ public class ReviewServiceImpl implements ReviewService{
         // 저장 되어 있다면 캐시에 빈 리뷰들 채워 넣고 리뷰들 리턴
         List<ReviewReturnDto> reviewReturnDtos = new ArrayList<>();
         if (pageable.getPageNumber() == 0) {
-            reviewReturnDtos = getFirstPageReviewReturnDtos(request, item, pageable);
+            reviewReturnDtos = getFirstPageReviewReturnDtos(memberEmail, item, pageable);
         } else {
-            reviewReturnDtos = getPageReviewReturnDtos(request, item, pageable);
+            reviewReturnDtos = getPageReviewReturnDtos(memberEmail, item, pageable);
         }
 
         return reviewReturnDtos;
@@ -99,7 +96,7 @@ public class ReviewServiceImpl implements ReviewService{
     /*
         - 첫번째 페이지의 5개 리뷰는 캐시에서 리턴한다.
      */
-    private List<ReviewReturnDto> getFirstPageReviewReturnDtos(HttpServletRequest request, Item item,
+    private List<ReviewReturnDto> getFirstPageReviewReturnDtos(String memberEmail, Item item,
                                                                Pageable pageable) {
         // reviewDtoRepository => redis repository
         List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(item.getId());
@@ -122,8 +119,6 @@ public class ReviewServiceImpl implements ReviewService{
                 reviewDtos.add(newDto);
             }
         }
-        HttpSession session = request.getSession();
-        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
         // 리턴 dto에 flag를 집어 넣어서 만약 리뷰 중 현재 로그인한 회원의 이메일과 일치한다면
         // true flag를 넣어 프론트에서 수정/삭제 버튼이 보이도록 설계
         return reviewDtos.stream()
@@ -137,10 +132,8 @@ public class ReviewServiceImpl implements ReviewService{
     /*
         - 1페이지 이후 페이지들은 pagable을 이용해 review들을 리턴한다.
      */
-    private List<ReviewReturnDto> getPageReviewReturnDtos(HttpServletRequest request, Item item, Pageable pageable) {
+    private List<ReviewReturnDto> getPageReviewReturnDtos(String memberEmail, Item item, Pageable pageable) {
         List<Review> reviews = reviewRepository.findReviewWithMemberWithPage(item, pageable);
-        HttpSession session = request.getSession();
-        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
         // 리턴 dto에 flag를 집어 넣어서 만약 리뷰 중 현재 로그인한 회원의 이메일과 일치한다면
         // true flag를 넣어 프론트에서 수정/삭제 버튼이 보이도록 설계
         return reviews.stream()
@@ -152,16 +145,13 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void removeReview(Long reviewId, HttpServletRequest request) {
+    public void removeReview(Long reviewId, String memberEmail) {
         List<Review> reviews = reviewRepository.findReviewWithMember(reviewId);
         if (reviews.size() == 0) {
             throw new NoReviewException("해당하는 리뷰가 없습니다.");
         }
         Review review = reviews.get(0);
-        // 세션 저장소에 저장되어 있는 멤버 이메일 값과 review 작성자의 이메일 값이 같아야 삭제 가능하다.
-        HttpSession session = request.getSession();
-        String email = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        if (review.getMember().getEmail().equals(email)) {
+        if (review.getMember().getEmail().equals(memberEmail)) {
             throw new NoMatchEmailException("리뷰 작성자가 아닙니다.");
         }
         reviewRepository.delete(review);
@@ -210,16 +200,13 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void editReview(ReviewEditDto dto, HttpServletRequest request) {
+    public void editReview(ReviewEditDto dto, String memberEmail) {
         List<Review> reviews = reviewRepository.findReviewWithMember(dto.getReviewId());
         if (reviews.size() == 0) {
             throw new NoReviewException("해당하는 리뷰가 없습니다.");
         }
         Review review = reviews.get(0);
-        // 세션 저장소에 저장되어 있는 멤버 이메일 값과 review 작성자의 이메일 값이 같아야 삭제 가능하다.
-        HttpSession session = request.getSession();
-        String email = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        if (review.getMember().getEmail().equals(email)) {
+        if (review.getMember().getEmail().equals(memberEmail)) {
             throw new NoMatchEmailException("리뷰 작성자가 아닙니다.");
         }
         if (dto.getNewTitle().isBlank() || dto.getNewContent().isBlank()) {

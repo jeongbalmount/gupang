@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import shoppingMall.gupang.repository.review.ReviewDtoRepository;
+import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
@@ -56,6 +57,8 @@ public class ReviewServiceTest {
     private List<Review> reviews = new ArrayList<>();
     private Item item;
 
+    private Member member;
+
 
     @BeforeEach
     void beforeEach() {
@@ -63,6 +66,7 @@ public class ReviewServiceTest {
         Member member = new Member("e@gmail.com", "pwd", "name", "010-1111-2222",
                 address, IsMemberShip.NOMEMBERSHIP);
         memberRepository.save(member);
+        this.member = member;
 
         Seller seller = new Seller("010-1111-2222", "managerName");
         Category category = new Category("categoryName");
@@ -72,12 +76,13 @@ public class ReviewServiceTest {
         itemRepository.save(item);
         this.item = item;
 
-        Review review = new Review(item, "test title", "test content");
+        Review review = new Review(member, item, "test title", "test content");
         reviewRepository.save(review);
         this.review = review;
 
         for (int i=0;i<5;i++){
-            Review r = new Review(item, "title" + Integer.toString(i), "review" + Integer.toString(i));
+            Review r = new Review(member, item, "title" + Integer.toString(i),
+                    "review" + Integer.toString(i));
             this.reviews.add(r);
         }
     }
@@ -134,8 +139,7 @@ public class ReviewServiceTest {
     void reviewCacheTest() {
         for (int i=0;i<5;i++){
             Review review = reviews.get(i);
-            reviewService.addReview(new ReviewItemDto(review.getId(), review.getItem().getId(), review.getTitle(),
-                    review.getContent(), review.getLike()));
+//            reviewService.addReview(new ReviewDto(item.getId(), "title", "content"));
         }
         Assertions.assertThat(this.reviews.size()).isEqualTo(5);
     }

@@ -22,16 +22,14 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
+    public String login(@Valid @RequestBody LoginDto loginDto, HttpSession session) {
 
         Member loginMember = loginService.Login(loginDto.getEmail(), loginDto.getPassword());
         if (loginMember == null) {
             return "loginFailed";
         }
 
-        HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember.getEmail());
-
         return "ok";
     }
 

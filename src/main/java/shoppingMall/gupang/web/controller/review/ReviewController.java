@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import shoppingMall.gupang.web.SessionConst;
 import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
@@ -20,6 +21,7 @@ import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
 import shoppingMall.gupang.service.review.ReviewService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -39,8 +41,11 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @PostMapping
-    public void addReview(@RequestBody ReviewDto reviewDto, HttpServletRequest request) {
-        reviewService.addReview(reviewDto, request);
+    public void addReview(@RequestBody ReviewDto reviewDto, HttpSession session) {
+        // 리뷰를 적은 회원은 현재 로그인한 회원이다.
+        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        log.info(reviewDto.toString());
+        reviewService.addReview(reviewDto, memberEmail);
     }
 
     @Operation(summary = "add like", description = "리뷰 좋아요 더하기")
@@ -63,8 +68,11 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewEditDto.class)))
     @PatchMapping
-    public String editReview(@Valid @RequestBody ReviewEditDto dto, HttpServletRequest request){
-        reviewService.editReview(dto, request);
+    public String editReview(@Valid @RequestBody ReviewEditDto dto, HttpSession session){
+        // review를 지울 수 있는사람은 review 작성자만 가능하기 때문에
+        // 현재 접속 인원이 review 작성자인지 확인하기 위해 login 정보 세션에서 꺼내 확인
+        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        reviewService.editReview(dto, memberEmail);
         return "ok";
     }
 
@@ -75,8 +83,9 @@ public class ReviewController {
     })
     @Parameter(name = "reviewId", description = "리뷰 아이디")
     @DeleteMapping("/{reviewId}")
-    public String removeReview(@PathVariable Long reviewId, HttpServletRequest request) {
-        reviewService.removeReview(reviewId, request);
+    public String removeReview(@PathVariable Long reviewId, HttpSession session) {
+        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        reviewService.removeReview(reviewId, memberEmail);
         return "ok";
     }
 
@@ -87,8 +96,9 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @GetMapping("/item/{itemId}")
-    public Result getItemReviews(@PathVariable Long itemId, HttpServletRequest request, Pageable pageable) {
-        List<ReviewReturnDto> returnCollect = reviewService.getItemReviews(itemId, request, pageable);
+    public Result getItemReviews(@PathVariable Long itemId, HttpSession session, Pageable pageable) {
+        String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        List<ReviewReturnDto> returnCollect = reviewService.getItemReviews(itemId, memberEmail, pageable);
         return new Result(returnCollect);
     }
 

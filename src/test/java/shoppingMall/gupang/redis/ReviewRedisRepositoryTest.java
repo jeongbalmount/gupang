@@ -10,16 +10,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import shoppingMall.gupang.domain.*;
+import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.repository.review.ReviewDtoRepository;
+import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
-import shoppingMall.gupang.domain.Category;
-import shoppingMall.gupang.domain.Item;
-import shoppingMall.gupang.domain.Review;
-import shoppingMall.gupang.domain.Seller;
 import shoppingMall.gupang.repository.review.ReviewRepository;
 import shoppingMall.gupang.service.review.ReviewService;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,34 +42,38 @@ public class ReviewRedisRepositoryTest {
 
     private Item theItem;
 
+    private Member member;
+
     @BeforeEach
     void before() {
+        Address address = new Address("city", "st", "zip");
+        Member member = new Member("mail", "password", "name", "010-111-111",
+                address, IsMemberShip.NOMEMBERSHIP);
+
+        em.persist(member);
+        this.member = member;
+
         Item item = makeItem();
         theItem = item;
 
         List<Review> reviews = makeReviews(item);
 
-        ReviewItemDto reviewItemDto1 = new ReviewItemDto(reviews.get(0).getId(), item.getId(), reviews.get(0).getTitle(), reviews.get(0).getContent(), reviews.get(0).getLike());
-        ReviewItemDto reviewItemDto2 = new ReviewItemDto(reviews.get(1).getId(), item.getId(), reviews.get(1).getTitle(), reviews.get(1).getContent(), reviews.get(1).getLike());
-        ReviewItemDto reviewItemDto3 = new ReviewItemDto(reviews.get(2).getId(), item.getId(), reviews.get(2).getTitle(), reviews.get(2).getContent(), reviews.get(2).getLike());
-        ReviewItemDto reviewItemDto4 = new ReviewItemDto(reviews.get(3).getId(), item.getId(), reviews.get(3).getTitle(), reviews.get(3).getContent(), reviews.get(3).getLike());
-        ReviewItemDto reviewItemDto5 = new ReviewItemDto(reviews.get(4).getId(), item.getId(), reviews.get(4).getTitle(), reviews.get(4).getContent(), reviews.get(4).getLike());
-        ReviewItemDto reviewItemDto6 = new ReviewItemDto(reviews.get(5).getId(), item.getId(), reviews.get(5).getTitle(), reviews.get(5).getContent(), reviews.get(5).getLike());
-        ReviewItemDto reviewItemDto7 = new ReviewItemDto(reviews.get(6).getId(), item.getId(), reviews.get(6).getTitle(), reviews.get(6).getContent(), reviews.get(6).getLike());
-        ReviewItemDto reviewItemDto8 = new ReviewItemDto(reviews.get(7).getId(), item.getId(), reviews.get(7).getTitle(), reviews.get(7).getContent(), reviews.get(7).getLike());
-        ReviewItemDto reviewItemDto9 = new ReviewItemDto(reviews.get(8).getId(), item.getId(), reviews.get(8).getTitle(), reviews.get(8).getContent(), reviews.get(8).getLike());
-        ReviewItemDto reviewItemDto10 = new ReviewItemDto(reviews.get(9).getId(), item.getId(), reviews.get(9).getTitle(), reviews.get(9).getContent(), reviews.get(9).getLike());
+        ReviewItemDto reviewItemDto1 = new ReviewItemDto(reviews.get(0).getId(), item.getId(),
+                member.getEmail(), reviews.get(0).getTitle(), reviews.get(0).getContent(), reviews.get(0).getLike());
+        ReviewItemDto reviewItemDto2 = new ReviewItemDto(reviews.get(1).getId(), item.getId(),
+                member.getEmail(),reviews.get(1).getTitle(), reviews.get(1).getContent(), reviews.get(1).getLike());
+        ReviewItemDto reviewItemDto3 = new ReviewItemDto(reviews.get(2).getId(), item.getId(),
+                member.getEmail(),reviews.get(2).getTitle(), reviews.get(2).getContent(), reviews.get(2).getLike());
+        ReviewItemDto reviewItemDto4 = new ReviewItemDto(reviews.get(3).getId(), item.getId(),
+                member.getEmail(),reviews.get(3).getTitle(), reviews.get(3).getContent(), reviews.get(3).getLike());
+        ReviewItemDto reviewItemDto5 = new ReviewItemDto(reviews.get(4).getId(), item.getId(),
+                member.getEmail(),reviews.get(4).getTitle(), reviews.get(4).getContent(), reviews.get(4).getLike());
 
         reviewDtoRepository.save(reviewItemDto1);
         reviewDtoRepository.save(reviewItemDto2);
         reviewDtoRepository.save(reviewItemDto3);
         reviewDtoRepository.save(reviewItemDto4);
         reviewDtoRepository.save(reviewItemDto5);
-//        reviewDtoRepository.save(reviewItemDto6);
-//        reviewDtoRepository.save(reviewItemDto7);
-//        reviewDtoRepository.save(reviewItemDto8);
-//        reviewDtoRepository.save(reviewItemDto9);
-//        reviewDtoRepository.save(reviewItemDto10);
     }
 
     @AfterEach
@@ -91,11 +95,13 @@ public class ReviewRedisRepositoryTest {
         log.info(String.valueOf(reviewDtos.size()));
         String newTitle = "newTitle";
         String newContent = "newContent";
-        Review newReview = new Review(theItem, newTitle, newContent);
+        Review newReview = new Review(member, theItem, newTitle, newContent);
         em.persist(newReview);
-        ReviewItemDto dto = new ReviewItemDto(newReview.getId(), theItem.getId(), newTitle, newContent, 0);
-        reviewService.addReview(dto);
+        ReviewDto dto = new ReviewDto(theItem.getId(), newTitle, newContent);
 
+        //HttpServletRequest mock으로 넣어줘야함
+//        HttpServletRequest request = new HttpServletRequest();
+//        reviewService.addReview(dto, HttpServletRequest request);
         List<ReviewItemDto> reviewDtos2 = reviewDtoRepository.findByItemIdOrderByLikeDesc(theItem.getId());
         for (ReviewItemDto reviewItemDto : reviewDtos2) {
             log.info(reviewItemDto.getTitle());
@@ -127,7 +133,7 @@ public class ReviewRedisRepositoryTest {
 
             for (Review r : leftReviews) {
                 ReviewItemDto newDto = new ReviewItemDto(r.getId(),
-                        r.getItem().getId(), r.getTitle(), r.getContent(), r.getLike());
+                        r.getItem().getId(), member.getEmail(), r.getTitle(), r.getContent(), r.getLike());
                 reviewDtoRepository.save(newDto);
                 reviewDtos.add(newDto);
             }
@@ -192,16 +198,16 @@ public class ReviewRedisRepositoryTest {
         String content9 = "content9";
         String content10 = "content10";
 
-        Review review1 = new Review(item1, title1, content1);
-        Review review2 = new Review(item1, title2, content2);
-        Review review3 = new Review(item1, title3, content3);
-        Review review4 = new Review(item1, title4, content4);
-        Review review5 = new Review(item1, title5, content5);
-        Review review6 = new Review(item1, title6, content6);
-        Review review7 = new Review(item1, title7, content7);
-        Review review8 = new Review(item1, title8, content8);
-        Review review9 = new Review(item1, title9, content9);
-        Review review10 = new Review(item1, title10, content10);
+        Review review1 = new Review(member, item1, title1, content1);
+        Review review2 = new Review(member, item1, title2, content2);
+        Review review3 = new Review(member, item1, title3, content3);
+        Review review4 = new Review(member, item1, title4, content4);
+        Review review5 = new Review(member, item1, title5, content5);
+        Review review6 = new Review(member, item1, title6, content6);
+        Review review7 = new Review(member, item1, title7, content7);
+        Review review8 = new Review(member, item1, title8, content8);
+        Review review9 = new Review(member, item1, title9, content9);
+        Review review10 = new Review(member, item1, title10, content10);
         review1.setLike(13);
         review2.setLike(223);
         review3.setLike(32);

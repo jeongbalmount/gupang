@@ -5,19 +5,18 @@ import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface ReviewService {
 
-    void addReview(ReviewDto reviewItemDto, HttpServletRequest request);
+    void addReview(ReviewDto reviewItemDto, String request);
 
-    List<ReviewReturnDto> getItemReviews(Long itemId, HttpServletRequest request, Pageable pageable);
+    List<ReviewReturnDto> getItemReviews(Long itemId, String request, Pageable pageable);
 
-    void removeReview(Long reviewId, HttpServletRequest request);
+    void removeReview(Long reviewId, String request);
 
     void addLike(Long reviewId);
 
-    void editReview(ReviewEditDto dto, HttpServletRequest request);
+    void editReview(ReviewEditDto dto, String request);
 
 }
