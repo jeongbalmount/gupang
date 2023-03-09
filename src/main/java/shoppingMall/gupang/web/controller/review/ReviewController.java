@@ -41,11 +41,10 @@ public class ReviewController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
     @PostMapping
-    public void addReview(@RequestBody ReviewDto reviewDto, HttpSession session) {
+    public Long addReview(@RequestBody ReviewDto reviewDto, HttpSession session) {
         // 리뷰를 적은 회원은 현재 로그인한 회원이다.
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        log.info(reviewDto.toString());
-        reviewService.addReview(reviewDto, memberEmail);
+        return reviewService.addReview(reviewDto, memberEmail);
     }
 
     @Operation(summary = "add like", description = "리뷰 좋아요 더하기")
@@ -83,7 +82,7 @@ public class ReviewController {
     })
     @Parameter(name = "reviewId", description = "리뷰 아이디")
     @DeleteMapping("/{reviewId}")
-    public String removeReview(@PathVariable Long reviewId, HttpSession session) {
+    public String removeReview(@PathVariable(name = "reviewId") Long reviewId, HttpSession session) {
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
         reviewService.removeReview(reviewId, memberEmail);
         return "ok";

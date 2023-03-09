@@ -19,7 +19,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         HttpSession session = request.getSession();
-        log.info(String.valueOf(session.getAttribute(SessionConst.LOGIN_MEMBER)));
         if (session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
             throw new AuthenticationsException("권한이 없습니다. 로그인 해주세요");
         }

@@ -43,7 +43,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final MemberRepository memberRepository;
 
     @Override
-    public void addReview(ReviewDto reviewDto, String memberEmail) {
+    public Long addReview(ReviewDto reviewDto, String memberEmail) {
 
         Optional<Item> optionalItem = itemRepository.findById(reviewDto.getItemId());
         Item item = optionalItem.orElse(null);
@@ -67,6 +67,8 @@ public class ReviewServiceImpl implements ReviewService{
         if (reviewDtos.size() < 5) {
             reviewDtoRepository.save(reviewItemDto);
         }
+
+        return review.getId();
     }
 
     /*
@@ -151,17 +153,16 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoReviewException("해당하는 리뷰가 없습니다.");
         }
         Review review = reviews.get(0);
-        if (review.getMember().getEmail().equals(memberEmail)) {
+        if (!review.getMember().getEmail().equals(memberEmail)) {
             throw new NoMatchEmailException("리뷰 작성자가 아닙니다.");
         }
         reviewRepository.delete(review);
 
         Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(reviewId);
         ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
-        if (reviewItemDto == null) {
-            throw new NoReviewException("해당 리뷰가 없습니다.(cache 오류)");
+        if (reviewItemDto != null) {
+            reviewDtoRepository.delete(reviewItemDto);
         }
-        reviewDtoRepository.delete(reviewItemDto);
     }
 
     @Override
@@ -206,7 +207,7 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoReviewException("해당하는 리뷰가 없습니다.");
         }
         Review review = reviews.get(0);
-        if (review.getMember().getEmail().equals(memberEmail)) {
+        if (!review.getMember().getEmail().equals(memberEmail)) {
             throw new NoMatchEmailException("리뷰 작성자가 아닙니다.");
         }
         if (dto.getNewTitle().isBlank() || dto.getNewContent().isBlank()) {
@@ -215,14 +216,17 @@ public class ReviewServiceImpl implements ReviewService{
         review.changeTitle(dto.getNewTitle());
         review.changeContents(dto.getNewContent());
 
+        /*
+            - 내용을 업데이트 하려는 리뷰가 캐시 안에 있을때 수정하는 코드
+         */
         Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(dto.getReviewId());
         ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
-        if (reviewItemDto == null) {
-            throw new NoReviewException("해당하는 리뷰가 없습니다.(cache 문제)");
-        }
-        reviewItemDto.setContent(dto.getNewContent());
-        reviewItemDto.setTitle(dto.getNewTitle());
+        if (reviewItemDto != null) {
+            reviewItemDto.setContent(dto.getNewContent());
+            reviewItemDto.setTitle(dto.getNewTitle());
 
-        reviewDtoRepository.save(reviewItemDto);
+            reviewDtoRepository.save(reviewItemDto);
+        }
+
     }
 }

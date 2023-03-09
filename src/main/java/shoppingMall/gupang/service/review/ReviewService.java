@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ReviewService {
 
-    void addReview(ReviewDto reviewItemDto, String request);
+    Long addReview(ReviewDto reviewDto, String memberEmail);
 
     List<ReviewReturnDto> getItemReviews(Long itemId, String request, Pageable pageable);
 
