@@ -28,7 +28,7 @@ public class Review {
 
     @Column(name = "likes")
     // 좋아요 버튼 눌린 횟수
-    private int like = 0;
+    private int like;
 
     private String title;
 
@@ -37,12 +37,13 @@ public class Review {
 
     private LocalDateTime writeDate;
 
-    public Review(Member member, Item item, String title, String content) {
+    public Review(Member member, Item item, String title, String content, int like) {
         this.member = member;
         this.item = item;
         this.title = title;
         this.content = content;
         this.writeDate = LocalDateTime.now();
+        this.like = like;
     }
 
     public void addLike() {

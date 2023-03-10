@@ -95,7 +95,7 @@ public class ReviewRedisRepositoryTest {
         log.info(String.valueOf(reviewDtos.size()));
         String newTitle = "newTitle";
         String newContent = "newContent";
-        Review newReview = new Review(member, theItem, newTitle, newContent);
+        Review newReview = new Review(member, theItem, newTitle, newContent, 0);
         em.persist(newReview);
         ReviewDto dto = new ReviewDto(theItem.getId(), newTitle, newContent);
 
@@ -198,16 +198,16 @@ public class ReviewRedisRepositoryTest {
         String content9 = "content9";
         String content10 = "content10";
 
-        Review review1 = new Review(member, item1, title1, content1);
-        Review review2 = new Review(member, item1, title2, content2);
-        Review review3 = new Review(member, item1, title3, content3);
-        Review review4 = new Review(member, item1, title4, content4);
-        Review review5 = new Review(member, item1, title5, content5);
-        Review review6 = new Review(member, item1, title6, content6);
-        Review review7 = new Review(member, item1, title7, content7);
-        Review review8 = new Review(member, item1, title8, content8);
-        Review review9 = new Review(member, item1, title9, content9);
-        Review review10 = new Review(member, item1, title10, content10);
+        Review review1 = new Review(member, item1, title1, content1, 0);
+        Review review2 = new Review(member, item1, title2, content2, 0);
+        Review review3 = new Review(member, item1, title3, content3, 0);
+        Review review4 = new Review(member, item1, title4, content4, 0);
+        Review review5 = new Review(member, item1, title5, content5, 0);
+        Review review6 = new Review(member, item1, title6, content6, 0);
+        Review review7 = new Review(member, item1, title7, content7, 0);
+        Review review8 = new Review(member, item1, title8, content8, 0);
+        Review review9 = new Review(member, item1, title9, content9, 0);
+        Review review10 = new Review(member, item1, title10, content10, 0);
         review1.setLike(13);
         review2.setLike(223);
         review3.setLike(32);

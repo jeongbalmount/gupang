@@ -76,13 +76,13 @@ public class ReviewServiceTest {
         itemRepository.save(item);
         this.item = item;
 
-        Review review = new Review(member, item, "test title", "test content");
+        Review review = new Review(member, item, "test title", "test content", 0);
         reviewRepository.save(review);
         this.review = review;
 
         for (int i=0;i<5;i++){
             Review r = new Review(member, item, "title" + Integer.toString(i),
-                    "review" + Integer.toString(i));
+                    "review" + Integer.toString(i), 0);
             this.reviews.add(r);
         }
     }

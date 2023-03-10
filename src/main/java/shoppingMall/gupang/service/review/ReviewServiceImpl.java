@@ -44,7 +44,6 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public Long addReview(ReviewDto reviewDto, String memberEmail) {
-
         Optional<Item> optionalItem = itemRepository.findById(reviewDto.getItemId());
         Item item = optionalItem.orElse(null);
         if (item == null) {
@@ -57,7 +56,7 @@ public class ReviewServiceImpl implements ReviewService{
             throw new NoMemberException("해당 사용자가 없습니다.");
         }
 
-        Review review = new Review(member, item, reviewDto.getTitle(), reviewDto.getContent());
+        Review review = new Review(member, item, reviewDto.getTitle(), reviewDto.getContent(), 0);
         Review savedReview = reviewRepository.save(review);
 
         ReviewItemDto reviewItemDto = new ReviewItemDto(review.getId(), reviewDto.getItemId(), memberEmail,
@@ -71,9 +70,37 @@ public class ReviewServiceImpl implements ReviewService{
         return review.getId();
     }
 
+    @Override
+    public Long addReviewForTest(ReviewDto reviewDto, String memberEmail, int like) {
+        Optional<Item> optionalItem = itemRepository.findById(reviewDto.getItemId());
+        Item item = optionalItem.orElse(null);
+        if (item == null) {
+            throw new NoItemException("해당 상품이 없습니다.");
+        }
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberEmail);
+        Member member = optionalMember.orElse(null);
+        if (member == null) {
+            throw new NoMemberException("해당 사용자가 없습니다.");
+        }
+
+        Review review = new Review(member, item, reviewDto.getTitle(), reviewDto.getContent(), like);
+        Review savedReview = reviewRepository.save(review);
+
+        ReviewItemDto reviewItemDto = new ReviewItemDto(review.getId(), reviewDto.getItemId(), memberEmail,
+                reviewDto.getTitle(), reviewDto.getContent(), like);
+        reviewItemDto.setReviewId(savedReview.getId());
+        List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(reviewDto.getItemId());
+        if (reviewDtos.size() < 5) {
+            reviewDtoRepository.save(reviewItemDto);
+        }
+
+        return review.getId();
+    }
+
     /*
-        - 상품에 맞는 리뷰들을 Page에 맞춰 가져온다.
-     */
+            - 상품에 맞는 리뷰들을 Page에 맞춰 가져온다.
+         */
     @Override
     @Transactional(readOnly = true)
     public List<ReviewReturnDto> getItemReviews(Long itemId, String memberEmail, Pageable pageable) {
@@ -177,8 +204,8 @@ public class ReviewServiceImpl implements ReviewService{
         if (like+1 > 999999) {
             throw new LikeLimitException("좋아요 개수는 999999이하만 가능합니다.");
         }
+        like += 1;
         review.addLike();
-
         Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(reviewId);
         ReviewItemDto reviewItemDto = optionalReviewItemDto.orElse(null);
         if (reviewItemDto != null) {
@@ -190,10 +217,9 @@ public class ReviewServiceImpl implements ReviewService{
             List<ReviewItemDto> reviewDtos = reviewDtoRepository.findByItemIdOrderByLikeDesc(review.getItem().getId());
             for (ReviewItemDto reviewDto : reviewDtos) {
                 if (reviewDto.getLike() < like) {
-                    String email = "email";
                     reviewDtoRepository.delete(reviewDto);
-                    reviewDtoRepository.save(new ReviewItemDto(review.getId(), review.getItem().getId(),email,
-                            review.getTitle(), review.getContent(), review.getLike()));
+                    reviewDtoRepository.save(new ReviewItemDto(review.getId(), review.getItem().getId(),
+                            review.getMember().getEmail(), review.getTitle(), review.getContent(), review.getLike()));
                     break;
                 }
             }
@@ -227,6 +253,5 @@ public class ReviewServiceImpl implements ReviewService{
 
             reviewDtoRepository.save(reviewItemDto);
         }
-
     }
 }

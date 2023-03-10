@@ -109,7 +109,7 @@ public class ReviewControllerTest {
         memberRepository.save(member);
         this.member = member;
 
-        Review review = new Review(member, item, "tmp title", "tmp content");
+        Review review = new Review(member, item, "tmp title", "tmp content", 0);
         reviewRepository.save(review);
         this.review = review;
 

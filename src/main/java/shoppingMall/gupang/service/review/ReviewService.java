@@ -1,6 +1,7 @@
 package shoppingMall.gupang.service.review;
 
 import org.springframework.data.domain.Pageable;
+import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
@@ -11,7 +12,9 @@ public interface ReviewService {
 
     Long addReview(ReviewDto reviewDto, String memberEmail);
 
-    List<ReviewReturnDto> getItemReviews(Long itemId, String request, Pageable pageable);
+    Long addReviewForTest(ReviewDto reviewDto, String memberEmail, int like);
+
+    List<ReviewReturnDto> getItemReviews(Long itemId, String memberEmail, Pageable pageable);
 
     void removeReview(Long reviewId, String request);
 
