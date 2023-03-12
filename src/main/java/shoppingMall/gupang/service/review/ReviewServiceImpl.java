@@ -194,7 +194,6 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public void addLike(Long reviewId) {
-
         List<Review> reviews = reviewRepository.findReviewsWithItem(reviewId);
         if (reviews.size() == 0) {
             throw new NoReviewException("해당하는 리뷰가 없습니다.");

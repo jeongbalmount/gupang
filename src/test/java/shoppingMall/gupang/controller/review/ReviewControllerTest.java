@@ -252,5 +252,4 @@ public class ReviewControllerTest {
         Assertions.assertThat(reviewItemDto.getTitle()).isEqualTo("newTitle");
         Assertions.assertThat(reviewItemDto.getContent()).isEqualTo("newContent");
     }
-
 }

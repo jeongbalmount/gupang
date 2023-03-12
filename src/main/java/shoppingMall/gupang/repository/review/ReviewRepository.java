@@ -12,4 +12,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     List<Review> findByMember(Member member);
     List<Review> findByItemAndLikeLessThan(Item item, int like);
+    List<Review> findAllByOrderByLikeDesc();
 }
