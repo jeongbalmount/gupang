@@ -51,7 +51,7 @@ public class CartServiceImpl implements CartService{
         Optional<CartItem> optionalCartItem = cartRepository.findById(cartItemId);
         CartItem cartItem = optionalCartItem.orElse(null);
         if (cartItem == null) {
-            throw new NoCartItemException("맞는 카트 상품이 없습니다.");
+            throw new NoCartItemException("해당 카트 상품이 없습니다.");
         }
 
         Optional<Member> optionalMember = memberRepository.findByEmail(cartItem.getMember().getEmail());
@@ -60,6 +60,7 @@ public class CartServiceImpl implements CartService{
             throw new NoMemberException("회원이 존재하지 않습니다.");
         }
 
+        // 세션의 이메일과 cartItem의 멤버의 이메일이 같지 않다면 throw exception
         if (!memberEmail.equals(cartItem.getMember().getEmail())) {
             throw new CartItemNotMatchWithMemberException("카트 상품의 소유자와 맞지 않습니다.");
         }
@@ -88,7 +89,6 @@ public class CartServiceImpl implements CartService{
 
     @Override
     public List<CartItem> removeCartItems(String memberEmail, CartItemIdsDto cartItemIdsDto) {
-
         /*
             - cartItems 돌면서 memberEmail과 cartItem의 memberEmail과 맞지 않는 케이스가 있다면
             - throw exception한다.

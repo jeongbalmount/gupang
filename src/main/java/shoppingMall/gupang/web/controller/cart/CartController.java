@@ -50,7 +50,7 @@ public class CartController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 멤버가 존재하지 않음"),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 존재하지 않음")
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 존재하지 않음"),
     })
     @Parameter(name = "itemId", description = "카트에 넣을 상품")
     @Parameter(name = "count", description = "카트에 넣을 상품 개수")
@@ -66,7 +66,9 @@ public class CartController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 멤버가 존재하지 않음"),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 존재하지 않음")
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 존재하지 않음"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 설정한 숫자가 1보다 작음"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 카트 상품의 소유자와 맞지 않음")
     })
     @Parameter(content = @Content(schema = @Schema(implementation = CartItemReturnDto.class)))
     @PutMapping
@@ -85,7 +87,8 @@ public class CartController {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = CartItemReturnDto.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 멤버가 존재하지 않음"),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 존재하지 않음")
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 존재하지 않음"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 카트 상품의 소유자와 맞지 않음")
     })
     @Parameter(content = @Content(schema = @Schema(implementation = CartItemIdsDto.class)))
     @DeleteMapping
