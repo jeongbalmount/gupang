@@ -39,7 +39,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 없습니다.")
     })
-    @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
+    @Parameter(content = @Content(schema = @Schema(implementation = ReviewDto.class)))
     @PostMapping
     public Long addReview(@RequestBody ReviewDto reviewDto, HttpSession session) {
         // 리뷰를 적은 회원은 현재 로그인한 회원이다.
@@ -93,7 +93,8 @@ public class ReviewController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 없습니다.")
     })
-    @Parameter(content = @Content(schema = @Schema(implementation = ReviewItemDto.class)))
+    @Parameter(name = "itemId", description = "상품 아이디")
+    @Parameter(name = "pageable", description = "페이징을 위한 Pageable")
     @GetMapping("/item/{itemId}")
     public Result getItemReviews(@PathVariable Long itemId, HttpSession session, Pageable pageable) {
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);

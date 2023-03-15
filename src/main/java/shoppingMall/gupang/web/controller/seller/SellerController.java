@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import shoppingMall.gupang.web.controller.cart.dto.CartItemMemberItemDto;
 import shoppingMall.gupang.web.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.service.seller.SellerService;
 

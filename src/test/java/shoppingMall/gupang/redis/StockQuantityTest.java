@@ -88,7 +88,7 @@ public class StockQuantityTest {
     @Test
     void 동시에_100개의_요청_캐시사용() throws InterruptedException {
         int threadCount = 100;
-        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         for (int i = 0; i < threadCount; i++) {

@@ -37,4 +37,10 @@ public class CartRestControllerAdvice {
         return new ErrorResult("LackOfCount", e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResult cartItemNotMatchWithMemberException(LackOfCountException e){
+        return new ErrorResult("카트 상품의 회원에 해당하지 않습니다.", e.getMessage());
+    }
+
 }

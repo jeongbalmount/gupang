@@ -3,13 +3,13 @@ package shoppingMall.gupang.web.controller.cart.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CartItemsMemberDto {
+public class CartItemIdsDto {
 
-    private Long memberId;
-    private List<CartItemDto> cartItemIds;
+    List<Long> cartItemIds = new ArrayList<>();
 
 }

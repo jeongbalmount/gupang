@@ -31,7 +31,8 @@ public class ItemController {
 
     @Operation(summary = "search items", description = "이름에 맞는 상품 가져오기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ItemReturnDto.class))),
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = ItemSearchDto.class))),
     })
     @Parameter(name = "itemName", description = "상품 이름")
     @GetMapping("/{itemName}")

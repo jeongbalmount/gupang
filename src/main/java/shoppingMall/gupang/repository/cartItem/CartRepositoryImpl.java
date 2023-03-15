@@ -8,6 +8,7 @@ import java.util.List;
 
 import static shoppingMall.gupang.domain.QCartItem.cartItem;
 import static shoppingMall.gupang.domain.QItem.item;
+import static shoppingMall.gupang.domain.QMember.member;
 
 public class CartRepositoryImpl implements CartRepositoryCustom {
 
@@ -22,11 +23,10 @@ public class CartRepositoryImpl implements CartRepositoryCustom {
 
     @Override
     public List<CartItem> findCartItemsByMemberId(Long memberId) {
-
         return queryFactory
                 .selectFrom(cartItem)
-                .join(cartItem.item, item).fetchJoin()
-                .where(cartItem.member.id.eq(memberId))
+                .join(cartItem.member, member).fetchJoin()
+                .where(member.id.eq(memberId))
                 .fetch();
     }
 

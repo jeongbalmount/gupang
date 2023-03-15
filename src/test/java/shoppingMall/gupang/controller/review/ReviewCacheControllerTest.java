@@ -20,8 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.redis.facade.RedissonLockLikeFacade;
+import shoppingMall.gupang.repository.category.CategoryRepository;
+import shoppingMall.gupang.repository.item.ItemRepository;
+import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.review.ReviewDtoRepository;
 import shoppingMall.gupang.repository.review.ReviewRepository;
+import shoppingMall.gupang.repository.seller.SellerRepository;
 import shoppingMall.gupang.service.review.ReviewService;
 import shoppingMall.gupang.web.SessionConst;
 import shoppingMall.gupang.web.controller.review.ReviewController;
@@ -30,7 +34,6 @@ import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewReturnDto;
 import shoppingMall.gupang.web.interceptor.LoginInterceptor;
 
-import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -63,9 +66,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ReviewCacheControllerTest {
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private ObjectMapper mapper;
 
     @Autowired
@@ -93,7 +93,19 @@ public class ReviewCacheControllerTest {
 
     private Item item;
     private Member member;
-//    private Review testReview;
+
+    @Autowired
+    private SellerRepository sellerRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
+
 
     @BeforeEach
     void init() {
@@ -104,21 +116,17 @@ public class ReviewCacheControllerTest {
         Seller seller = new Seller("010-111-222", "manager");
         Category category = new Category("food");
 
-        em.persist(seller);
-        em.persist(category);
+        sellerRepository.save(seller);
+        categoryRepository.save(category);
         Item item = new Item("item name", 1000, 100, seller, category);
-        em.persist(item);
+        itemRepository.save(item);
+
         this.item = item;
         Address address = new Address("city", "st", "zip");
         Member member = new Member("test@test.com", "password", "name", "010-111-111",
                 address, IsMemberShip.NOMEMBERSHIP);
-        em.persist(member);
+        memberRepository.save(member);
         this.member = member;
-
-//        Review review = new Review(member, item, "test title", "test content", 0);
-//        reviewRepository.save(review);
-//        this.testReview = review;
-
     }
 
     // 테스트 끝나면 삭제하기
@@ -264,9 +272,8 @@ public class ReviewCacheControllerTest {
     }
 
     /*
-        - Facade를 사용하기 때문에 test의 @Transactional을 끄지 않으면 service 계층에서
-          값이 업데이트 되지 않는다.
-        - 이 문제는 트랜잭션의 격리 수준 때문에 발생할 수 있다. JPA의 기본적인 트랜잭션 격리 수준은 READ_COMMITTED이다.
+        - test의 @Transactional을 끄지 않으면 service 계층에서 값이 업데이트 되지 않는다.
+        - 이 문제는 트랜잭션의 격리 수준 때문에 발생할 수 있다. mysql의 기본적인 트랜잭션 격리 수준은 REPEATABLE READ이다.
           이는 하나의 트랜잭션에서 변경된 데이터가 커밋되어야만 다른 트랜잭션에서 조회할 수 있다는 것을 의미한다.
           따라서, 테스트 코드의 @Transactional이 붙어 있을 경우에는,
           테스트 코드 내에서 Review 엔티티의 like 값이 증가하더라도 해당 트랜잭션이 커밋되기 전까지는 다른 트랜잭션에서 조회할 수 없다.
@@ -285,7 +292,7 @@ public class ReviewCacheControllerTest {
         Long newReviewId = reviewService.addReview(reviewDto, member.getEmail());
 
         int COUNT = 100;
-        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(COUNT);
         for (int i = 0; i < COUNT; i++) {
             executorService.submit(() -> {

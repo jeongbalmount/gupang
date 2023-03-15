@@ -9,5 +9,4 @@ import shoppingMall.gupang.domain.Member;
 public interface CartRepository extends JpaRepository<CartItem, Long>, CartRepositoryCustom {
 
     Page<CartItem> findByMember(Member member, Pageable pageable);
-
 }

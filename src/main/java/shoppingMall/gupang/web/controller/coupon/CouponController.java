@@ -26,7 +26,8 @@ public class CouponController {
 
     @Operation(summary = "get member coupons", description = "회원이 가지고 있는 쿠폰 목록 가져오기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CouponMemberDto.class))),
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = CouponMemberDto.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 멤버가 존재하지 않음"),
     })
     @Parameter(name = "memberId", description = "카테고리 id")
