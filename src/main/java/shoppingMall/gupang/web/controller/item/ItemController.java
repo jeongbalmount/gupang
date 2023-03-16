@@ -27,7 +27,6 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemRepository itemRepository;
 
     @Operation(summary = "search items", description = "이름에 맞는 상품 가져오기")
     @ApiResponses({
@@ -47,10 +46,14 @@ public class ItemController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 카테고리 존재하지 않음"),
     })
     @Parameter(content = @Content(schema = @Schema(implementation = ItemDto.class)))
-    @PostMapping("/add")
-    public String addItem(@Valid @RequestBody ItemDto itemDto) {
-        itemService.saveItem(itemDto);
-        return "ok";
+    @PostMapping
+    public Long addItem(@Valid @RequestBody ItemDto itemDto) {
+        return itemService.saveItem(itemDto);
+    }
+
+    @GetMapping("/singleitem/{itemId}")
+    public ItemReturnDto getSingleItem(@PathVariable(name = "itemId") Long itemId) {
+        return itemService.findSingleItem(itemId);
     }
 
     @Data

@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import shoppingMall.gupang.exception.cart.CartItemNotMatchWithMemberException;
 import shoppingMall.gupang.exception.cart.LackOfCountException;
 import shoppingMall.gupang.exception.cart.NoCartItemException;
 import shoppingMall.gupang.exception.item.NoItemException;
@@ -39,7 +40,7 @@ public class CartRestControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ErrorResult cartItemNotMatchWithMemberException(LackOfCountException e){
+    public ErrorResult cartItemNotMatchWithMemberException(CartItemNotMatchWithMemberException e){
         return new ErrorResult("카트 상품의 회원에 해당하지 않습니다.", e.getMessage());
     }
 

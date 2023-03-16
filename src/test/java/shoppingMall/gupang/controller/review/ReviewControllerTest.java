@@ -147,15 +147,8 @@ public class ReviewControllerTest {
         Optional<ReviewItemDto> optionalReviewItemDto = reviewDtoRepository.findById(Long.decode(content));
         Review newReview = optionalReview.orElse(null);
         ReviewItemDto newReviewItemDto = optionalReviewItemDto.orElse(null);
-        if (newReview != null) {
-            log.info("11");
-            Assertions.assertThat(newReview.getContent()).isEqualTo("contents");
-        }
-        if (newReviewItemDto != null) {
-            log.info("22");
-            Assertions.assertThat(newReviewItemDto.getContent()).isEqualTo("contents");
-        }
-
+        Assertions.assertThat(newReview.getContent()).isEqualTo("contents");
+        Assertions.assertThat(newReviewItemDto.getContent()).isEqualTo("contents");
     }
 
     /*

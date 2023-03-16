@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.web.controller.item.dto.ItemDto;
+import shoppingMall.gupang.web.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.web.controller.item.dto.ItemSearchDto;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
@@ -32,7 +33,7 @@ public class ItemServiceImpl implements ItemService{
     private final ItemSearchRepository itemSearchRepository;
 
     @Override
-    public void saveItem(ItemDto itemDto) {
+    public Long saveItem(ItemDto itemDto) {
 
         Optional<Seller> optionalSeller = sellerRepository.findById(itemDto.getSeller_id());
         Seller seller = optionalSeller.orElse(null);
@@ -51,6 +52,8 @@ public class ItemServiceImpl implements ItemService{
         ItemSearchDto itemSearchDto =
                 new ItemSearchDto(item.getId(), item.getName(), item.getItemPrice(), item.getCategory().getName());
         itemSearchRepository.save(itemSearchDto);
+
+        return item.getId();
     }
 
     @Override
@@ -58,6 +61,17 @@ public class ItemServiceImpl implements ItemService{
     public List<ItemSearchDto> findItemByName(String subString) {
         List<ItemSearchDto> items = itemSearchRepository.findByItemname(subString);
         return items;
+    }
+
+    @Override
+    public ItemReturnDto findSingleItem(Long itemId) {
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        Item item = optionalItem.orElse(null);
+        if (item == null) {
+            throw new NoItemException("해당 상품이 존재하지 않음");
+        }
+        return new ItemReturnDto(item.getName(), item.getItemPrice(), item.getSeller().getManagerName(),
+                item.getCategory().getName(), itemId);
     }
 
     @Override

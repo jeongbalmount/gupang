@@ -1,5 +1,6 @@
 package shoppingMall.gupang.web.config;
 
+import jodd.net.HttpMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -15,6 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/", "/signup", "/checkId", "/login", "/logout", "/category/*",
-                        "/css/**", "*/ico", "/error", "/item", "/review/item/*");
+                        "/css/**", "*/ico", "/error", "/item/**", "/review/item/*")
+                .addPathPatterns(HttpMethod.POST.name(), "/item/**");
     }
 }

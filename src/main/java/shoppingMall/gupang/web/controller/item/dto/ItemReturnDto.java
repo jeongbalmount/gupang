@@ -1,30 +1,35 @@
 package shoppingMall.gupang.web.controller.item.dto;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemReturnDto {
 
     @NotEmpty
-    private String name;
-    @NotEmpty
-    private int price;
+    private String itemName;
 
     @NotEmpty
-    private String seller;
+    private int itemPrice;
 
     @NotEmpty
-    private String category;
+    private String sellerName;
 
+    @NotEmpty
+    private String categoryName;
+
+    @NotEmpty
     private Long itemId;
 
-    public ItemReturnDto(String name, int price, String seller, String category, Long itemId) {
-        this.name = name;
-        this.price = price;
-        this.seller = seller;
-        this.category = category;
+    public ItemReturnDto(String name, int price, String sellerName, String categoryName, Long itemId) {
+        this.itemName = name;
+        this.itemPrice = price;
+        this.sellerName = sellerName;
+        this.categoryName = categoryName;
         this.itemId = itemId;
     }
 }

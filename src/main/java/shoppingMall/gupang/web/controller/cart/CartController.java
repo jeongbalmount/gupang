@@ -36,14 +36,14 @@ public class CartController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 멤버가 존재하지 않음")
     })
     @GetMapping
-    public Result getMemberCartItems(HttpServletRequest request){
+    public List<CartItemReturnDto> getMemberCartItems(HttpServletRequest request){
         HttpSession session = request.getSession();
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
         List<CartItemReturnDto> cartItemReturnDtos = cartService.getAllCartItems(memberEmail).stream()
                 .map(CartItemReturnDto::new)
                 .collect(Collectors.toList());
 
-        return new Result(cartItemReturnDtos);
+        return cartItemReturnDtos;
     }
 
     @Operation(summary = "add new cart item", description = "새로운 상품 카트에 넣기")
@@ -59,6 +59,7 @@ public class CartController {
                             HttpServletRequest request) {
         HttpSession session = request.getSession();
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        log.info(String.valueOf(count));
         cartService.addCartItem(memberEmail, itemId, count);
     }
 
@@ -72,14 +73,14 @@ public class CartController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = CartItemReturnDto.class)))
     @PutMapping
-    public Result updateCartItemCount(@RequestParam("cartItemId") Long cartItemId, @RequestParam("count") int count,
-                                      HttpServletRequest request) {
+    public List<CartItemReturnDto> updateCartItemCount(@RequestParam("cartItemId") Long cartItemId,
+                                                       @RequestParam("count") int count, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
         List<CartItemReturnDto> collect = cartService.updateItemCount(memberEmail, cartItemId, count)
                 .stream().map(CartItemReturnDto::new)
                 .collect(Collectors.toList());
-        return new Result(collect);
+        return collect;
     }
 
     @Operation(summary = "delete cart item", description = "카트 상품 삭제하기")
@@ -92,14 +93,14 @@ public class CartController {
     })
     @Parameter(content = @Content(schema = @Schema(implementation = CartItemIdsDto.class)))
     @DeleteMapping
-    public Result removeCartItems(@RequestBody CartItemIdsDto cartItemIdsDto, HttpServletRequest request) {
+    public List<CartItemReturnDto> removeCartItems(@RequestBody CartItemIdsDto cartItemIdsDto, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String memberEmail = (String) session.getAttribute(SessionConst.LOGIN_MEMBER);
         List<CartItemReturnDto> cartItemDtos = cartService.removeCartItems(memberEmail, cartItemIdsDto).stream()
                 .map(CartItemReturnDto::new)
                 .collect(Collectors.toList());
 
-        return new Result(cartItemDtos);
+        return cartItemDtos;
     }
 
     @Data

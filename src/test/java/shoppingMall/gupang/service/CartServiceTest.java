@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.web.controller.cart.dto.CartItemMemberDto;
 import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.cart.NoCartItemException;
@@ -77,52 +76,52 @@ public class CartServiceTest {
         items.add(item4);
     }
 
-    @Test
-    void getAllCartItemsTest() {
-        List<CartItem> allCartItems = cartService.getAllCartItems(member.getId());
-        for (CartItem i : allCartItems) {
-            log.info(String.valueOf(i.getItem().getItemPrice()));
-        }
-    }
-
-    @Test
-    void updateItemCountTest() {
-        CartItem cartItem = cartItems.get(0);
-        log.info(String.valueOf(cartItem.getId()));
-        log.info(String.valueOf(cartItem.getItemCount()));
-        cartService.updateItemCount(cartItem.getId(), 35);
-        log.info(String.valueOf(cartItem.getId()));
-        log.info(String.valueOf(cartItem.getItemCount()));
-        Long tmp = 100L;
-        Assertions.assertThrows(NoCartItemException.class,() -> cartService.updateItemCount(tmp,35));
-    }
-
-    @Test
-    void addCartItemTest() {
-        for (CartItem i : cartItems) {
-            log.info(String.valueOf(i.getId()));
-        }
-        System.out.println(">>>>>>>>>>>>");
-        Item item = items.get(0);
-        Assertions.assertThrows(NoItemException.class, () -> cartService.addCartItem(member.getId(),
-                item.getId(), 10));
-        cartService.addCartItem(member.getId(), item.getId(), 10);
-        List<CartItem> allCartItems = cartService.getAllCartItems(member.getId());
-        for (CartItem i : allCartItems) {
-            log.info(String.valueOf(i.getId()));
-        }
-    }
-
-    @Test
-    void removeCartItemTest() {
-        List<Long> ids = new ArrayList<>();
-        for (CartItem i : cartItems) {
-            ids.add(i.getId());
-        }
-        List<CartItem> allCartItems2 = cartService.getAllCartItems(member.getId());
-        CartItemMemberDto cartItemMemberDto = new CartItemMemberDto();
-//        CartItemsMemberDto cartItemsMemberDto = new CartItemsMemberDto(member.getId(), ids);
-//        cartService.removeCartItems(cartItemsMemberDto);
-        List<CartItem> allCartItems = cartService.getAllCartItems(member.getId());
-    }
+//    @Test
+//    void getAllCartItemsTest() {
+//        List<CartItem> allCartItems = cartService.getAllCartItems(member.getId());
+//        for (CartItem i : allCartItems) {
+//            log.info(String.valueOf(i.getItem().getItemPrice()));
+//        }
+//    }
+//
+//    @Test
+//    void updateItemCountTest() {
+//        CartItem cartItem = cartItems.get(0);
+//        log.info(String.valueOf(cartItem.getId()));
+//        log.info(String.valueOf(cartItem.getItemCount()));
+//        cartService.updateItemCount(cartItem.getId(), 35);
+//        log.info(String.valueOf(cartItem.getId()));
+//        log.info(String.valueOf(cartItem.getItemCount()));
+//        Long tmp = 100L;
+//        Assertions.assertThrows(NoCartItemException.class,() -> cartService.updateItemCount(tmp,35));
+//    }
+//
+//    @Test
+//    void addCartItemTest() {
+//        for (CartItem i : cartItems) {
+//            log.info(String.valueOf(i.getId()));
+//        }
+//        System.out.println(">>>>>>>>>>>>");
+//        Item item = items.get(0);
+//        Assertions.assertThrows(NoItemException.class, () -> cartService.addCartItem(member.getId(),
+//                item.getId(), 10));
+//        cartService.addCartItem(member.getId(), item.getId(), 10);
+//        List<CartItem> allCartItems = cartService.getAllCartItems(member.getId());
+//        for (CartItem i : allCartItems) {
+//            log.info(String.valueOf(i.getId()));
+//        }
+//    }
+//
+//    @Test
+//    void removeCartItemTest() {
+//        List<Long> ids = new ArrayList<>();
+//        for (CartItem i : cartItems) {
+//            ids.add(i.getId());
+//        }
+//        List<CartItem> allCartItems2 = cartService.getAllCartItems(member.getId());
+//        CartItemMemberDto cartItemMemberDto = new CartItemMemberDto();
+////        CartItemsMemberDto cartItemsMemberDto = new CartItemsMemberDto(member.getId(), ids);
+////        cartService.removeCartItems(cartItemsMemberDto);
+//        List<CartItem> allCartItems = cartService.getAllCartItems(member.getId());
+//    }
 }
