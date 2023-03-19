@@ -1,6 +1,7 @@
 package shoppingMall.gupang.service.seller;
 
 import shoppingMall.gupang.domain.Item;
+import shoppingMall.gupang.web.controller.item.dto.ItemDto;
 
 import java.util.List;
 

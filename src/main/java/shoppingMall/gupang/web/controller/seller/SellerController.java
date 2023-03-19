@@ -12,9 +12,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import shoppingMall.gupang.service.item.ItemService;
+import shoppingMall.gupang.web.controller.item.dto.ItemDto;
 import shoppingMall.gupang.web.controller.item.dto.ItemReturnDto;
 import shoppingMall.gupang.service.seller.SellerService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 public class SellerController {
 
     private final SellerService sellerService;
+    private final ItemService itemService;
 
     @Operation(summary = "get seller items", description = "판매자 판매 상품들 가져오기")
     @ApiResponses({
@@ -67,11 +71,23 @@ public class SellerController {
             @Parameter(name = "sellerId", description = "판매자 아이디"),
             @Parameter(name = "managerName", description = "판매 매니저 이름")
     })
-    @PatchMapping
+    @PutMapping
     public String editSellerInfo(@RequestParam(value = "sellerId") Long sellerId,
                                  @RequestParam(value = "managerName") String managerName) {
         sellerService.updateManagerName(sellerId, managerName);
         return "ok";
+    }
+
+    @Operation(summary = "add item", description = "상품 추가하기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 판매자 존재하지 않음"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 카테고리 존재하지 않음"),
+    })
+    @Parameter(content = @Content(schema = @Schema(implementation = ItemDto.class)))
+    @PostMapping("/newitem")
+    public Long addItem(@Valid @RequestBody ItemDto itemDto) {
+        return itemService.saveItem(itemDto);
     }
 
     @Data

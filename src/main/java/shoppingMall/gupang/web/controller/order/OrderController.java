@@ -13,9 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.web.controller.order.dto.OrderCouponDto;
-import shoppingMall.gupang.web.controller.order.dto.OrderDto;
 import shoppingMall.gupang.web.controller.order.dto.OrderReturnDto;
-import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.service.order.OrderService;
 
 @RestController
@@ -27,29 +25,29 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @Operation(summary = "add order", description = "주문 추가하기")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 회원이 없습니다.")
-    })
-    @Parameter(content = @Content(schema = @Schema(implementation = OrderDto.class)))
-    @PostMapping("/add")
-    public String order(@RequestBody OrderDto orderDto) {
-        Address address = new Address(orderDto.getCity(), orderDto.getStreet(), orderDto.getZipcode());
-        orderService.order(address, orderDto);
-        return "ok";
-    }
+//    @Operation(summary = "add order", description = "주문 추가하기")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "OK"),
+//            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 회원이 없습니다.")
+//    })
+//    @Parameter(content = @Content(schema = @Schema(implementation = OrderDto.class)))
+//    @PostMapping("/add")
+//    public String order(@RequestBody OrderDto orderDto) {
+//        Address address = new Address(orderDto.getCity(), orderDto.getStreet(), orderDto.getZipcode());
+//        orderService.order(address, orderDto);
+//        return "ok";
+//    }
 
-    @Operation(summary = "order with coupon", description = "쿠폰과 함께 주문하기")
+    @Operation(summary = "add order", description = "주문 추가하기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 회원이 없습니다."),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 상품이 없습니다.")
     })
     @Parameter(content = @Content(schema = @Schema(implementation = OrderCouponDto.class)))
-    @PostMapping("/coupon")
-    public String orderWithCoupon(@RequestBody OrderCouponDto orderCouponDto) {
-        orderService.orderWithCoupon(orderCouponDto);
+    @PostMapping("/add")
+    public String order(@RequestBody OrderCouponDto orderCouponDto) {
+        orderService.order(orderCouponDto);
         return "ok";
     }
 

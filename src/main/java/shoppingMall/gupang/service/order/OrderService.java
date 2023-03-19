@@ -9,9 +9,9 @@ import shoppingMall.gupang.domain.*;
 
 public interface OrderService {
 
-    Long order(Address address, OrderDto dto);
+//    Long order(Address address, OrderDto dto);
 
-    Order orderWithCoupon(OrderCouponDto dto);
+    Order order(OrderCouponDto dto);
 
     void cancelOrder(Long orderId);
 

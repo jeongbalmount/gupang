@@ -39,18 +39,6 @@ public class ItemController {
         return itemService.findItemByName(itemName);
     }
 
-    @Operation(summary = "add item", description = "상품 추가하기")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 판매자 존재하지 않음"),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST => 해당 카테고리 존재하지 않음"),
-    })
-    @Parameter(content = @Content(schema = @Schema(implementation = ItemDto.class)))
-    @PostMapping
-    public Long addItem(@Valid @RequestBody ItemDto itemDto) {
-        return itemService.saveItem(itemDto);
-    }
-
     @GetMapping("/singleitem/{itemId}")
     public ItemReturnDto getSingleItem(@PathVariable(name = "itemId") Long itemId) {
         return itemService.findSingleItem(itemId);

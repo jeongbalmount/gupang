@@ -29,7 +29,6 @@ public class OrderItem {
         this.item = item;
         this.itemCount = itemCount;
         this.itemPrice = itemPrice;
-        this.couponDiscountAmount = couponDiscountAmount;
     }
 
     public static OrderItem createOrderItem(Item item, int itemPrice, int count, int couponDiscountAmount) {
@@ -39,8 +38,6 @@ public class OrderItem {
     public void registerOrder(Order order) {
         this.order = order;
     }
-
-    private int couponDiscountAmount;
 
     private int itemCount;
 

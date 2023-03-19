@@ -1,6 +1,5 @@
 package shoppingMall.gupang.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -13,11 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,8 +26,6 @@ import shoppingMall.gupang.domain.Seller;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.elasticsearch.itemSearch.ItemSearchRepository;
 import shoppingMall.gupang.service.item.ItemService;
-import shoppingMall.gupang.web.SessionConst;
-import shoppingMall.gupang.web.config.WebConfig;
 import shoppingMall.gupang.web.controller.item.ItemController;
 import shoppingMall.gupang.web.controller.item.dto.ItemDto;
 import shoppingMall.gupang.web.interceptor.LoginInterceptor;
@@ -121,20 +115,6 @@ public class ItemControllerTest {
     @AfterEach
     void after() {
         itemSearchRepository.deleteAll();
-    }
-
-    @Test
-    @DisplayName("새로운 상품 추가 테스트")
-    void addItemTest() throws Exception {
-        MockHttpSession mockSession = new MockHttpSession();
-        mockSession.setAttribute(SessionConst.LOGIN_MEMBER, this.member.getEmail());
-        ItemDto dto = new ItemDto("new apple", 1000, 100, sellerId, categoryId);
-
-        mvc.perform(post(BASE_URL)
-                        .content(mapper.writeValueAsString(dto))
-                        .contentType(MediaType.APPLICATION_JSON)
-//                        .session(mockSession)
-                ).andExpect(status().isOk());
     }
 
     @Test

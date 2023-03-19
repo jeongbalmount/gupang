@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import org.springframework.util.MultiValueMap;
 import shoppingMall.gupang.domain.Category;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Seller;
+import shoppingMall.gupang.web.controller.item.dto.ItemDto;
 
 import javax.persistence.EntityManager;
 
@@ -30,6 +32,11 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
+/*
+    -  seller login member login과 세션 분리 필요
+ */
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -43,18 +50,22 @@ public class SellerControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     private static final String BASE_URL = "/seller";
 
     private Seller seller;
 
     private List<Item> items = new ArrayList<>();
 
+    private Long categoryId;
+    private Long sellerId;
+
     @BeforeEach
     void before() {
         Category category = new Category("food");
         Seller seller = new Seller("010-111-111", "managerName");
-        em.persist(seller);
-        em.persist(category);
         this.seller = seller;
 
         Item item1 = new Item("apple", 1000, 100, seller, category);
@@ -63,6 +74,10 @@ public class SellerControllerTest {
 
         em.persist(seller);
         em.persist(category);
+
+        categoryId = category.getId();
+        sellerId = seller.getId();
+
         em.persist(item1);
         em.persist(item2);
         em.persist(item3);
@@ -113,10 +128,30 @@ public class SellerControllerTest {
         map.set("sellerId", id);
         map.set("managerName", "name");
 
-        mvc.perform(patch(BASE_URL)
+        mvc.perform(put(BASE_URL)
                 .params(map)
         ).andExpect(status().isOk())
                 .andExpect(content().string("ok"));
+    }
+
+        /*
+        - 상품을 추가하는 행위는 itemController에서 진행할 수 없을것이다.
+        - seller가 추가 하기 때문에 sellerController에서 진행되어야 한다.
+        - 그리고 Interceptor 분리해주는게 맞다.
+        - (addInterceptor는 "/item/**"라는 경로가 있다면 /item이후 **에 대해선 http method 상관없이 모두 적용된다.)
+     */
+    @Test
+    @DisplayName("새로운 상품 추가 테스트")
+    void addItemTest() throws Exception {
+//        MockHttpSession mockSession = new MockHttpSession();
+//        mockSession.setAttribute(SessionConst.LOGIN_MEMBER, this.member.getEmail());
+        ItemDto dto = new ItemDto("new apple", 1000, 100, sellerId, categoryId);
+
+        mvc.perform(post(BASE_URL + "/" + "newitem")
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON)
+//                        .session(mockSession)
+                ).andExpect(status().isOk());
     }
 
 }

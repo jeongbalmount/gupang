@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.web.controller.order.dto.OrderCouponDto;
-import shoppingMall.gupang.web.controller.order.dto.OrderDto;
 import shoppingMall.gupang.web.controller.order.dto.OrderItemDto;
 import shoppingMall.gupang.web.controller.order.dto.OrderReturnDto;
 import shoppingMall.gupang.domain.discount.DiscountPolicy;
@@ -52,61 +51,7 @@ public class OrderServiceImpl implements OrderService {
     private final RedissonLockStockFacade redissonLockStockFacade;
 
     @Override
-    public Long order(Address address, OrderDto dto) {
-        Optional<Member> optionalMember = memberRepository.findById(dto.getMemberId());
-        Member member = optionalMember.orElse(null);
-        if (member == null) {
-            throw new NoMemberException("해당 멤버가 없습니다.");
-        }
-
-        IsMemberShip isMemberShip = member.getIsMemberShip();
-
-        Delivery delivery = getDelivery(member.getIsMemberShip(), address);
-
-        List<OrderItem> orderItems = new ArrayList<>();
-
-        getOrderItems(dto.getOrderItemDtos(), isMemberShip, orderItems);
-
-        Order order = Order.createOrder(LocalDateTime.now(), member, delivery, isMemberShip,
-                OrderStatus.ORDER, orderItems);
-
-        orderRepository.save(order);
-        return order.getId();
-    }
-
-    private void getOrderItems(List<OrderItemDto> dtos, IsMemberShip isMemberShip, List<OrderItem> orderItems) {
-        for (OrderItemDto dto : dtos) {
-            Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
-            Item item = optionalItem.orElse(null);
-            if (item != null) {
-                OrderItem orderItem = OrderItem.createOrderItem(item,
-                        getMembershipDiscountedPrice(isMemberShip, item.getItemPrice()),
-                        dto.getItemCount(), 0);
-                decreaseItemQuantity(dto.getItemId(), dto.getItemCount());
-                orderItemRepository.save(orderItem);
-                orderItems.add(orderItem);
-            }
-        }
-    }
-
-    private void decreaseItemQuantity(Long itemId, int quantity) {
-        try {
-            redissonLockStockFacade.decrease(itemId, quantity);
-        } catch (Exception e) {
-            throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
-        }
-    }
-
-    private void increaseItemQuantity(Long itemId, int quantity) {
-        try {
-            redissonLockStockFacade.increase(itemId, quantity);
-        } catch (Exception e) {
-            throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
-        }
-    }
-
-    @Override
-    public Order orderWithCoupon(OrderCouponDto dto) {
+    public Order order(OrderCouponDto dto) {
         Optional<Member> optionalMember = memberRepository.findById(dto.getMemberId());
         Member member = optionalMember.orElse(null);
         if (member == null) {
@@ -246,6 +191,22 @@ public class OrderServiceImpl implements OrderService {
             return 0;
         } else {
             return 3000;
+        }
+    }
+
+    private void decreaseItemQuantity(Long itemId, int quantity) {
+        try {
+            redissonLockStockFacade.decrease(itemId, quantity);
+        } catch (Exception e) {
+            throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
+        }
+    }
+
+    private void increaseItemQuantity(Long itemId, int quantity) {
+        try {
+            redissonLockStockFacade.increase(itemId, quantity);
+        } catch (Exception e) {
+            throw new KeyAttemptFailException("레디스 키 값을 가져오는 중에 문제가 발생하였습니다.");
         }
     }
 }
