@@ -12,14 +12,10 @@ import static shoppingMall.gupang.domain.enums.IsMemberShip.MEMBERSHIP;
 public class FixDiscountPolicy implements DiscountPolicy{
     @Override
     public int discount(IsMemberShip isMemberShip, int price) {
-        int discountPrice;
-
         if (isMemberShip == MEMBERSHIP) {
-            discountPrice = price - 3000;
+            return Math.min(price, 3000);
         } else {
-            discountPrice = price - 1000;
+            return Math.min(price, 1000);
         }
-
-        return max(discountPrice, 0);
     }
 }

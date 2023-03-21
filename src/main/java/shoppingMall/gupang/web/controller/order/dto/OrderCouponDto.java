@@ -12,9 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderCouponDto {
 
-    @NotNull
-    private Long memberId;
-
     // 주문시 주소는 회원 주소와 다를 수 있다.
     @NotNull
     private Address address;
@@ -24,5 +21,5 @@ public class OrderCouponDto {
 
     private List<Long> couponIds;
 
-    private List<Long> deliveryCouponIds;
+    private Long deliveryCouponId;
 }

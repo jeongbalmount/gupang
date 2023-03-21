@@ -2,6 +2,7 @@ package shoppingMall.gupang.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -21,10 +23,12 @@ import shoppingMall.gupang.domain.coupon.FixCoupon;
 import shoppingMall.gupang.domain.coupon.PercentCoupon;
 import shoppingMall.gupang.domain.enums.DeliveryStatus;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
+import shoppingMall.gupang.repository.order.OrderRepository;
 import shoppingMall.gupang.web.SessionConst;
 import shoppingMall.gupang.web.controller.order.dto.OrderCouponDto;
 import shoppingMall.gupang.web.controller.order.dto.OrderItemDto;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,6 +69,9 @@ public class OrderControllerTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     private String BASE_URL = "/order";
 
     private Member membershipMember;
@@ -73,6 +80,10 @@ public class OrderControllerTest {
     private Item item1;
     private Item item2;
 
+    private Long fixId;
+    private Long percentId;
+    private Long deliveryCouponId;
+
 
     @BeforeEach
     void init() {
@@ -80,9 +91,9 @@ public class OrderControllerTest {
                 .build();
 
         Address address = new Address("city", "st", "zip");
-        Member membershipMember = new Member("email@gmail.com", "password", "name",
+        Member membershipMember = new Member("memberEmail@gmail.com", "password", "name",
                 "010-1111-1111", address, IsMemberShip.MEMBERSHIP);
-        Member noMembershipMember = new Member("email@gmail.com", "password", "name",
+        Member noMembershipMember = new Member("noMemberEmail@gmail.com", "password", "name",
                 "010-1111-1111", address, IsMemberShip.NOMEMBERSHIP);
         Delivery delivery = new Delivery(address, 2000, DeliveryStatus.READY);
         em.persist(membershipMember);
@@ -116,9 +127,14 @@ public class OrderControllerTest {
                 1000, "fix not valid coupon");
         DeliveryCoupon deliveryCoupon = new DeliveryCoupon(membershipMember, validExpireDate);
 
+        em.persist(fixValidCoupon);
         em.persist(fixNotValidCoupon);
         em.persist(percentValidCoupon);
         em.persist(deliveryCoupon);
+
+        this.fixId = fixValidCoupon.getId();
+        this.percentId = percentValidCoupon.getId();
+        this.deliveryCouponId = deliveryCoupon.getId();
     }
 
     @Test
@@ -126,26 +142,82 @@ public class OrderControllerTest {
     void addOrderWithNoCouponTest() throws Exception {
 
         OrderItemDto orderItemDto1 = new OrderItemDto(item1.getId(), 10, item1.getItemPrice());
-        OrderItemDto orderItemDto2 = new OrderItemDto(item2.getId(), 10, item2.getItemPrice());
+        OrderItemDto orderItemDto2 = new OrderItemDto(item2.getId(), 5, item2.getItemPrice());
         List<OrderItemDto> orderItemDtos = new ArrayList<>();
         orderItemDtos.add(orderItemDto1);
         orderItemDtos.add(orderItemDto2);
 
         OrderCouponDto orderCouponDto = OrderCouponDto.builder()
                 .address(new Address("city", "st", "zip"))
-                .memberId(membershipMember.getId())
                 .orderItemDtos(orderItemDtos)
                 .build();
 
         MockHttpSession mockSession = new MockHttpSession();
         mockSession.setAttribute(SessionConst.LOGIN_MEMBER, this.membershipMember.getEmail());
 
-        mvc.perform(post(BASE_URL)
-                .session(mockSession)
-                .content(mapper.writeValueAsString(orderCouponDto))
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
+        MvcResult result = mvc.perform(post(BASE_URL)
+                        .session(mockSession)
+                        .content(mapper.writeValueAsString(orderCouponDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andReturn();
 
+        String content = result.getResponse().getContentAsString();
+        Long orderId = Long.parseLong(content);
+        List<Order> orders = orderRepository.findOrderWithDelivery(orderId);
+        Order order = orders.get(0);
+        OrderItem orderItem = order.getOrderItems().get(0);
+        OrderItem orderItem2 = order.getOrderItems().get(1);
+
+        assertThat(orderItem.getTotalPrice()).isEqualTo(100000);
+        assertThat(orderItem2.getTotalPrice()).isEqualTo(50000);
+        assertThat(order.getTotalPrice()).isEqualTo(150000);
     }
 
+    /*
+        - 정량, 배송
+        - 퍼센트 하나만
+        - 정량, 퍼센트, 배송쿠폰 (정량 상품id == 퍼센트 상품id)
+            - 퍼센트 쿠폰은 같은 상품이기 때문에 적용되면 안된다.
+        - 정량, 퍼센트, 배송쿠폰 (정량 상품id != 퍼센트 상품id)
+     */
+    @Test
+    @DisplayName("쿠폰이 모두 valid한 상태에서 정량, 퍼센트, 배송 쿠폰 적용 테스트")
+    void allCouponsValidAndTestAllKindsOfCouponTest() throws Exception {
+        OrderItemDto orderItemDto = new OrderItemDto(item1.getId(), 10, item1.getItemPrice());
+        List<OrderItemDto> orderItemDtos = new ArrayList<>();
+        orderItemDtos.add(orderItemDto);
+
+        List<Long> couponIds = new ArrayList<>();
+        couponIds.add(fixId);
+        couponIds.add(percentId);
+
+        OrderCouponDto orderCouponDto = OrderCouponDto.builder()
+                .address(new Address("city", "st", "zip"))
+                .couponIds(couponIds)
+                .deliveryCouponId(deliveryCouponId)
+                .orderItemDtos(orderItemDtos)
+                .build();
+
+        MockHttpSession mockSession = new MockHttpSession();
+        mockSession.setAttribute(SessionConst.LOGIN_MEMBER, this.membershipMember.getEmail());
+
+        MvcResult result = mvc.perform(post(BASE_URL)
+                        .session(mockSession)
+                        .content(mapper.writeValueAsString(orderCouponDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Long orderId = Long.parseLong(content);
+        List<Order> orders = orderRepository.findOrderWithDelivery(orderId);
+        Order order = orders.get(0);
+        OrderItem orderItem = order.getOrderItems().get(0);
+        OrderItem orderItem2 = order.getOrderItems().get(1);
+
+        assertThat(orderItem.getTotalPrice()).isEqualTo(100000);
+        assertThat(orderItem2.getTotalPrice()).isEqualTo(50000);
+        assertThat(order.getTotalPrice()).isEqualTo(150000);
+    }
 }

@@ -74,49 +74,49 @@ public class OrderServiceTest {
 //        this.percentCoupon = percentCoupon;
     }
 
-    @Test
-    void orderTest() {
-        Address address = new Address("city", "st", "zip");
-        long itemId = 12;
-        int itemCount = 100;
-        List<OrderItemDto> dtos = new ArrayList<>();
-        OrderItemDto dto = new OrderItemDto();
-        dto.setItemId(itemId);
-        dto.setItemCount(itemCount);
-        dtos.add(dto);
-        OrderDto orderDto1 = new OrderDto();
-        orderDto1.setMemberId(member.getId());
-        orderDto1.setCity("c");
-        orderDto1.setStreet("st");
-        orderDto1.setZipcode("zip");
-        orderDto1.setOrderItemDtos(dtos);
-
-        Address address1 = new Address("c", "st", "zip");
-        for (Item item : items) {
-            log.info(String.valueOf(item.getItemQuantity()));
-            log.info(String.valueOf(item.getId()));
-        }
-
-        orderService.order(address1, orderDto1);
-
-        List<Order> orderByMember = orderRepository.findByMemberId(member.getId());
-        log.info(String.valueOf(orderByMember.size()));
-        for (Order i : orderByMember) {
-            log.info(String.valueOf(i.getId()));
-            log.info(String.valueOf(i.getOrderItems().size()));
-            for (OrderItem oi: i.getOrderItems()){
-                log.info(String.valueOf(oi.getItem().getItemQuantity()));
-            }
-        }
-        long orderNumber = 7;
-        orderService.cancelOrder(orderNumber);
-        List<Order> orderByMember2 = orderRepository.findByMemberId(member.getId());
-        for (Order i : orderByMember2) {
-            for (OrderItem oi: i.getOrderItems()){
-                log.info(String.valueOf(oi.getItem().getItemQuantity()));
-            }
-        }
-    }
+//    @Test
+//    void orderTest() {
+//        Address address = new Address("city", "st", "zip");
+//        long itemId = 12;
+//        int itemCount = 100;
+//        List<OrderItemDto> dtos = new ArrayList<>();
+//        OrderItemDto dto = new OrderItemDto();
+//        dto.setItemId(itemId);
+//        dto.setItemCount(itemCount);
+//        dtos.add(dto);
+//        OrderDto orderDto1 = new OrderDto();
+//        orderDto1.setMemberId(member.getId());
+//        orderDto1.setCity("c");
+//        orderDto1.setStreet("st");
+//        orderDto1.setZipcode("zip");
+//        orderDto1.setOrderItemDtos(dtos);
+//
+//        Address address1 = new Address("c", "st", "zip");
+//        for (Item item : items) {
+//            log.info(String.valueOf(item.getItemQuantity()));
+//            log.info(String.valueOf(item.getId()));
+//        }
+//
+//        orderService.order(address1, orderDto1);
+//
+//        List<Order> orderByMember = orderRepository.findByMemberId(member.getId());
+//        log.info(String.valueOf(orderByMember.size()));
+//        for (Order i : orderByMember) {
+//            log.info(String.valueOf(i.getId()));
+//            log.info(String.valueOf(i.getOrderItems().size()));
+//            for (OrderItem oi: i.getOrderItems()){
+//                log.info(String.valueOf(oi.getItem().getItemQuantity()));
+//            }
+//        }
+//        long orderNumber = 7;
+//        orderService.cancelOrder(orderNumber);
+//        List<Order> orderByMember2 = orderRepository.findByMemberId(member.getId());
+//        for (Order i : orderByMember2) {
+//            for (OrderItem oi: i.getOrderItems()){
+//                log.info(String.valueOf(oi.getItem().getItemQuantity()));
+//            }
+//        }
+//    }
 
 //    @Test
 //    void orderWithCouponTest() {

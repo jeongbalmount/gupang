@@ -21,7 +21,6 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "orders") // sql에서 order라는 이름의 테이블은 사용할 수 없다!
 public class Order {
 
-    public static Order Builder;
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -46,20 +45,23 @@ public class Order {
     @Enumerated(STRING)
     private OrderStatus orderStatus;
 
+    private int totalPrice;
+
     private Order(LocalDateTime orderDate, Member member, Delivery delivery, IsMemberShip memberShipOrder,
-                  OrderStatus orderStatus) {
+                  OrderStatus orderStatus, int totalPrice) {
         this.orderDate = orderDate;
         this.member = member;
         this.delivery = delivery;
         this.memberShipOrder = memberShipOrder;
         this.orderStatus = orderStatus;
+        this.totalPrice = totalPrice;
     }
 
     // 생성 메서드
     public static Order createOrder(LocalDateTime orderDate, Member member,
                                     Delivery delivery, IsMemberShip memberShipOrder,
-                                    OrderStatus orderStatus, List<OrderItem> orderItems) {
-        Order order = new Order(orderDate, member, delivery, memberShipOrder, orderStatus);
+                                    OrderStatus orderStatus, List<OrderItem> orderItems, int totalPrice) {
+        Order order = new Order(orderDate, member, delivery, memberShipOrder, orderStatus, totalPrice);
         for (OrderItem orderItem : orderItems) {
             order.addOrderItem(orderItem);
         }

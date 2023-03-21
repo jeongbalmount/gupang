@@ -121,23 +121,21 @@ public class ItemControllerTest {
     @DisplayName("한개의 상품 상세 정보 반환 테스트")
     void getSingleItemTest() throws Exception {
         ItemDto dto = new ItemDto("new apple", 1000, 100, sellerId, categoryId);
-        MvcResult result = mvc.perform(post(BASE_URL)
+
+        MvcResult result = mvc.perform(post("/seller/newitem")
                         .content(mapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        JSONArray jsonArray = new JSONArray(content);
-        JSONObject jsonObject = jsonArray.getJSONObject(0);
-        long itemId = jsonObject.getLong("itemId");
+        long itemId = Long.parseLong(content);
 
         MvcResult otherResult = mvc.perform(get(BASE_URL + "singleitem/" + itemId))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String content2 = otherResult.getResponse().getContentAsString();
-        JSONArray jsonArray2 = new JSONArray(content2);
-        JSONObject jsonObject2 = jsonArray2.getJSONObject(0);
+        JSONObject jsonObject2 = new JSONObject(content2);
         Assertions.assertThat(jsonObject2.getString("itemName")).isEqualTo("new apple");
     }
 

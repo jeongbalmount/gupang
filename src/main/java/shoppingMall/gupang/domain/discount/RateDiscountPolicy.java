@@ -10,9 +10,9 @@ public class RateDiscountPolicy implements DiscountPolicy{
     @Override
     public int discount(IsMemberShip isMemberShip, int price) {
         if (isMemberShip == MEMBERSHIP) {
-            return price * 10 / 100;
+            return price * 2 / 100;
         } else {
-            return price * 5 / 100;
+            return price / 100;
         }
     }
 }

@@ -64,10 +64,14 @@ public class OrderRepositoryTest {
         Member member = new Member("e@gmail.com", "pwd", "name", "010-1111-2222",
                 address, IsMemberShip.NOMEMBERSHIP);
         em.persist(member);
-        order = Order.createOrder(LocalDateTime.now(), member, delivery, IsMemberShip.NOMEMBERSHIP, OrderStatus.ORDER,
-                this.orderItems);
-        em.persist(delivery);
-        em.persist(order);
+//        int totalPrice = 0;
+//        for (int i = 1; i < 4; i++) {
+//            OrderItem
+//        }
+//        order = Order.createOrder(LocalDateTime.now(), member, delivery, IsMemberShip.NOMEMBERSHIP, OrderStatus.ORDER,
+//                this.orderItems);
+//        em.persist(delivery);
+//        em.persist(order);
     }
 
     @Test

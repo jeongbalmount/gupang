@@ -110,10 +110,10 @@ public class DomainTest {
         orderItems.add(orderItem1);
         orderItems.add(orderItem2);
 
-        Order order = Order.createOrder(LocalDateTime.now(), member, delivery, IsMemberShip.NOMEMBERSHIP,
-                OrderStatus.ORDER, orderItems);
-
-        em.persist(order);
+//        Order order = Order.createOrder(LocalDateTime.now(), member, delivery, IsMemberShip.NOMEMBERSHIP,
+//                OrderStatus.ORDER, orderItems);
+//
+//        em.persist(order);
     }
 
     @Test

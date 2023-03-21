@@ -29,6 +29,17 @@ public class OrderItem {
         this.item = item;
         this.itemCount = itemCount;
         this.itemPrice = itemPrice;
+        this.couponDiscountAmount = couponDiscountAmount;
+        /*
+        - coupon으로 할인되는 상품은 1개여야 한다. 그렇기 때문에 1개의 상품만 couponDiscountAmount를 적용하고
+        - 나머지는 정상가격으로 등록해야 한다.
+        - 그렇기 때문에 totalPrice를 따로 만들어 쿠폰이 있는경우 상품 1개에 대해 쿠폰을 적용해야 한다.
+     */
+        if (itemPrice >= couponDiscountAmount) {
+            this.totalPrice = (itemPrice - couponDiscountAmount) + (itemPrice * (itemCount - 1));
+        } else {
+            this.totalPrice = itemPrice * itemCount;
+        }
     }
 
     public static OrderItem createOrderItem(Item item, int itemPrice, int count, int couponDiscountAmount) {
@@ -43,9 +54,7 @@ public class OrderItem {
 
     private int itemPrice;
 
+    private int couponDiscountAmount;
 
-    public int getTotalPrice() {
-        return itemCount * itemPrice;
-    }
-
+    private int totalPrice;
 }
