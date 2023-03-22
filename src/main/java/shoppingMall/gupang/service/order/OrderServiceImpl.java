@@ -82,7 +82,6 @@ public class OrderServiceImpl implements OrderService {
             DeliveryCoupon newDeliveryCoupon = deliveryCoupon.orElse(null);
             newDeliveryCoupon.useCoupon();
         }
-
         // 전체 값을 구한 뒤, 배송비와 멤버십 할인 여부 및 얼마나 할인할지를 정한다.
         int totalPrice = getTotalPrice(delivery.getDeliveryFee(), orderItems, isMemberShip);
 
@@ -163,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
                  */
                 if (coupon.getItem().getId().equals(item.getId())) {
                     if (!coupon.getUsed() && !alreadyCheckItemIds.contains(dto.getItemId())) {
-                        discountAmount = coupon.getDiscountAmount();
+                        discountAmount = coupon.getItemDiscountedAmount(dto.getItemPrice());
                         coupon.useCoupon();
                         alreadyCheckItemIds.add(dto.getItemId());
                         break;

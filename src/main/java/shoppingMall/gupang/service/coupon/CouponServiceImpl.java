@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shoppingMall.gupang.exception.coupon.CouponExpiredException;
 import shoppingMall.gupang.web.controller.coupon.dto.CouponDto;
 import shoppingMall.gupang.web.controller.coupon.dto.CouponMemberDto;
 import shoppingMall.gupang.domain.Item;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.coupon.Coupon;
-import shoppingMall.gupang.domain.coupon.DeliveryCoupon;
 import shoppingMall.gupang.domain.coupon.FixCoupon;
 import shoppingMall.gupang.domain.coupon.PercentCoupon;
-import shoppingMall.gupang.exception.coupon.CouponExpireException;
 import shoppingMall.gupang.exception.coupon.NoCouponTypeException;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.member.NoMemberException;
@@ -49,9 +48,8 @@ public class CouponServiceImpl implements CouponService{
     }
 
     private void saveCoupon(CouponDto couponDto) {
-        log.info(String.valueOf(couponDto.getExpireDate()));
         if (couponDto.getExpireDate().isBefore(LocalDateTime.now())) {
-            throw new CouponExpireException("쿠폰 허용 기한이 현재보다 과거입니다.");
+            throw new CouponExpiredException("쿠폰 허용 기한이 현재보다 과거입니다.");
         }
 
         Optional<Member> optionalMember = memberRepository.findById(couponDto.getMemberId());

@@ -21,12 +21,6 @@ public class CouponRestControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ErrorResult couponExpireException(CouponExpireException e) {
-        return new ErrorResult("NoCoupon type", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
     public ErrorResult noMemberException(NoMemberException e) {
         return new ErrorResult("No Member", e.getMessage());
     }

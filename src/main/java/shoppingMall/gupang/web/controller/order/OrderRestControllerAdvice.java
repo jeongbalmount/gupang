@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import shoppingMall.gupang.exception.coupon.CouponExpiredException;
 import shoppingMall.gupang.exception.exceptiondto.ErrorResult;
 import shoppingMall.gupang.exception.item.NoItemException;
 import shoppingMall.gupang.exception.item.NotEnoughStockException;
@@ -55,6 +56,12 @@ public class OrderRestControllerAdvice {
     @ExceptionHandler
     public ErrorResult noDeliveryCouponException(NoDeliveryCouponException e) {
         return new ErrorResult("no deliveryCoupon Excpetion occured!", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResult couponExpiredException(CouponExpiredException e) {
+        return new ErrorResult("coupon already expired!", e.getMessage());
     }
 
 }

@@ -20,7 +20,7 @@ import shoppingMall.gupang.domain.coupon.Coupon;
 import shoppingMall.gupang.domain.coupon.FixCoupon;
 import shoppingMall.gupang.domain.coupon.PercentCoupon;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
-import shoppingMall.gupang.exception.coupon.CouponExpireException;
+import shoppingMall.gupang.exception.coupon.CouponExpiredException;
 import shoppingMall.gupang.exception.coupon.NoCouponTypeException;
 import shoppingMall.gupang.service.coupon.CouponService;
 import shoppingMall.gupang.web.controller.coupon.dto.CouponDto;
@@ -29,8 +29,6 @@ import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -149,7 +147,7 @@ public class CouponControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(
                         result -> Assertions.assertTrue(result.getResolvedException().getClass()
-                                .isAssignableFrom(CouponExpireException.class))
+                                .isAssignableFrom(CouponExpiredException.class))
                 )
                 .andExpect(status().is4xxClientError());
 
