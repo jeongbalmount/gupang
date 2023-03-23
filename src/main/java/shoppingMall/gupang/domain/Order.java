@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import shoppingMall.gupang.domain.enums.DeliveryStatus;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
+import shoppingMall.gupang.exception.order.AlreadyDeliveredException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -71,7 +72,7 @@ public class Order {
 
     public void cancel() {
         if (delivery.getDeliveryStatus() == DeliveryStatus.DELIVERED) {
-            throw new IllegalStateException("이미 배송 처리 되었습니다.");
+            throw new AlreadyDeliveredException("이미 배송 처리 되었습니다.");
         }
 
         this.orderStatus = OrderStatus.CANCEL;

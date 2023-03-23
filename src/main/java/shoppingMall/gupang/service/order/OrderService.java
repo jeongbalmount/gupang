@@ -1,9 +1,9 @@
 package shoppingMall.gupang.service.order;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import shoppingMall.gupang.web.controller.order.dto.OrderCouponDto;
 import shoppingMall.gupang.web.controller.order.dto.OrderReturnDto;
+
+import java.util.List;
 
 public interface OrderService {
 
@@ -11,6 +11,6 @@ public interface OrderService {
 
     void cancelOrder(Long orderId);
 
-    Page<OrderReturnDto> getOrderByMember(Long memberId, Pageable pageable);
+    List<OrderReturnDto> getOrderByMember(Long memberId);
 
 }

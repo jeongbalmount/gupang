@@ -1,6 +1,5 @@
-package shoppingMall.gupang.web.member;
+package shoppingMall.gupang.web.controller.member;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.service.member.MemberService;
-import shoppingMall.gupang.web.controller.member.MemberDto;
+import shoppingMall.gupang.web.controller.member.dto.MemberDto;
+import shoppingMall.gupang.web.exception.AlreadyEmailExistException;
 import shoppingMall.gupang.web.exception.AlreadyMemberExistException;
 
 import java.util.Optional;
@@ -22,20 +22,15 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
 
-    @GetMapping
-    public String checkExistEmail(@RequestBody EmailDto emailDto) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(emailDto.getEmail());
+    @GetMapping("/{memberEmail}")
+    public String checkExistEmail(@PathVariable String memberEmail) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberEmail);
         Member member = optionalMember.orElse(null);
         if (member == null){
             return "ok";
         } else {
-            return "alreadyExist";
+            throw new AlreadyEmailExistException("이미 존재하는 이메일이 있습니다.");
         }
-    }
-
-    @Data
-    private static class EmailDto {
-        private String email;
     }
 
     @PostMapping
@@ -44,16 +39,10 @@ public class MemberController {
         Member member = optionalMember.orElse(null);
         if (member == null) {
             memberService.registerMember(memberDto);
-            return "signup";
+            return "ok";
         }
 
         throw new AlreadyMemberExistException("이미 아이디가 존재합니다.");
-    }
-
-    @Data
-    @AllArgsConstructor
-    static class Result<T> {
-        private T data;
     }
 
 }

@@ -42,4 +42,8 @@ public class Delivery {
         }
     }
 
+    public void setDeliveryStatusToDelivered() {
+        this.deliveryStatus = DeliveryStatus.DELIVERED;
+    }
+
 }

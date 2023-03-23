@@ -19,6 +19,7 @@ import shoppingMall.gupang.service.order.OrderService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,8 +65,8 @@ public class OrderController {
     })
     @Parameter(name = "memberId", description = "회원 아이디")
     @GetMapping("/{memberId}")
-    public Page<OrderReturnDto> getOrder(@PathVariable Long memberId, Pageable pageable) {
-        return orderService.getOrderByMember(memberId, pageable);
+    public List<OrderReturnDto> getOrder(@PathVariable Long memberId) {
+        return orderService.getOrderByMember(memberId);
     }
 
     @Operation(summary = "cancel order", description = "주문 취소하기")
@@ -75,8 +76,9 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST => 이미 취소된 주문입니다.")
     })
     @Parameter(name = "orderId", description = "주문 아이디")
-    @DeleteMapping
+    @PostMapping("/{orderId}")
     public String cancelOrder(@PathVariable Long orderId) {
+        log.info("TlqkjglwsWk dhodksskdhsirh");
         orderService.cancelOrder(orderId);
         return "ok";
     }

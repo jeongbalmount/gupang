@@ -1,6 +1,6 @@
 package shoppingMall.gupang.service.member;
 
-import shoppingMall.gupang.web.controller.member.MemberDto;
+import shoppingMall.gupang.web.controller.member.dto.MemberDto;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.Review;
 

@@ -9,7 +9,5 @@ import shoppingMall.gupang.domain.Order;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long>, OrderRepositoryCustom {
-    Page<Order> findByMember(Member member, Pageable pageable);
-
-    List<Order> findByMemberId(Long memberId);
+    List<Order> findByMember(Member member);
 }

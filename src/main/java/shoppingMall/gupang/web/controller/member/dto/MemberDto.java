@@ -1,4 +1,4 @@
-package shoppingMall.gupang.web.controller.member;
+package shoppingMall.gupang.web.controller.member.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

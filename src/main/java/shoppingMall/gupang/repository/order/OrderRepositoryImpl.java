@@ -30,15 +30,4 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .where(order.id.eq(orderId))
                 .fetch();
     }
-
-    @Override
-    public List<Order> findOrderWithMember(Long memberId) {
-        return queryFactory
-                .selectFrom(order).distinct()
-                .join(order.member, member).fetchJoin()
-                .join(order.orderItems, orderItem).fetchJoin()
-                .join(orderItem.item, item).fetchJoin()
-                .where(order.member.id.eq(memberId))
-                .fetch();
-    }
 }

@@ -3,7 +3,7 @@ package shoppingMall.gupang.service.member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingMall.gupang.web.controller.member.MemberDto;
+import shoppingMall.gupang.web.controller.member.dto.MemberDto;
 import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.domain.Review;
 import shoppingMall.gupang.domain.enums.IsMemberShip;

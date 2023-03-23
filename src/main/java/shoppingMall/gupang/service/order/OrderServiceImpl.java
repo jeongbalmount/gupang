@@ -2,8 +2,6 @@ package shoppingMall.gupang.service.order;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingMall.gupang.exception.coupon.NoCouponException;
@@ -33,6 +31,7 @@ import shoppingMall.gupang.repository.orderItem.OrderItemRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static shoppingMall.gupang.domain.OrderStatus.CANCEL;
 
@@ -93,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private List<Coupon> checkAndGetCoupons(List<Long> couponIds, Member member) {
-        // session의 멤버id와 coupon이 갖고 있는 member id가 맞으면 coupons에 추가
+        // session의 멤버id와 coupon이 갖고 있는 member id가 맞으면 coupons에 추가 => 멤버 id만 체크
         List<Coupon> coupons = new ArrayList<>();
         for (Long couponId : couponIds) {
             Optional<Coupon> optionalCoupon = couponRepository.findById(couponId);
@@ -153,7 +152,6 @@ public class OrderServiceImpl implements OrderService {
                 throw new NoItemException("해당 상품이 없습니다.");
             }
             int discountAmount = 0;
-
             for (Coupon coupon : coupons) {
                 /*
                     - 쿠폰을 여러개 돌리면서 사용되지 않은 쿠폰이면서 쿠폰이 지원하는 상품과 현재 상품이 같을 때 쿠폰 할인 적용
@@ -185,14 +183,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderReturnDto> getOrderByMember(Long memberId, Pageable pageable) {
+    public List<OrderReturnDto> getOrderByMember(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElse(null);
         if (member == null) {
             throw new NoMemberException("해당 멤버가 없습니다.");
         }
-        Page<Order> page = orderRepository.findByMember(member, pageable);
-        return page.map(OrderReturnDto::new);
+        return orderRepository.findByMember(member)
+                .stream().map(OrderReturnDto::new)
+                .collect(Collectors.toList());
+
     }
 
     @Override

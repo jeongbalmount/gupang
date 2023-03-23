@@ -9,14 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.web.SessionConst;
 import shoppingMall.gupang.web.exception.LoginFailedException;
+import shoppingMall.gupang.web.login.dto.LoginDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-@RestController
 @Slf4j
 @RequiredArgsConstructor
+@RestController
 public class LoginController {
 
     private final LoginService loginService;
@@ -26,7 +27,7 @@ public class LoginController {
 
         Member loginMember = loginService.Login(loginDto.getEmail(), loginDto.getPassword());
         if (loginMember == null) {
-            return "loginFailed";
+            throw new LoginFailedException("로그인에 실패하였습니다.");
         }
 
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember.getEmail());
