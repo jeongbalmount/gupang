@@ -10,7 +10,6 @@ import shoppingMall.gupang.exception.member.NoMemberException;
 import shoppingMall.gupang.exception.review.NoMatchEmailException;
 import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.review.ReviewDtoRepository;
-import shoppingMall.gupang.web.SessionConst;
 import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewItemDto;
@@ -24,8 +23,6 @@ import shoppingMall.gupang.exception.review.NoReviewException;
 import shoppingMall.gupang.repository.item.ItemRepository;
 import shoppingMall.gupang.repository.review.ReviewRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

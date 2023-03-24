@@ -21,7 +21,7 @@ import shoppingMall.gupang.repository.member.MemberRepository;
 import shoppingMall.gupang.repository.review.ReviewDtoRepository;
 import shoppingMall.gupang.repository.review.ReviewRepository;
 import shoppingMall.gupang.service.review.ReviewService;
-import shoppingMall.gupang.web.SessionConst;
+import shoppingMall.gupang.web.consts.SessionConst;
 import shoppingMall.gupang.web.controller.review.ReviewController;
 import shoppingMall.gupang.web.controller.review.dto.ReviewDto;
 import shoppingMall.gupang.web.controller.review.dto.ReviewEditDto;

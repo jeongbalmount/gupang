@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import shoppingMall.gupang.service.cart.CartService;
-import shoppingMall.gupang.web.SessionConst;
+import shoppingMall.gupang.web.consts.SessionConst;
 import shoppingMall.gupang.web.controller.cart.dto.*;
 
 import javax.servlet.http.HttpServletRequest;

@@ -27,7 +27,7 @@ import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.coupon.CouponExpiredException;
 import shoppingMall.gupang.exception.order.AlreadyDeliveredException;
 import shoppingMall.gupang.repository.order.OrderRepository;
-import shoppingMall.gupang.web.SessionConst;
+import shoppingMall.gupang.web.consts.SessionConst;
 import shoppingMall.gupang.web.controller.order.dto.OrderCouponDto;
 import shoppingMall.gupang.web.controller.order.dto.OrderItemDto;
 

@@ -23,7 +23,7 @@ import shoppingMall.gupang.domain.*;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.repository.cartItem.CartRepository;
 import shoppingMall.gupang.service.cart.CartService;
-import shoppingMall.gupang.web.SessionConst;
+import shoppingMall.gupang.web.consts.SessionConst;
 import shoppingMall.gupang.web.controller.cart.CartController;
 import shoppingMall.gupang.web.controller.cart.dto.CartItemIdsDto;
 import shoppingMall.gupang.web.interceptor.LoginInterceptor;

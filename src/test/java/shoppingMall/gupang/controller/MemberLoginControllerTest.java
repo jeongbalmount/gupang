@@ -12,11 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import shoppingMall.gupang.domain.Address;
 import shoppingMall.gupang.domain.Member;
 import shoppingMall.gupang.domain.enums.IsMemberShip;
+import shoppingMall.gupang.web.consts.SessionConst;
 import shoppingMall.gupang.web.controller.member.dto.MemberDto;
 import shoppingMall.gupang.web.exception.AlreadyEmailExistException;
 import shoppingMall.gupang.web.exception.AlreadyMemberExistException;
@@ -47,15 +49,26 @@ public class MemberLoginControllerTest {
     private EntityManager em;
 
     @Autowired
-    private MockMvc mvc;
+    private WebApplicationContext context;
 
     @Autowired
     private ObjectMapper mapper;
+
+    private MockMvc mvc;
 
     private static String BASE_URL = "/member";
 
     @BeforeEach
     void init() {
+        /*
+            - MockMvc에 @Autowired만 하면 Spring 애플리케이션 컨텍스트와 연결되지 않을 수 있으며
+              세션 관리를 처리하는 데 필요한 구성이 없을 수도 있다.
+              그런데 MockMvcBuilders.webAppContextSetup(context).build()를 호출하면
+              애플리케이션 컨텍스트와 연결되고 세션 관리를 처리하는 데 필요한 구성이 있는 MockMvc의 새 인스턴스가 생성된다.
+              이 새 인스턴스는 세션 관리가 필요한 컨트롤러를 테스트하는 데 사용할 수 있다.
+         */
+        this.mvc = MockMvcBuilders.webAppContextSetup(context).build();
+
         Address address = new Address("city", "st", "zip");
         Member member = new Member("email@gmail.com", "password", "name",
                 "010-111-111", address, IsMemberShip.MEMBERSHIP);
@@ -110,9 +123,9 @@ public class MemberLoginControllerTest {
         LoginDto loginDto = new LoginDto("email@gmail.com", "password");
 
         mvc.perform(post("/login")
-                .content(mapper.writeValueAsString(loginDto))
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
+                        .content(mapper.writeValueAsString(loginDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk());
 
         // 로그인 실패
         LoginDto failLoginDto = new LoginDto("email@gmail.com", "password1");
@@ -124,10 +137,13 @@ public class MemberLoginControllerTest {
                         .isAssignableFrom(LoginFailedException.class)))
                 .andExpect(status().is4xxClientError());
 
-        // logout
         MockHttpSession mockSession = new MockHttpSession();
+        mockSession.setAttribute(SessionConst.LOGIN_MEMBER, "email@gmail.com");
+
+        // logout
         mvc.perform(post("/logout").session(mockSession))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
 
         // session 무효화 체크
         assertThat(mockSession.isInvalid()).isTrue();

@@ -4,7 +4,7 @@ package shoppingMall.gupang.web.interceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import shoppingMall.gupang.web.SessionConst;
+import shoppingMall.gupang.web.consts.SessionConst;
 import shoppingMall.gupang.web.exception.AuthenticationsException;
 
 import javax.servlet.http.HttpServletRequest;
