@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /*
-    <캐시 주로 사용하는 테스트>
+    <캐시 테스트>
 
     - 리뷰 좋아요 버튼 누르기
         - 좋아요 누른 리뷰 좋아요 1만큼 제대로 늘어 났는지 확인

@@ -94,7 +94,7 @@ public class CategoryControllerTest {
     @DisplayName("카테고리 속한 상품 불러오기 테스트")
     void getCategoryItemsTest() throws Exception {
         /*
-        CategoryController 리턴 타입 List<ItemReturnDto>로 바꿔야 test 통과
+            - CategoryController 리턴 타입 List<ItemReturnDto>로 바꿔야 test 통과
          */
         String name = "food";
         MvcResult result = mvc.perform(get(BASE_URL + "/" +name))

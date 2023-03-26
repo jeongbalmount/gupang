@@ -36,6 +36,7 @@ public class RedissonLockStockFacade {
             throw new LockFailException("Lock 획득 실패");
         }
     }
+
     public void increase(Long key, int quantity) {
         RLock lock = redissonClient.getLock(key.toString());
 

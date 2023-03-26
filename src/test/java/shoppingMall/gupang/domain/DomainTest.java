@@ -12,7 +12,6 @@ import shoppingMall.gupang.domain.enums.IsMemberShip;
 import shoppingMall.gupang.exception.item.NotEnoughStockException;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
